@@ -367,6 +367,7 @@
     <label class="small">속도
       <input type="range" id="kSpeed" min="1.5" max="7" step="0.5" value="3.5">
     </label>
+    <button id="btnRefresh" title="음성·색칠 새로 고침">⟳</button>
   </div>
   <div class="row">
     <button id="btnDone">🌹 1단 봉헌</button>
@@ -675,10 +676,9 @@ $('voiceClose').onclick=()=>{ if(recId&&mediaRec) mediaRec.stop(); voiceAudio.pa
 $('readSel').onchange=e=>{
   settings.read=e.target.value; saveSettings();
   voiceOn=(settings.read==='rec');
-  stopVoice();
   if(settings.read==='tts' && !('speechSynthesis' in window))
     alert('이 기기에서는 기계 음성(TTS)을 지원하지 않습니다.');
-  if(kOn) show();
+  refreshStep(true);
 };
 $('themeSel').onchange=e=>{
   settings.theme=e.target.value; saveSettings();
@@ -687,6 +687,7 @@ $('themeSel').onchange=e=>{
 $('contSel').onchange=e=>{
   settings.cont=(e.target.value==='cont'); saveSettings();
   toast(settings.cont?'∞ 멈춤없이 계속 이어갑니다':'신비를 마치면 잠시 멈춥니다');
+  if(kOn) refreshStep(true);
 };
 function stopVoice(){ voicePlaying=false; voiceResume=false; voiceAudio.pause(); voiceAudio.currentTime=0; if(typeof stopTTS==='function') stopTTS(); }
 voiceAudio.onended=()=>{
@@ -801,6 +802,12 @@ function advance(){
 
 /* ═══ 따라 읽기(글자 색칠) ═══ */
 function kTick(ts){
+  /* TTS 멈춤 감시: 자동 읽기 중인데 낭독이 조용히 끊겼으면 다시 시작 */
+  if(kOn && settings.read==='tts' && idx<steps.length){
+    if(ttsPlaying){ ttsStallT=ts; }
+    else if(!ttsStallT){ ttsStallT=ts; }
+    else if(ts-ttsStallT>3500){ ttsStallT=ts; speakStep(); }
+  }else{ ttsStallT=0; }
   if(idx<steps.length && kChars.length && (kOn || voicePlaying || ttsPlaying)){
     if(ttsPlaying){
       /* 경계 이벤트가 오면 실제 발화 위치, 아니면 보정된 시간 추정 */
@@ -847,7 +854,7 @@ function kTick(ts){
 requestAnimationFrame(kTick);
 let voiceResume=false;
 let ttsPlaying=false, ttsRestart=false, ttsT0=0, ttsEst=1;
-let ttsHasBoundary=false, ttsBoundaryPos=0, ttsLen=1, ttsRate=1;
+let ttsHasBoundary=false, ttsBoundaryPos=0, ttsLen=1, ttsRate=1, ttsStallT=0;
 function ttsText(x){
   const t=document.createElement('div'); t.innerHTML=x;
   t.querySelectorAll('.rubric').forEach(n=>n.remove());
@@ -901,6 +908,7 @@ function speakStep(){
     ttsPlaying=true; ttsT0=performance.now();
     const cps=(settings.ttsCps||3.3)*ttsRate;
     ttsEst=Math.max(ttsLen/cps*1000,1500);
+    try{ speechSynthesis.resume(); }catch(e){}   /* 걸림 방지 */
     speechSynthesis.speak(u);
   }catch(e){ ttsPlaying=false; }
 }
@@ -934,9 +942,16 @@ $('btnAuto').onclick=()=>{
   updateAutoBtn();
 };
 $('kSpeed').oninput=e=>{ kRate=parseFloat(e.target.value); };
-$('kSpeed').onchange=()=>{
-  if(kOn && settings.read==='tts' && ttsPlaying){ stopTTS(); speakStep(); }
-};
+function refreshStep(quiet){
+  stopVoice();                       /* 녹음·TTS 모두 정지 */
+  try{ speechSynthesis.cancel(); }catch(e){}
+  voiceResume=false; ttsRestart=false;
+  kProg=0; kHold=0; kLast=0;
+  show();                            /* 현재 기도문을 처음부터 다시 (자동 읽기 켜져 있으면 곧바로 재생) */
+  if(!quiet) toast('⟳ 새로 시작합니다');
+}
+$('kSpeed').onchange=()=>{ if(kOn) refreshStep(true); };
+$('btnRefresh').onclick=()=>refreshStep(false);
 function nextMystery(){
   const ni=(ORDER.indexOf(mystKey)+1)%ORDER.length;
   mystKey=ORDER[ni];
@@ -1106,9 +1121,9 @@ $('spiritSel').onchange=e=>{
   buildSteps();
   counted=savedCounted;
   idx=Math.min(savedIdx,steps.length); finished=savedFin;
-  show();
+  refreshStep(true);
 };
-$('modeSel').onchange=e=>{ settings.mode=e.target.value; saveSettings(); };
+$('modeSel').onchange=e=>{ settings.mode=e.target.value; saveSettings(); if(kOn) refreshStep(true); };
 $('goalInput').onchange=e=>{
   settings.goal=Math.max(0,parseInt(e.target.value)||0);
   e.target.value=settings.goal; saveSettings(); updateGoalLine();
