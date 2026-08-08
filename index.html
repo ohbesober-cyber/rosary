@@ -367,7 +367,6 @@
     <label class="small">속도
       <input type="range" id="kSpeed" min="1.5" max="7" step="0.5" value="3.5">
     </label>
-    <button id="btnCont">∞ 멈춤없이</button>
   </div>
   <div class="row">
     <button id="btnDone">🌹 1단 봉헌</button>
@@ -383,6 +382,12 @@
         <option value="none">글자만 (음성 없음)</option>
         <option value="rec">내 녹음</option>
         <option value="tts">기계 음성 (TTS)</option>
+      </select>
+    </label>
+    <label class="small">신비 마친 뒤
+      <select id="contSel">
+        <option value="stop">잠시 멈춤</option>
+        <option value="cont">∞ 멈춤없이 계속</option>
       </select>
     </label>
     <button id="btnVoiceRec">녹음</button>
@@ -679,14 +684,8 @@ $('themeSel').onchange=e=>{
   settings.theme=e.target.value; saveSettings();
   document.body.classList.toggle('light', settings.theme==='light');
 };
-function updateContBtn(){
-  const b=$('btnCont');
-  b.classList.toggle('playing',!!settings.cont);
-  b.style.color=settings.cont?'var(--gold)':'';
-  b.style.borderColor=settings.cont?'var(--gold)':'';
-}
-$('btnCont').onclick=()=>{
-  settings.cont=!settings.cont; saveSettings(); updateContBtn();
+$('contSel').onchange=e=>{
+  settings.cont=(e.target.value==='cont'); saveSettings();
   toast(settings.cont?'∞ 멈춤없이 계속 이어갑니다':'신비를 마치면 잠시 멈춥니다');
 };
 function stopVoice(){ voicePlaying=false; voiceResume=false; voiceAudio.pause(); voiceAudio.currentTime=0; if(typeof stopTTS==='function') stopTTS(); }
@@ -1098,7 +1097,7 @@ async function loadSettings(){
   $('themeSel').value=settings.theme||'night';
   voiceOn=(settings.read==='rec');
   document.body.classList.toggle('light', settings.theme==='light');
-  updateContBtn();
+  $('contSel').value=settings.cont?'cont':'stop';
 }
 async function saveSettings(){ await kvSet('rosary-settings-v1',JSON.stringify(settings)); }
 $('spiritSel').onchange=e=>{
