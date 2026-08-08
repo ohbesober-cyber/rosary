@@ -802,12 +802,18 @@ function advance(){
 
 /* ═══ 따라 읽기(글자 색칠) ═══ */
 function kTick(ts){
-  /* TTS 멈춤 감시: 자동 읽기 중인데 낭독이 조용히 끊겼으면 다시 시작 */
-  if(kOn && settings.read==='tts' && idx<steps.length){
-    if(ttsPlaying){ ttsStallT=ts; }
-    else if(!ttsStallT){ ttsStallT=ts; }
-    else if(ts-ttsStallT>3500){ ttsStallT=ts; speakStep(); }
-  }else{ ttsStallT=0; }
+  /* TTS 안전 장치 */
+  if(kOn && settings.read==='tts' && idx<steps.length && ttsPlaying){
+    const el=performance.now()-ttsT0;
+    if(!ttsStarted && el>1800 && !ttsRetried){
+      /* 발화가 시작조차 안 됨 → 한 번만 다시 시도 */
+      ttsRetried=true; speakStep();
+    }else if(ttsStarted && el > ttsEst*1.8+2500){
+      /* 종료 신호가 유실됨 → 끝난 것으로 간주하고 다음으로 */
+      ttsPlaying=false;
+      if(kOn && idx<steps.length) advance();
+    }
+  }
   if(idx<steps.length && kChars.length && (kOn || voicePlaying || ttsPlaying)){
     if(ttsPlaying){
       /* 경계 이벤트가 오면 실제 발화 위치, 아니면 보정된 시간 추정 */
@@ -865,13 +871,11 @@ async function holdWake(on){
   }catch(e){}
 }
 document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible' && kOn){
-    holdWake(true);
-    if(settings.read==='tts' && !ttsPlaying) speakStep();  /* 복귀 시 낭독 재개 */
-  }
+  if(document.visibilityState==='visible' && kOn) holdWake(true);
 });
 let ttsPlaying=false, ttsRestart=false, ttsT0=0, ttsEst=1;
-let ttsHasBoundary=false, ttsBoundaryPos=0, ttsLen=1, ttsRate=1, ttsStallT=0;
+let ttsHasBoundary=false, ttsBoundaryPos=0, ttsLen=1, ttsRate=1;
+let ttsToken=0, ttsStarted=false, ttsRetried=false;
 function ttsText(x){
   const t=document.createElement('div'); t.innerHTML=x;
   t.querySelectorAll('.rubric').forEach(n=>n.remove());
@@ -886,48 +890,60 @@ function stopTTS(){
   try{ speechSynthesis.cancel(); }catch(e){}
 }
 function speakStep(){
+  if(!kOn) return;   /* TTS는 ▶ 자동 읽기가 켜져 있을 때만 */
   const s=steps[idx]; if(!s || !('speechSynthesis' in window)) return;
   const txt=ttsText(s.p.x); if(!txt.trim()) return;
-  try{
-    speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(txt);
-    u.lang='ko-KR';
-    ttsRate=ttsRateFromSlider();
-    u.rate=ttsRate;
-    const myIdx=idx;
-    const nonSpace=txt.replace(/\s/g,'');
-    ttsLen=Math.max(nonSpace.length,1);
-    /* 글자 위치 매핑: 전체 텍스트 인덱스 → 공백 제외 글자 수 */
-    const map=new Array(txt.length+1); let c=0;
-    for(let i=0;i<txt.length;i++){ map[i]=c; if(txt[i].trim()) c++; }
-    map[txt.length]=c;
-    ttsHasBoundary=false; ttsBoundaryPos=0;
-    u.onboundary=e=>{
-      if(idx!==myIdx) return;
-      if(typeof e.charIndex==='number' && e.charIndex>=0){
-        ttsHasBoundary=true;
-        ttsBoundaryPos=map[Math.min(e.charIndex,txt.length)];
-      }
-    };
-    u.onend=()=>{
-      if(!ttsPlaying || idx!==myIdx) return;
-      /* 실측 속도로 다음 추정을 자기 보정 (경계 이벤트가 없는 기기용) */
-      const sec=(performance.now()-ttsT0)/1000;
-      if(sec>1 && ttsLen>5){
-        const baseCps=ttsLen/sec/ttsRate;
-        settings.ttsCps = settings.ttsCps ? settings.ttsCps*0.5+baseCps*0.5 : baseCps;
-        saveSettings();
-      }
-      ttsPlaying=false;
-      setTimeout(()=>{ if(kOn && idx===myIdx && idx<steps.length) advance(); },400);
-    };
-    u.onerror=()=>{ ttsPlaying=false; };
-    ttsPlaying=true; ttsT0=performance.now();
-    const cps=(settings.ttsCps||3.3)*ttsRate;
-    ttsEst=Math.max(ttsLen/cps*1000,1500);
-    try{ speechSynthesis.resume(); }catch(e){}   /* 걸림 방지 */
-    speechSynthesis.speak(u);
-  }catch(e){ ttsPlaying=false; }
+  const tok=++ttsToken;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  ttsPlaying=true; ttsStarted=false; ttsRetried=false;
+  ttsHasBoundary=false; ttsBoundaryPos=0;
+  ttsRate=ttsRateFromSlider();
+  const nonSpace=txt.replace(/\s/g,'');
+  ttsLen=Math.max(nonSpace.length,1);
+  const map=new Array(txt.length+1); let c=0;
+  for(let i=0;i<txt.length;i++){ map[i]=c; if(txt[i].trim()) c++; }
+  map[txt.length]=c;
+  ttsT0=performance.now();
+  const cps=(settings.ttsCps||3.3)*ttsRate;
+  ttsEst=Math.max(ttsLen/cps*1000,1500);
+  const myIdx=idx;
+  /* cancel 직후 바로 speak하면 일부 기기에서 무시되므로 잠시 띄운다 */
+  setTimeout(()=>{
+    if(tok!==ttsToken || !ttsPlaying || idx!==myIdx) return;
+    try{
+      const u=new SpeechSynthesisUtterance(txt);
+      u.lang='ko-KR';
+      u.rate=ttsRate;
+      u.onstart=()=>{
+        if(tok!==ttsToken) return;
+        ttsStarted=true;
+        ttsT0=performance.now();   /* 실제 발화 시작에 맞춰 색칠 기준 재설정 */
+      };
+      u.onboundary=e=>{
+        if(tok!==ttsToken || idx!==myIdx) return;
+        if(typeof e.charIndex==='number' && e.charIndex>=0){
+          ttsHasBoundary=true; ttsStarted=true;
+          ttsBoundaryPos=map[Math.min(e.charIndex,txt.length)];
+        }
+      };
+      u.onend=()=>{
+        if(tok!==ttsToken || !ttsPlaying || idx!==myIdx) return;
+        const sec=(performance.now()-ttsT0)/1000;
+        if(ttsStarted && sec>1 && ttsLen>5){
+          const baseCps=ttsLen/sec/ttsRate;
+          if(baseCps>0.5 && baseCps<15){
+            settings.ttsCps = settings.ttsCps ? settings.ttsCps*0.5+baseCps*0.5 : baseCps;
+            saveSettings();
+          }
+        }
+        ttsPlaying=false;
+        setTimeout(()=>{ if(kOn && idx===myIdx && idx<steps.length) advance(); },400);
+      };
+      u.onerror=()=>{ if(tok===ttsToken) ttsPlaying=false; };
+      try{ speechSynthesis.resume(); }catch(e){}
+      speechSynthesis.speak(u);
+    }catch(e){ if(tok===ttsToken) ttsPlaying=false; }
+  },180);
 }
 function updateAutoBtn(){
   const b=$('btnAuto');
@@ -940,7 +956,7 @@ $('btnAuto').onclick=()=>{
     kOn=false;
     holdWake(false);
     if(voicePlaying){ voiceAudio.pause(); voicePlaying=false; voiceResume=true; }
-    if(ttsPlaying){ stopTTS(); ttsRestart=true; }
+    if(ttsPlaying||settings.read==='tts'){ stopTTS(); ttsToken++; ttsRestart=true; }
     kLast=0;
   }else{
     /* 시작/이어서 */
