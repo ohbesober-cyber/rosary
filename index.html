@@ -853,6 +853,23 @@ function kTick(ts){
 }
 requestAnimationFrame(kTick);
 let voiceResume=false;
+let wakeLock=null;
+async function holdWake(on){
+  try{
+    if(on){
+      if(!wakeLock && 'wakeLock' in navigator)
+        wakeLock=await navigator.wakeLock.request('screen');
+    }else if(wakeLock){
+      await wakeLock.release(); wakeLock=null;
+    }
+  }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible' && kOn){
+    holdWake(true);
+    if(settings.read==='tts' && !ttsPlaying) speakStep();  /* 복귀 시 낭독 재개 */
+  }
+});
 let ttsPlaying=false, ttsRestart=false, ttsT0=0, ttsEst=1;
 let ttsHasBoundary=false, ttsBoundaryPos=0, ttsLen=1, ttsRate=1, ttsStallT=0;
 function ttsText(x){
@@ -921,12 +938,14 @@ $('btnAuto').onclick=()=>{
   if(kOn){
     /* 멈추기: 진행 위치 보존 */
     kOn=false;
+    holdWake(false);
     if(voicePlaying){ voiceAudio.pause(); voicePlaying=false; voiceResume=true; }
     if(ttsPlaying){ stopTTS(); ttsRestart=true; }
     kLast=0;
   }else{
     /* 시작/이어서 */
     kOn=true; kLast=0;
+    holdWake(true);
     $('prayer').classList.add('karaoke');
     const s=steps[idx];
     if(settings.read==='tts'){
