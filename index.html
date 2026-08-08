@@ -125,9 +125,14 @@
   /* ── 기도 화면 ── */
   #main{
     flex:1 1 auto;overflow-y:auto;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:24px 6vw;text-align:center;
+    display:flex;flex-direction:column;
+    padding:18px 6vw;text-align:center;
     background:radial-gradient(ellipse 70% 45% at 50% 42%,rgba(232,193,90,.05),transparent 70%);
+  }
+  #mainInner{
+    margin:auto;   /* 내용이 짧으면 중앙, 길면 위부터 자연 스크롤 */
+    width:100%;
+    display:flex;flex-direction:column;align-items:center;
   }
   #stepTitle{
     font-family:'Noto Serif KR',serif;
@@ -345,6 +350,7 @@
 </header>
 
 <div id="main">
+ <div id="mainInner">
   <div id="stepTitle"></div>
   <div id="stepSub"></div>
   <div id="beads"></div>
@@ -356,6 +362,7 @@
       <button id="btnNextMyst" class="primary">다음 신비 이어가기</button>
     </div>
   </div>
+ </div>
 </div>
 
 <div id="panel">
@@ -702,11 +709,19 @@ const ORDER=['joyful','luminous','sorrowful','glorious'];
 let idx=0, finished=false;
 let kOn=false, kRate=3.5, kProg=0, kLast=0, kChars=[], kHold=0;
 
+let lastScrollCi=-1;
+function ensureVisible(el,ci){
+  if(ci===lastScrollCi || !el) return;
+  lastScrollCi=ci;
+  const m=$('main'), r=el.getBoundingClientRect(), mr=m.getBoundingClientRect();
+  if(r.bottom>mr.top+mr.height*0.72 || r.top<mr.top+mr.height*0.12)
+    el.scrollIntoView({block:'center',behavior:'smooth'});
+}
 function renderPrayer(html){
   const pr=$('prayer');
   pr.classList.toggle('karaoke',kOn);
   const tmp=document.createElement('div'); tmp.innerHTML=html;
-  pr.innerHTML=''; kChars=[]; kProg=0; kHold=0;
+  pr.innerHTML=''; kChars=[]; kProg=0; kHold=0; lastScrollCi=-1;
   (function walk(node,cls){
     node.childNodes.forEach(ch=>{
       if(ch.nodeType===3){
@@ -761,6 +776,7 @@ function show(){
     return;
   }
   const s=steps[idx];
+  $('main').scrollTop=0;
   $('stepTitle').textContent=s.p.t;
   $('stepSub').textContent=s.sub||'';
   renderPrayer(s.p.x);
@@ -830,6 +846,7 @@ function kTick(ts){
         c.classList.toggle('done', i<ci || p>=kChars.length);
         c.classList.toggle('cur', i===ci && p<kChars.length);
       });
+      ensureVisible(kChars[ci],ci);
       kLast=ts;
       requestAnimationFrame(kTick);
       return;
@@ -843,6 +860,7 @@ function kTick(ts){
         c.classList.toggle('done', i<ci || p>=kChars.length);
         c.classList.toggle('cur', i===ci && p<kChars.length);
       });
+      ensureVisible(kChars[ci],ci);
     }else if(kOn && settings.read!=='tts' && kLast){
       if(kProg<kChars.length){
         kProg=Math.min(kProg+(ts-kLast)/1000*kRate, kChars.length);
@@ -851,6 +869,7 @@ function kTick(ts){
           c.classList.toggle('done', i<ci || kProg>=kChars.length);
           c.classList.toggle('cur', i===ci && kProg<kChars.length);
         });
+        ensureVisible(kChars[ci],ci);
       }else{
         kHold+=(ts-kLast)/1000;
         if(kHold>0.9){ advance(); }
