@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>묵주기도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Gowun+Batang&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue-deep:#141a30;
+    --blue:#1c2445;
+    --blue-panel:#232c55;
+    --gold:#e8c15a;
+    --gold-bright:#f6d98a;
+    --rose:#d98a9a;
+    --ink-dim:#5a6488;
+    --ink-mid:#98a2c8;
+    --line:#2e3763;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  @supports (height:100dvh){ html,body{height:100dvh;} }
+  body{
+    position:fixed;inset:0;width:100%;
+    background:linear-gradient(180deg,#181f3a 0%,var(--blue-deep) 45%,#0e1226 100%);
+    color:var(--ink-mid);
+    font-family:'Gowun Batang','Noto Serif KR',serif;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+
+  header{
+    padding:14px 16px 13px;text-align:center;
+    background:transparent;flex:0 0 auto;position:relative;
+  }
+  header::after{
+    content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+    width:150px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    opacity:.55;
+  }
+  header h1{
+    font-family:'Noto Serif KR',serif;font-weight:700;
+    font-size:1.5rem;letter-spacing:.42em;text-indent:.42em;
+    color:var(--gold-bright);
+    background:linear-gradient(180deg,#f8e3a8 20%,var(--gold) 75%,#c9a144);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 24px rgba(232,193,90,.22);
+    display:flex;align-items:center;justify-content:center;gap:14px;
+  }
+  header h1::before, header h1::after{
+    content:'';flex:0 0 34px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold));
+    opacity:.7;letter-spacing:0;text-indent:0;
+  }
+  header h1::after{
+    background:linear-gradient(90deg,var(--gold),transparent);
+  }
+  #mysteryName::before{content:'🌹 ';font-size:.7rem;}
+  #mysteryName{font-size:.82rem;color:var(--rose);letter-spacing:.2em;margin-top:7px;}
+  #dateLine{font-size:.7rem;color:var(--ink-dim);letter-spacing:.1em;margin-top:3px;}
+  #goalLine{font-size:.72rem;color:var(--gold);letter-spacing:.08em;margin-top:4px;line-height:1.6;}
+  #goalLine .nv{color:var(--rose);}
+  input[type=number],input[type=date],#nvTitle{
+    font-family:inherit;background:var(--blue-panel);color:var(--ink-mid);
+    border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.85rem;
+  }
+  input[type=number]{width:56px;text-align:center;}
+
+  /* ── 지향 기도 설정 ── */
+  #nvOverlay{
+    position:fixed;inset:0;background:rgba(12,15,30,.94);
+    display:none;flex-direction:column;align-items:center;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y:auto;z-index:30;
+  }
+  #nvOverlay.open{display:flex;}
+  #nvCard{width:100%;max-width:440px;}
+  #nvCard h2{font-family:'Noto Serif KR',serif;color:var(--gold);font-size:1.05rem;letter-spacing:.2em;text-align:center;margin-bottom:14px;}
+  .nvrow{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+  .nvrow label{font-size:.8rem;color:var(--ink-dim);min-width:64px;}
+  #nvTitle{flex:1;min-width:200px;}
+  #nvStatus{font-size:.78rem;color:var(--ink-mid);line-height:1.8;margin:10px 0;text-align:center;}
+  #nvStatus b{color:var(--rose);}
+  .day.nv{box-shadow:inset 0 -2px 0 var(--ink-dim);}
+  .day.nv.nvmet{box-shadow:inset 0 -2px 0 var(--rose);}
+  #rangeBox{
+    margin-top:14px;background:var(--blue);
+    border:1px solid var(--line);border-radius:12px;padding:12px;
+  }
+  #rangeBox .nvrow{margin-bottom:8px;}
+  #rgResult{font-size:.8rem;color:var(--ink-mid);text-align:center;line-height:1.9;}
+  #rgResult b{color:var(--gold);}
+
+  /* ── 기도 화면 ── */
+  #main{
+    flex:1 1 auto;overflow-y:auto;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px 6vw;text-align:center;
+    background:radial-gradient(ellipse 70% 45% at 50% 42%,rgba(232,193,90,.05),transparent 70%);
+  }
+  #stepTitle{
+    font-family:'Noto Serif KR',serif;
+    color:var(--gold);font-size:1rem;letter-spacing:.3em;text-indent:.3em;
+    margin-bottom:6px;
+  }
+  #stepTitle:not(:empty)::before{
+    content:'✛';display:block;
+    color:var(--rose);font-size:.75rem;letter-spacing:0;text-indent:0;
+    margin-bottom:10px;opacity:.75;
+  }
+  #stepSub{font-size:.78rem;color:var(--ink-dim);letter-spacing:.1em;margin-bottom:18px;}
+  #beads{display:flex;gap:9px;justify-content:center;margin-bottom:20px;min-height:14px;flex-wrap:wrap;}
+  #beads .bd{
+    width:14px;height:14px;border-radius:50%;
+    border:1px solid rgba(90,100,136,.6);
+    background:radial-gradient(circle at 35% 30%,rgba(152,162,200,.15),transparent 60%);
+    transition:all .25s;
+  }
+  #beads .bd.on{
+    background:radial-gradient(circle at 35% 30%,#fbe9b8,var(--gold) 70%);
+    border-color:var(--gold);
+    box-shadow:0 0 9px rgba(232,193,90,.45), inset 0 -1px 2px rgba(0,0,0,.25);
+  }
+  #beads .bd.now{
+    background:radial-gradient(circle at 35% 30%,#f3c4cf,var(--rose) 70%);
+    border-color:var(--rose);
+    box-shadow:0 0 11px rgba(217,138,154,.55), inset 0 -1px 2px rgba(0,0,0,.25);
+  }
+  #prayer{
+    max-width:600px;
+    font-size:var(--fs,1.5rem);
+    line-height:1.95;letter-spacing:.03em;word-break:keep-all;
+    color:#c9d1ee;
+  }
+  #prayer .amen{color:var(--gold);}
+  #prayer .rubric{color:var(--ink-dim);font-size:.8em;}
+  .vtext .rubric{color:var(--ink-dim);font-size:.85em;}
+  #prayer .ch{transition:color .1s linear;}
+  #prayer.karaoke .ch{color:var(--ink-dim);}
+  #prayer.karaoke .ch.done{color:var(--gold);text-shadow:0 0 12px rgba(232,193,90,.3);}
+  #prayer.karaoke .ch.cur{color:var(--gold-bright);text-shadow:0 0 16px rgba(246,217,138,.55);}
+
+  /* ── 하단 ── */
+  #panel{
+    flex:0 0 auto;background:rgba(28,36,69,.65);
+    backdrop-filter:blur(6px);
+    border-top:1px solid var(--line);
+    padding:8px 14px calc(10px + env(safe-area-inset-bottom));
+  }
+  #bar{
+    width:100%;max-width:680px;margin:0 auto 9px;
+    height:3px;background:var(--line);border-radius:2px;
+  }
+  #barFill{height:100%;width:0;background:linear-gradient(90deg,var(--rose),var(--gold-bright));border-radius:2px;transition:width .3s;}
+  .row{display:flex;gap:8px;max-width:680px;margin:0 auto;justify-content:center;align-items:center;flex-wrap:wrap;}
+  .row+.row{margin-top:7px;}
+  button{
+    font-family:inherit;background:transparent;color:var(--ink-mid);
+    border:1px solid var(--line);border-radius:999px;
+    padding:7px 15px;font-size:.85rem;cursor:pointer;letter-spacing:.06em;
+  }
+  button.auto{
+    min-width:150px;font-weight:600;
+    border-color:var(--gold);color:var(--gold);
+  }
+  button.auto.playing{
+    background:rgba(232,193,90,.12);
+  }
+  button.primary{
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    color:#241c05;border-color:var(--gold);
+    font-weight:700;flex:1;max-width:300px;padding:10px 0;font-size:.98rem;
+    box-shadow:0 2px 10px rgba(232,193,90,.25);
+  }
+  button:disabled{opacity:.35;}
+  label.small{font-size:.75rem;color:var(--ink-dim);display:flex;align-items:center;gap:6px;}
+  #more{
+    display:none;
+    position:fixed;left:0;right:0;bottom:0;z-index:25;
+    background:var(--blue-panel);
+    border-top:1px solid var(--gold);
+    border-radius:16px 16px 0 0;
+    padding:16px 16px calc(20px + env(safe-area-inset-bottom));
+    box-shadow:0 -10px 40px rgba(0,0,0,.55);
+    max-height:70%;overflow-y:auto;
+  }
+  #more.open{display:block;}
+  #more .close{width:100%;max-width:680px;display:block;margin:6px auto 0;}
+  input[type=range]{accent-color:var(--gold);width:110px;}
+  select{
+    font-family:inherit;background:var(--blue-panel);color:var(--ink-mid);
+    border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.85rem;
+  }
+
+  /* ── 달력 ── */
+  #calOverlay{
+    position:fixed;inset:0;background:rgba(12,15,30,.94);
+    display:none;flex-direction:column;align-items:center;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y:auto;z-index:30;
+  }
+  #calOverlay.open{display:flex;}
+  #calCard{width:100%;max-width:420px;}
+  #calHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  #calHead h2{font-family:'Noto Serif KR',serif;color:var(--gold);font-size:1.05rem;letter-spacing:.15em;}
+  #calHead button{padding:8px 14px;}
+  #calGrid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+    background:var(--blue);border:1px solid var(--line);border-radius:12px;padding:12px 8px;
+  }
+  .dow{font-size:.7rem;color:var(--ink-dim);text-align:center;padding:4px 0;}
+  .dow.sun{color:var(--rose);}
+  .day{
+    aspect-ratio:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:2px;
+    font-size:.82rem;color:var(--ink-mid);border-radius:8px;
+  }
+  .day.out{opacity:.22;}
+  .day.today{outline:1px solid var(--gold);}
+  .day .mark{
+    min-width:15px;height:15px;border-radius:50%;
+    font-size:.62rem;line-height:15px;text-align:center;
+    color:transparent;background:transparent;
+  }
+  .day.done{color:var(--gold-bright);}
+  .day.done .mark{
+    background:var(--rose);color:#2a1220;font-weight:700;
+    box-shadow:0 0 8px rgba(217,138,154,.7);
+  }
+  #calStats{text-align:center;font-size:.8rem;color:var(--ink-dim);margin-top:14px;line-height:1.8;}
+  #calStats b{color:var(--gold);}
+  #calEdit{
+    display:none;margin-top:14px;
+    background:var(--blue);border:1px solid var(--line);border-radius:12px;
+    padding:12px;text-align:center;
+    align-items:center;justify-content:center;gap:14px;
+  }
+  #calEdit.open{display:flex;}
+  #calEdit span{font-size:.85rem;color:var(--ink-mid);}
+  #calEdit b{color:var(--gold);font-size:1.05rem;min-width:52px;}
+  #calEdit button{padding:6px 16px;font-size:1rem;}
+  .day{cursor:pointer;}
+  .day.sel{background:var(--blue-panel);outline:1px solid var(--rose);}
+  #toast{
+    position:fixed;left:50%;bottom:130px;transform:translateX(-50%);
+    background:var(--blue-panel);border:1px solid var(--gold);color:var(--gold-bright);
+    padding:10px 20px;border-radius:24px;font-size:.9rem;letter-spacing:.05em;
+    opacity:0;pointer-events:none;transition:opacity .3s;z-index:40;white-space:nowrap;
+  }
+  #toast.show{opacity:1;}
+
+  /* ── 목소리 녹음 ── */
+  #voiceOverlay{
+    position:fixed;inset:0;background:rgba(12,15,30,.94);
+    display:none;flex-direction:column;align-items:center;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y:auto;z-index:30;
+  }
+  #voiceOverlay.open{display:flex;}
+  #voiceCard{width:100%;max-width:460px;}
+  #voiceCard h2{
+    font-family:'Noto Serif KR',serif;color:var(--gold);
+    font-size:1.05rem;letter-spacing:.2em;text-align:center;margin-bottom:6px;
+  }
+  #voiceCard p.hint{font-size:.72rem;color:var(--ink-dim);text-align:center;margin-bottom:16px;line-height:1.7;}
+  .vitem{
+    background:var(--blue);border:1px solid var(--line);border-radius:12px;
+    margin-bottom:8px;overflow:hidden;
+  }
+  .vitem.recing{border-color:var(--rose);}
+  .vrow{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 12px;
+  }
+  .vrow .nm{flex:1;font-size:.9rem;color:var(--ink-mid);cursor:pointer;}
+  .vrow .nm .dot{color:var(--ink-dim);margin-right:6px;}
+  .vitem.has .nm .dot{color:var(--rose);}
+  .vrow button{padding:6px 11px;font-size:.78rem;}
+  .vrow button.recing{background:var(--rose);color:#2a1220;border-color:var(--rose);font-weight:700;animation:pulse 1.2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+  .vtext{
+    display:none;
+    padding:4px 16px 16px;
+    font-size:1.05rem;line-height:1.95;letter-spacing:.03em;
+    color:#c9d1ee;word-break:keep-all;
+    border-top:1px dashed var(--line);
+    padding-top:12px;margin:0 12px 12px;
+  }
+  .vtext .amen{color:var(--gold);}
+  .vitem.open .vtext{display:block;}
+  #voiceClose{margin-top:14px;width:100%;max-width:460px;}
+  #calClose{margin-top:18px;width:100%;max-width:420px;}
+
+  /* ── 완료 화면 ── */
+  #doneMsg{display:none;}
+  #doneMsg.show{display:block;}
+  #doneMsg .big{font-size:1.6rem;color:var(--gold);letter-spacing:.2em;margin-bottom:14px;font-family:'Noto Serif KR',serif;}
+
+  @media (max-width:480px){
+    #prayer{font-size:calc(var(--fs,1.5rem) * .9);}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>묵 주 기 도</h1>
+  <div id="mysteryName"></div>
+  <div id="dateLine"></div>
+  <div id="goalLine"></div>
+</header>
+
+<div id="main">
+  <div id="stepTitle"></div>
+  <div id="stepSub"></div>
+  <div id="beads"></div>
+  <div id="prayer"></div>
+  <div id="doneMsg">
+    <div class="big">기도를 마쳤습니다</div>
+    <p id="doneText"></p>
+    <div class="row" style="margin-top:20px;">
+      <button id="btnNextMyst" class="primary">다음 신비 이어가기</button>
+    </div>
+  </div>
+</div>
+
+<div id="panel">
+  <div id="bar"><div id="barFill"></div></div>
+  <div class="row">
+    <button id="btnPrev">이전</button>
+    <button id="btnNext" class="primary">다음 ›</button>
+    <button id="btnMore">설정 ⚙</button>
+  </div>
+  <div class="row">
+    <button id="btnAuto" class="auto">▶ 자동 읽기</button>
+    <label class="small">속도
+      <input type="range" id="kSpeed" min="1.5" max="7" step="0.5" value="3.5">
+    </label>
+  </div>
+  <div class="row">
+    <button id="btnDone">🌹 1단 봉헌</button>
+    <button id="btnEnd">🙏 기도 끝내기</button>
+    <button id="btnCal">달력</button>
+  </div>
+</div>
+
+<div id="more">
+  <div class="row">
+    <button id="btnVoiceOn">내 목소리</button>
+    <button id="btnVoiceRec">녹음</button>
+    <button id="btnNovena">기도 지향</button>
+  </div>
+  <div class="row">
+    <label class="small">봉헌
+      <select id="modeSel">
+        <option value="manual">수동(직접 체크)</option>
+        <option value="auto">자동(단마다 +1)</option>
+      </select>
+    </label>
+    <label class="small">오늘 목표 <input type="number" id="goalInput" min="0" max="99" value="0"> 단</label>
+    <label class="small">꽃다발 봉헌
+      <select id="spiritSel">
+        <option value="pet">청원기도</option>
+        <option value="thx">감사기도</option>
+      </select>
+    </label>
+  </div>
+  <div class="row">
+    <label class="small">신비 선택
+      <select id="mysterySel">
+        <option value="auto">오늘의 신비(자동)</option>
+        <option value="joyful">환희의 신비</option>
+        <option value="luminous">빛의 신비</option>
+        <option value="sorrowful">고통의 신비</option>
+        <option value="glorious">영광의 신비</option>
+      </select>
+    </label>
+    <label class="small">글자 크기
+      <input type="range" id="fontSize" min="1.1" max="2.4" step="0.1" value="1.5">
+    </label>
+    <button id="btnRestart">처음부터</button>
+  </div>
+  <button class="close" id="moreClose">닫기</button>
+</div>
+
+<div id="calOverlay">
+  <div id="calCard">
+    <div id="calHead">
+      <button id="calPrev">‹</button>
+      <h2 id="calTitle"></h2>
+      <button id="calNext">›</button>
+    </div>
+    <div id="calGrid"></div>
+    <div id="calStats"></div>
+    <div id="calEdit">
+      <span id="calEditDate"></span>
+      <button id="calMinus">−</button>
+      <b id="calEditCnt">0단</b>
+      <button id="calPlus">＋</button>
+    </div>
+    <div id="rangeBox">
+      <div class="nvrow" style="justify-content:center;">
+        <input type="date" id="rgFrom"> ~ <input type="date" id="rgTo">
+      </div>
+      <div id="rgResult"></div>
+    </div>
+  </div>
+  <button id="calClose">닫기</button>
+</div>
+
+<div id="voiceOverlay">
+  <div id="voiceCard">
+    <h2>내 목소리 녹음</h2>
+    <p class="hint">기도문을 하나씩 또박또박 읽어 녹음해 주세요.<br>기도할 때 [내 목소리]를 켜면 녹음이 함께 재생됩니다.<br>● 녹음이 안 되는 환경에서는, 휴대폰 녹음 앱으로 녹음한 뒤 📁 버튼으로 파일을 불러오세요.</p>
+    <div id="voiceList"></div>
+  </div>
+  <button id="voiceClose">닫기</button>
+</div>
+
+<div id="nvOverlay">
+  <div id="nvCard">
+    <h2>기도 지향</h2>
+    <div class="nvrow"><label>지향</label><input type="text" id="nvTitle" placeholder="예) 가족의 건강을 위하여"></div>
+    <div class="nvrow"><label>형식</label>
+      <select id="nvPreset">
+        <option value="9">9일기도</option>
+        <option value="54">54일기도</option>
+        <option value="0">직접 입력</option>
+      </select>
+      <input type="number" id="nvDays" min="1" max="365" value="9"> 일간
+    </div>
+    <div class="nvrow"><label>시작일</label><input type="date" id="nvStart"></div>
+    <div class="nvrow"><label>하루</label><input type="number" id="nvPerDay" min="1" max="99" value="1"> 단 이상</div>
+    <div id="nvStatus"></div>
+    <div class="row">
+      <button id="nvSave" class="primary">저장</button>
+      <button id="nvClear">지향 해제</button>
+      <button id="nvClose">닫기</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="voiceFile" accept="audio/*" hidden>
+<div id="toast"></div>
+
+<script>
+/* ═══ 기도문 ═══ */
+const P = {
+  sign: {t:'십자성호', x:'성부와 성자와 성령의 이름으로. <span class="amen">아멘.</span>'},
+  creed:{t:'사도신경', x:'전능하신 천주 성부 천지의 창조주를 저는 믿나이다. 그 외아들 우리 주 예수 그리스도님, 성령으로 인하여 동정 마리아께 잉태되어 나시고, 본시오 빌라도 통치 아래서 고난을 받으시고, 십자가에 못박혀 돌아가시고 묻히셨으며, 저승에 가시어 사흗날에 죽은 이들 가운데서 부활하시고, 하늘에 올라 전능하신 천주 성부 오른편에 앉으시며, 그리로부터 산 이와 죽은 이를 심판하러 오시리라 믿나이다. 성령을 믿으며, 거룩하고 보편된 교회와 모든 성인의 통공을 믿으며, 죄의 용서와 육신의 부활을 믿으며, 영원한 삶을 믿나이다. <span class="amen">아멘.</span>'},
+  lord: {t:'주님의 기도', x:'하늘에 계신 우리 아버지, 아버지의 이름이 거룩히 빛나시며, 아버지의 나라가 오시며, 아버지의 뜻이 하늘에서와 같이 땅에서도 이루어지소서. 오늘 저희에게 일용할 양식을 주시고, 저희에게 잘못한 이를 저희가 용서하오니 저희 죄를 용서하시고, 저희를 유혹에 빠지지 않게 하시고 악에서 구하소서. <span class="amen">아멘.</span>'},
+  hail: {t:'성모송', x:'은총이 가득하신 마리아님, 기뻐하소서! 주님께서 함께 계시니 여인 중에 복되시며, 태중의 아들 예수님 또한 복되시나이다. 천주의 성모 마리아님, 이제와 저희 죽을 때에 저희 죄인을 위하여 빌어 주소서. <span class="amen">아멘.</span>'},
+  glory:{t:'영광송', x:'영광이 성부와 성자와 성령께, 처음과 같이 이제와 항상 영원히. <span class="amen">아멘.</span>'},
+  fatima:{t:'구원송', x:'예수님, 저희 죄를 용서하시며, 저희를 지옥 불에서 구하시고, 연옥 영혼을 돌보시며, 가장 버림받은 영혼을 돌보소서.'},
+  spirit:{t:'신령성체를 위한 기도', x:'지극히 거룩하신 예수님, 참으로 성체 안에 계시는 당신을 사랑하며 제 안에 모시기를 간절히 원하나이다. 지금은 비록 당신을 직접 모실 수 없사오나, 당신은 신령한 방법으로 제 마음에 오실 수 있나이다. 이제 제가 묵주기도를 바치며 기억하는 당신 어머니의 티 없는 성심을 통해 영적으로 제게 오시어 길이 머무르소서. 또한 제가 당신을 떠나지 않고 당신의 사랑을 증거하고 실천하며 살게 하소서.'},
+  spiritP:{t:'꽃다발 봉헌 (청원)', x:'<span class="rubric">(청원기도를 바칠 때)</span> 너그러우신 어머니, 신령성체의 기도로 묶어 바치는 이 영적 꽃다발을 받으소서. 그리고 제가 하느님께 청하는 모든 은혜를 받아 누리도록 함께 기억하며 빌어 주소서. 또한 저를 온갖 위험과 고통 중에서 돌보아 주시며 제가 죽을 때에 저를 저버리지 마옵소서. <span class="amen">아멘.</span>'},
+  spiritT:{t:'꽃다발 봉헌 (감사)', x:'<span class="rubric">(감사기도를 바칠 때)</span> 너그러우신 어머니, 신령성체의 기도로 묶어 바치는 이 영적 꽃다발을 받으소서. 그리고 저를 위해 하느님께 은혜를 빌어 주심에 감사드리오니 받아 주소서. 또한 은혜를 내려 주신 하느님께 감사드리는 저와 함께해 주소서. <span class="amen">아멘.</span>'},
+  salve:{t:'성모찬송', x:'모후이시며 사랑이 넘친 어머니, 우리의 생명, 기쁨, 희망이시여, 당신 우러러 하와의 그 자손들이 눈물을 흘리며 부르짖나이다, 슬픔의 골짜기에서. 우리들의 보호자 성모님, 불쌍한 저희를 인자로운 눈으로 굽어보소서. 귀양살이 끝날 때에 당신의 아들 우리 주 예수님 뵙게 하소서. 너그러우시고, 자애로우시며 오! 아름다우신 동정 마리아님.'},
+  salveOra:{t:'마침 기도', x:'<span class="rubric">○</span> 천주의 성모님, 저희를 위하여 빌어 주시어 <span class="rubric">●</span> 그리스도께서 약속하신 영원한 생명을 얻게 하소서. <span class="rubric">† 기도합시다.</span> 하느님, 외아드님이 삶과 죽음과 부활로써 저희에게 영원한 구원을 마련해 주셨나이다. 복되신 동정 마리아와 함께 이 신비를 묵상하며 묵주기도를 바치오니 저희가 그 가르침을 따라 영원한 생명을 얻게 하소서. 우리 주 그리스도를 통하여 비나이다. <span class="amen">◎ 아멘.</span>'}
+};
+
+/* ═══ 신비 ═══ */
+const MYST = {
+  joyful:  {name:'환희의 신비', days:[1,6], m:[
+    '마리아께서 예수님을 잉태하심을 묵상합시다',
+    '마리아께서 엘리사벳을 찾아보심을 묵상합시다',
+    '마리아께서 예수님을 낳으심을 묵상합시다',
+    '마리아께서 예수님을 성전에 바치심을 묵상합시다',
+    '마리아께서 잃으셨던 예수님을 성전에서 찾으심을 묵상합시다']},
+  luminous:{name:'빛의 신비', days:[4], m:[
+    '예수님께서 세례받으심을 묵상합시다',
+    '예수님께서 가나에서 첫 기적을 행하심을 묵상합시다',
+    '예수님께서 하느님 나라를 선포하심을 묵상합시다',
+    '예수님께서 거룩하게 변모하심을 묵상합시다',
+    '예수님께서 성체성사를 세우심을 묵상합시다']},
+  sorrowful:{name:'고통의 신비', days:[2,5], m:[
+    '예수님께서 저희를 위하여 피땀 흘리심을 묵상합시다',
+    '예수님께서 저희를 위하여 매맞으심을 묵상합시다',
+    '예수님께서 저희를 위하여 가시관 쓰심을 묵상합시다',
+    '예수님께서 저희를 위하여 십자가 지심을 묵상합시다',
+    '예수님께서 저희를 위하여 십자가에 못박혀 돌아가심을 묵상합시다']},
+  glorious:{name:'영광의 신비', days:[3,0], m:[
+    '예수님께서 부활하심을 묵상합시다',
+    '예수님께서 승천하심을 묵상합시다',
+    '예수님께서 성령을 보내심을 묵상합시다',
+    '예수님께서 성모님을 하늘에 불러올리심을 묵상합시다',
+    '예수님께서 성모님께 천상 모후의 관을 씌우심을 묵상합시다']}
+};
+function todayKey(){
+  const d=new Date().getDay();
+  for(const k in MYST) if(MYST[k].days.includes(d)) return k;
+  return 'joyful';
+}
+
+/* ═══ 기도 순서 구성 ═══ */
+let mystKey=todayKey();
+let steps=[];
+let counted=new Set();   /* 이번 회차에서 이미 봉헌 처리된 단 번호 */
+let pendingDan=0;        /* 수동 봉헌 모드에서 아직 정산 전인 이번 기도 단수 */
+function buildSteps(){
+  const M=MYST[mystKey];
+  steps=[]; counted=new Set();
+  steps.push({p:P.sign});
+  steps.push({p:P.creed});
+  steps.push({p:P.lord});
+  for(let i=1;i<=3;i++) steps.push({p:P.hail, bead:i, of:3, sub:'성모송 '+i+' / 3'});
+  steps.push({p:P.glory});
+  for(let d=0; d<5; d++){
+    steps.push({p:{t:'제'+(d+1)+'단 묵상', x:M.m[d]}, sub:M.name+' 제'+(d+1)+'단', med:true});
+    steps.push({p:P.lord, sub:M.name+' 제'+(d+1)+'단'});
+    for(let i=1;i<=10;i++)
+      steps.push({p:P.hail, bead:i, of:10, sub:M.name+' 제'+(d+1)+'단 · 성모송 '+i+' / 10'});
+    steps.push({p:P.glory, sub:M.name+' 제'+(d+1)+'단'});
+    steps.push({p:P.fatima, sub:M.name+' 제'+(d+1)+'단', dEnd:true, dNo:d});
+  }
+  steps.push({p:P.spirit});
+  steps.push({p: settings.spirit==='thx' ? P.spiritT : P.spiritP});
+  steps.push({p:P.salve});
+  steps.push({p:P.salveOra});
+  steps.push({p:P.sign});
+}
+
+const $=id=>document.getElementById(id);
+for(const k in P) P[k].id=k;
+
+/* ═══ 내 목소리 녹음/재생 ═══ */
+const voices={};          /* {id: dataURL} */
+const voiceAudio=new Audio();
+let voiceOn=false, voicePlaying=false;
+let mediaRec=null, recChunks=[], recId=null, openText=null, voiceFileTarget=null;
+
+$('voiceFile').onchange=e=>{
+  const f=e.target.files[0], k=voiceFileTarget;
+  e.target.value='';
+  if(!f||!k) return;
+  if(f.size>4*1024*1024){
+    alert('파일이 너무 큽니다(4MB 이하 권장).\n기도문 하나씩 짧게 녹음해 주세요.');
+    return;
+  }
+  const r=new FileReader();
+  r.onload=async()=>{
+    voices[k]=r.result;
+    const ok=await kvSet('rosary-voice-'+k, r.result);
+    if(!ok) toast('저장 공간이 부족해 이번만 사용됩니다');
+    drawVoiceList();
+    toast(P[k].t+' 녹음을 연결했습니다');
+  };
+  r.readAsDataURL(f);
+};
+
+async function loadVoices(){
+  for(const k in P){
+    const v=await kvGet('rosary-voice-'+k);
+    if(v && v.length>50) voices[k]=v;
+  }
+}
+function drawVoiceList(){
+  const box=$('voiceList'); box.innerHTML='';
+  for(const k in P){
+    const item=document.createElement('div');
+    item.className='vitem'
+      +(voices[k]?' has':'')
+      +(recId===k?' recing open':'')
+      +(openText===k?' open':'');
+    const row=document.createElement('div');
+    row.className='vrow';
+    const nm=document.createElement('span');
+    nm.className='nm';
+    nm.innerHTML='<span class="dot">●</span>'+P[k].t+' <small style="color:var(--ink-dim)">▾</small>';
+    nm.onclick=()=>{ openText = openText===k ? null : k; drawVoiceList(); };
+    const bRec=document.createElement('button');
+    bRec.textContent = recId===k ? '■ 정지' : '● 녹음';
+    if(recId===k) bRec.classList.add('recing');
+    bRec.onclick=()=>toggleRec(k);
+    const bFile=document.createElement('button');
+    bFile.textContent='📁';
+    bFile.title='녹음 파일 불러오기';
+    bFile.onclick=()=>{ voiceFileTarget=k; $('voiceFile').click(); };
+    const bPlay=document.createElement('button');
+    bPlay.textContent='▶'; bPlay.disabled=!voices[k];
+    bPlay.onclick=()=>{ voiceAudio.src=voices[k]; voiceAudio.play(); };
+    const bDel=document.createElement('button');
+    bDel.textContent='지움'; bDel.disabled=!voices[k];
+    bDel.onclick=async()=>{ delete voices[k]; try{ if(window.storage) await window.storage.delete('rosary-voice-'+k); }catch(e){} try{ localStorage.removeItem('rosary-voice-'+k); }catch(e){} drawVoiceList(); };
+    row.append(nm,bRec,bFile,bPlay,bDel);
+    const txt=document.createElement('div');
+    txt.className='vtext';
+    txt.innerHTML=P[k].x;
+    item.append(row,txt);
+    box.appendChild(item);
+  }
+}
+async function toggleRec(k){
+  if(recId===k){ mediaRec.stop(); return; }
+  if(recId){ mediaRec.stop(); }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    recChunks=[]; recId=k;
+    mediaRec=new MediaRecorder(stream);
+    mediaRec.ondataavailable=e=>recChunks.push(e.data);
+    mediaRec.onstop=()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      const blob=new Blob(recChunks,{type:mediaRec.mimeType||'audio/webm'});
+      const r=new FileReader();
+      r.onload=async()=>{
+        voices[k]=r.result;
+        const ok=await kvSet('rosary-voice-'+k, r.result);
+        if(!ok) toast('저장 공간이 부족해 이번만 사용됩니다');
+        recId=null; drawVoiceList();
+        toast(P[k].t+' 녹음을 저장했습니다');
+      };
+      r.readAsDataURL(blob);
+    };
+    mediaRec.start();
+    openText=k;
+    drawVoiceList();
+    const items=document.querySelectorAll('.vitem.recing');
+    if(items[0]) items[0].scrollIntoView({block:'center',behavior:'smooth'});
+  }catch(err){
+    alert('마이크를 사용할 수 없습니다.\n브라우저의 마이크 권한을 허용해 주세요.\n(일부 환경에서는 서버에 올린 뒤에만 녹음이 가능합니다.)');
+    recId=null; drawVoiceList();
+  }
+}
+$('btnVoiceRec').onclick=()=>{ closeMore(); stopVoice(); drawVoiceList(); $('voiceOverlay').classList.add('open'); };
+$('voiceClose').onclick=()=>{ if(recId&&mediaRec) mediaRec.stop(); voiceAudio.pause(); $('voiceOverlay').classList.remove('open'); };
+$('btnVoiceOn').onclick=()=>{
+  voiceOn=!voiceOn;
+  $('btnVoiceOn').style.color=voiceOn?'var(--gold)':'';
+  $('btnVoiceOn').style.borderColor=voiceOn?'var(--gold)':'';
+  if(!voiceOn) stopVoice(); else show();
+};
+function stopVoice(){ voicePlaying=false; voiceResume=false; voiceAudio.pause(); voiceAudio.currentTime=0; }
+voiceAudio.onended=()=>{
+  if(!voicePlaying) return;
+  voicePlaying=false;
+  setTimeout(()=>{ if(idx<steps.length){ advance(); } },500);
+};
+const ORDER=['joyful','luminous','sorrowful','glorious'];
+let idx=0, finished=false;
+let kOn=false, kRate=3.5, kProg=0, kLast=0, kChars=[], kHold=0;
+
+function renderPrayer(html){
+  const pr=$('prayer');
+  pr.classList.toggle('karaoke',kOn);
+  const tmp=document.createElement('div'); tmp.innerHTML=html;
+  pr.innerHTML=''; kChars=[]; kProg=0; kHold=0;
+  (function walk(node,cls){
+    node.childNodes.forEach(ch=>{
+      if(ch.nodeType===3){
+        for(const c of ch.textContent){
+          const s=document.createElement('span');
+          s.textContent=c;
+          s.className='ch'+(cls?' '+cls:'');
+          pr.appendChild(s);
+          if(c.trim() && cls!=='rubric') kChars.push(s);
+        }
+      }else{
+        let c2=cls;
+        if(ch.classList?.contains('amen')) c2='amen';
+        if(ch.classList?.contains('rubric')) c2='rubric';
+        walk(ch,c2);
+      }
+    });
+  })(tmp,'');
+}
+function show(){
+  const done = idx>=steps.length;
+  $('doneMsg').classList.toggle('show',done);
+  $('prayer').style.display=done?'none':'';
+  $('beads').style.display=done?'none':'';
+  if(done){
+    kvDel('rosary-bm-v1');
+    $('stepTitle').textContent='';
+    $('stepSub').textContent='';
+    $('barFill').style.width='100%';
+    $('btnNext').textContent='달력 보기';
+    if(!finished){
+      finished=true;
+      if(settings.mode==='auto'){
+        const t=log[ymd(new Date())]||0;
+        $('doneText').innerHTML=MYST[mystKey].name+' 5단을 모두 봉헌하셨습니다. (오늘 <b style="color:var(--gold)">'+t+'단</b>)<br>잠시 후 다음 신비로 이어집니다…';
+        setTimeout(()=>{
+          if(!finished) return;   /* 사용자가 이동했으면 중단 */
+          const ni=(ORDER.indexOf(mystKey)+1)%ORDER.length;
+          mystKey=ORDER[ni];
+          $('mysterySel').value=mystKey;
+          buildSteps(); idx=0; finished=false; refreshHead(); show();
+        },1800);
+      }else{
+        const t=log[ymd(new Date())]||0;
+        $('doneText').innerHTML='기도를 마치셨습니다.'
+          +(pendingDan>0?'<br>🙏 <b>기도 끝내기</b>를 누르시면 이번에 마치신 <b>'+pendingDan+'단</b>이 기록됩니다.':'')
+          +(t>0?'<br>(오늘 지금까지 '+t+'단)':'')
+          +'<br>주님의 평화가 함께하시길 빕니다. †';
+      }
+    }
+    return;
+  }
+  const s=steps[idx];
+  $('stepTitle').textContent=s.p.t;
+  $('stepSub').textContent=s.sub||'';
+  renderPrayer(s.p.x);
+  const bd=$('beads'); bd.innerHTML='';
+  if(s.bead){
+    for(let i=1;i<=s.of;i++){
+      const b=document.createElement('span');
+      b.className='bd'+(i<s.bead?' on':i===s.bead?' now':'');
+      bd.appendChild(b);
+    }
+  }
+  $('barFill').style.width=(idx/steps.length*100)+'%';
+  $('btnNext').textContent='다음 ›';
+  $('btnPrev').disabled = idx===0;
+  /* 내 목소리 재생 */
+  stopVoice();
+  const pid=s.p.id;
+  if(kOn && voiceOn && pid && voices[pid]){
+    voiceAudio.src=voices[pid];
+    voiceAudio.play().then(()=>{ voicePlaying=true; }).catch(()=>{});
+    voicePlaying=true;
+  }
+  saveBM();
+}
+
+function advance(){
+  const s=steps[idx];
+  idx++;
+  if(s && s.dEnd && !counted.has(s.dNo)){
+    counted.add(s.dNo);
+    if(settings.mode==='auto'){
+      markToday().then(()=>toast('🌹 오늘 '+(log[ymd(new Date())]||0)+'단째 봉헌'));
+    }else{
+      pendingDan++;
+      toast('🌹 '+pendingDan+'단째 (기도 끝내기 시 기록됩니다)');
+    }
+  }
+  show();
+}
+
+/* ═══ 따라 읽기(글자 색칠) ═══ */
+function kTick(ts){
+  if(idx<steps.length && kChars.length && (kOn || voicePlaying)){
+    if(voicePlaying && voiceAudio.duration){
+      /* 녹음 길이에 맞춰 색칠 */
+      const p=Math.min(voiceAudio.currentTime/voiceAudio.duration,1)*kChars.length;
+      const ci=Math.min(Math.floor(p),kChars.length-1);
+      $('prayer').classList.add('karaoke');
+      kChars.forEach((c,i)=>{
+        c.classList.toggle('done', i<ci || p>=kChars.length);
+        c.classList.toggle('cur', i===ci && p<kChars.length);
+      });
+    }else if(kOn && kLast){
+      if(kProg<kChars.length){
+        kProg=Math.min(kProg+(ts-kLast)/1000*kRate, kChars.length);
+        const ci=Math.min(Math.floor(kProg),kChars.length-1);
+        kChars.forEach((c,i)=>{
+          c.classList.toggle('done', i<ci || kProg>=kChars.length);
+          c.classList.toggle('cur', i===ci && kProg<kChars.length);
+        });
+      }else{
+        kHold+=(ts-kLast)/1000;
+        if(kHold>0.9){ advance(); }
+      }
+    }
+    kLast=ts;
+  }else kLast=ts;
+  requestAnimationFrame(kTick);
+}
+requestAnimationFrame(kTick);
+let voiceResume=false;
+function updateAutoBtn(){
+  const b=$('btnAuto');
+  b.textContent = kOn? '⏸ 멈추기' : '▶ 자동 읽기';
+  b.classList.toggle('playing',kOn);
+}
+$('btnAuto').onclick=()=>{
+  if(kOn){
+    /* 멈추기: 진행 위치 보존 */
+    kOn=false;
+    if(voicePlaying){ voiceAudio.pause(); voicePlaying=false; voiceResume=true; }
+    kLast=0;
+  }else{
+    /* 시작/이어서 */
+    kOn=true; kLast=0;
+    $('prayer').classList.add('karaoke');
+    const s=steps[idx];
+    if(voiceResume && voiceAudio.src && !voiceAudio.ended){
+      voiceAudio.play(); voicePlaying=true; voiceResume=false;
+    }else if(voiceOn && s && s.p.id && voices[s.p.id] && !voicePlaying){
+      voiceAudio.src=voices[s.p.id];
+      voiceAudio.play().catch(()=>{});
+      voicePlaying=true;
+    }
+  }
+  updateAutoBtn();
+};
+$('kSpeed').oninput=e=>{ kRate=parseFloat(e.target.value); };
+$('btnNextMyst').onclick=e=>{
+  e.stopPropagation();
+  const ni=(ORDER.indexOf(mystKey)+1)%ORDER.length;
+  mystKey=ORDER[ni];
+  $('mysterySel').value=mystKey;
+  buildSteps(); idx=0; finished=false; refreshHead(); show();
+};
+$('btnNext').onclick=()=>{
+  if(idx>=steps.length){ openCal(); return; }
+  advance();
+};
+$('btnPrev').onclick=()=>{ if(idx>0){ idx--; finished=finished&&idx>=steps.length; show(); } };
+$('btnRestart').onclick=()=>{ idx=0; finished=false; show(); };
+let toastTimer=null;
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+$('btnMore').onclick=()=>{
+  const o=$('more').classList.toggle('open');
+  $('btnMore').classList.toggle('on',o);
+  $('btnMore').style.color=o?'var(--gold)':'';
+  $('btnMore').style.borderColor=o?'var(--gold)':'';
+};
+function closeMore(){ $('more').classList.remove('open'); $('btnMore').style.color=''; $('btnMore').style.borderColor=''; }
+$('moreClose').onclick=closeMore;
+document.addEventListener('pointerdown',e=>{
+  if($('more').classList.contains('open')
+     && !e.target.closest('#more') && !e.target.closest('#btnMore')) closeMore();
+});
+[['calOverlay',null],['nvOverlay',null],['voiceOverlay','vo']].forEach(([id,kind])=>{
+  $(id).addEventListener('click',e=>{
+    if(e.target!==$(id)) return;
+    if(kind==='vo'){ if(recId&&mediaRec) mediaRec.stop(); voiceAudio.pause(); }
+    $(id).classList.remove('open');
+  });
+});
+$('btnDone').onclick=async e=>{
+  e.stopPropagation();
+  await markToday();
+  toast('🌹 오늘 '+log[ymd(new Date())]+'단을 봉헌하셨습니다');
+};
+$('btnEnd').onclick=async e=>{
+  e.stopPropagation();
+  stopVoice();
+  const n=pendingDan;
+  const today=log[ymd(new Date())]||0;
+  const msg = settings.mode==='manual'
+    ? (n>0 ? '이번 기도에서 마치신 '+n+'단을 기록에 더하고 마칩니다.\n(오늘 '+today+'단 → '+(today+n)+'단)' : '기도를 마칩니다. (오늘 '+today+'단)')
+    : '기도를 마칩니다. (오늘 '+today+'단 봉헌)';
+  if(!confirm('🙏 '+msg)) return;
+  if(settings.mode==='manual' && n>0) await markToday(n);
+  pendingDan=0;
+  kvDel('rosary-bm-v1');
+  idx=0; finished=false; buildSteps(); show();
+  toast('오늘 모두 '+(log[ymd(new Date())]||0)+'단을 봉헌하셨습니다 🌹');
+};
+$('main').onclick=e=>{ if(e.target.closest('#doneMsg'))return; $('btnNext').click(); };
+$('fontSize').oninput=e=>$('prayer').style.setProperty('--fs',e.target.value+'rem');
+$('mysterySel').onchange=e=>{
+  mystKey = e.target.value==='auto'? todayKey() : e.target.value;
+  buildSteps(); idx=0; finished=false; refreshHead(); show();
+};
+function refreshHead(){
+  const n=new Date();
+  $('mysteryName').textContent=MYST[mystKey].name;
+  $('dateLine').textContent=n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일 '+'일월화수목금토'[n.getDay()]+'요일';
+}
+
+/* ═══ 저장 ═══ */
+async function kvSet(k,v){
+  try{ if(window.storage){ await window.storage.set(k,v); return true; } }catch(e){}
+  try{ localStorage.setItem(k,v); return true; }catch(e){}
+  return false;
+}
+async function kvGet(k){
+  try{ if(window.storage){ const r=await window.storage.get(k); if(r&&r.value!=null) return r.value; } }catch(e){}
+  try{ return localStorage.getItem(k); }catch(e){}
+  return null;
+}
+let log={};   /* { 'YYYY-MM-DD': 단수 } */
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+async function loadLog(){
+  try{
+    const v2=await kvGet('rosary-log-v2');
+    if(v2){ log=JSON.parse(v2)||{}; return; }
+    const v1=await kvGet('rosary-log-v1');   /* 구버전(완료일 목록) 이전 */
+    if(v1){ (JSON.parse(v1)||[]).forEach(d=>log[d]=1);
+      await kvSet('rosary-log-v2',JSON.stringify(log)); }
+  }catch(e){}
+}
+async function markToday(n=1){
+  const t=ymd(new Date());
+  const prev=log[t]||0;
+  log[t]=prev+n;
+  await kvSet('rosary-log-v2',JSON.stringify(log));
+  updateGoalLine();
+  if(settings.goal>0 && prev<settings.goal && log[t]>=settings.goal)
+    toast('🌹 오늘 목표 '+settings.goal+'단을 채우셨습니다!');
+  if(novena){
+    const di=nvDayIndex();
+    if(di>=0 && di<novena.days && prev<novena.perDay && log[t]>=novena.perDay)
+      toast('🕯 지향 기도 '+(di+1)+'일째 몫을 채우셨습니다');
+  }
+}
+
+/* ═══ 책갈피(진행 위치 자동 저장) ═══ */
+async function kvDel(k){
+  try{ if(window.storage) await window.storage.delete(k); }catch(e){}
+  try{ localStorage.removeItem(k); }catch(e){}
+}
+function saveBM(){
+  if(idx>0 && idx<steps.length){
+    const s=steps[idx];
+    kvSet('rosary-bm-v1',JSON.stringify({
+      m:mystKey, i:idx,
+      label:(s.sub||s.p.t||''), ts:Date.now()
+    }));
+  }else{
+    kvDel('rosary-bm-v1');
+  }
+}
+async function tryResume(){
+  try{
+    const v=await kvGet('rosary-bm-v1');
+    if(!v) return;
+    const bm=JSON.parse(v);
+    if(!MYST[bm.m] || !(bm.i>0)) return;
+    const when=bm.ts? new Date(bm.ts) : null;
+    const dayTxt=when? (ymd(when)===ymd(new Date())?'오늘':(when.getMonth()+1)+'월 '+when.getDate()+'일') : '지난번';
+    if(confirm('📖 '+dayTxt+' 「'+(bm.label||MYST[bm.m].name)+'」에서 멈추셨습니다.\n\n[확인] 이어서 기도하기\n[취소] 처음부터')){
+      mystKey=bm.m;
+      $('mysterySel').value='auto'===$('mysterySel').value && bm.m===todayKey() ? 'auto' : bm.m;
+      buildSteps();
+      idx=Math.min(bm.i, steps.length-1);
+      /* 이미 지난 단은 봉헌 처리된 것으로 간주(중복 방지) */
+      steps.forEach((s,i)=>{ if(i<idx && s.dEnd) counted.add(s.dNo); });
+      refreshHead();
+    }else{
+      kvDel('rosary-bm-v1');
+    }
+  }catch(e){}
+}
+
+/* ═══ 설정(봉헌 방식·목표) ═══ */
+let settings={mode:'manual', goal:0, spirit:'pet'};
+async function loadSettings(){
+  try{ const v=await kvGet('rosary-settings-v1'); if(v) Object.assign(settings,JSON.parse(v)); }catch(e){}
+  $('modeSel').value=settings.mode;
+  $('goalInput').value=settings.goal;
+  $('spiritSel').value=settings.spirit||'pet';
+}
+async function saveSettings(){ await kvSet('rosary-settings-v1',JSON.stringify(settings)); }
+$('spiritSel').onchange=e=>{
+  settings.spirit=e.target.value; saveSettings();
+  const savedCounted=counted, savedIdx=idx, savedFin=finished;
+  buildSteps();
+  counted=savedCounted;
+  idx=Math.min(savedIdx,steps.length); finished=savedFin;
+  show();
+};
+$('modeSel').onchange=e=>{ settings.mode=e.target.value; saveSettings(); };
+$('goalInput').onchange=e=>{
+  settings.goal=Math.max(0,parseInt(e.target.value)||0);
+  e.target.value=settings.goal; saveSettings(); updateGoalLine();
+};
+
+/* ═══ 지향 기도(9일기도 등) ═══ */
+let novena=null;   /* {title,start,days,perDay} */
+async function loadNovena(){
+  try{ const v=await kvGet('rosary-novena-v1'); if(v) novena=JSON.parse(v); }catch(e){}
+}
+function nvDayIndex(){
+  if(!novena) return -1;
+  const s=new Date(novena.start+'T00:00:00');
+  return Math.floor((new Date()-s)/86400000);
+}
+function updateGoalLine(){
+  const t=ymd(new Date()), cnt=log[t]||0;
+  const parts=[];
+  if(settings.goal>0) parts.push('오늘 '+cnt+' / '+settings.goal+'단');
+  else if(cnt>0) parts.push('오늘 '+cnt+'단');
+  if(novena){
+    const di=nvDayIndex();
+    if(di>=0 && di<novena.days)
+      parts.push('<span class="nv">🕯 '+novena.title+' · '+novena.days+'일기도 '+(di+1)+'일째 ('+cnt+'/'+novena.perDay+'단)</span>');
+    else if(di>=novena.days)
+      parts.push('<span class="nv">🕯 '+novena.title+' — 기간을 마쳤습니다 ✝</span>');
+    else
+      parts.push('<span class="nv">🕯 '+novena.title+' · '+novena.start+' 시작 예정</span>');
+  }
+  $('goalLine').innerHTML=parts.join('<br>');
+}
+function nvStatusText(){
+  if(!novena) return '설정된 지향 기도가 없습니다.';
+  let met=0;
+  const s=new Date(novena.start+'T00:00:00');
+  for(let i=0;i<novena.days;i++){
+    const d=new Date(s); d.setDate(s.getDate()+i);
+    if(d>new Date()) break;
+    if((log[ymd(d)]||0)>=novena.perDay) met++;
+  }
+  const di=nvDayIndex();
+  const pos = di<0 ? '시작 전' : di>=novena.days ? '기간 종료' : (di+1)+'일째';
+  return '『'+novena.title+'』 '+novena.days+'일 중 <b>'+met+'일</b> 달성 · 현재 '+pos;
+}
+$('btnNovena').onclick=()=>{ closeMore();
+  if(novena){
+    $('nvTitle').value=novena.title;
+    $('nvDays').value=novena.days;
+    $('nvPreset').value=(novena.days===9||novena.days===54)?String(novena.days):'0';
+    $('nvStart').value=novena.start;
+    $('nvPerDay').value=novena.perDay;
+  }else{
+    $('nvStart').value=ymd(new Date());
+  }
+  $('nvStatus').innerHTML=nvStatusText();
+  $('nvOverlay').classList.add('open');
+};
+$('nvPreset').onchange=e=>{ if(e.target.value!=='0') $('nvDays').value=e.target.value; };
+$('nvSave').onclick=async()=>{
+  const title=$('nvTitle').value.trim()||'기도 지향';
+  const days=Math.max(1,parseInt($('nvDays').value)||9);
+  const start=$('nvStart').value||ymd(new Date());
+  const perDay=Math.max(1,parseInt($('nvPerDay').value)||1);
+  novena={title,days,start,perDay};
+  await kvSet('rosary-novena-v1',JSON.stringify(novena));
+  updateGoalLine(); toast('지향 기도를 봉헌합니다 🕯');
+  $('nvOverlay').classList.remove('open');
+};
+$('nvClear').onclick=async()=>{
+  novena=null;
+  try{ if(window.storage) await window.storage.delete('rosary-novena-v1'); }catch(e){}
+  try{ localStorage.removeItem('rosary-novena-v1'); }catch(e){}
+  updateGoalLine(); $('nvOverlay').classList.remove('open');
+};
+$('nvClose').onclick=()=>$('nvOverlay').classList.remove('open');
+
+/* ═══ 달력 ═══ */
+let calY, calM, selDay=null;
+function openCal(){
+  const n=new Date(); calY=n.getFullYear(); calM=n.getMonth();
+  selDay=null;
+  if(!$('rgFrom').value){
+    $('rgFrom').value=calY+'-'+String(calM+1).padStart(2,'0')+'-01';
+    $('rgTo').value=ymd(n);
+  }
+  drawCal(); rangeStats(); $('calOverlay').classList.add('open');
+}
+function rangeStats(){
+  const f=$('rgFrom').value, t=$('rgTo').value;
+  const out=$('rgResult');
+  if(!f||!t){ out.innerHTML='기간을 선택해 주세요.'; return; }
+  const d1=new Date(f+'T00:00:00'), d2=new Date(t+'T00:00:00');
+  if(d1>d2){ out.innerHTML='시작일이 종료일보다 늦습니다.'; return; }
+  let dan=0, days=0, span=0;
+  for(const d=new Date(d1); d<=d2; d.setDate(d.getDate()+1)){
+    span++;
+    const c=log[ymd(d)]||0;
+    if(c>0){ days++; dan+=c; }
+  }
+  const avg = days? (dan/span).toFixed(1) : 0;
+  out.innerHTML=span+'일 동안 <b>'+dan+'단</b>을 봉헌하셨습니다.'
+    +'<br>기도한 날 <b>'+days+'일</b> · 하루 평균 <b>'+avg+'단</b>';
+}
+$('rgFrom').onchange=rangeStats;
+$('rgTo').onchange=rangeStats;
+async function adjustDay(delta){
+  if(!selDay) return;
+  const v=Math.max((log[selDay]||0)+delta,0);
+  if(v===0) delete log[selDay]; else log[selDay]=v;
+  await kvSet('rosary-log-v2',JSON.stringify(log));
+  updateGoalLine();
+  drawCal(); rangeStats();
+}
+$('calMinus').onclick=()=>adjustDay(-1);
+$('calPlus').onclick=()=>adjustDay(1);
+function drawCal(){
+  $('calTitle').textContent=calY+'년 '+(calM+1)+'월';
+  const g=$('calGrid'); g.innerHTML='';
+  '일월화수목금토'.split('').forEach((d,i)=>{
+    const e=document.createElement('div');
+    e.className='dow'+(i===0?' sun':''); e.textContent=d; g.appendChild(e);
+  });
+  const first=new Date(calY,calM,1), start=first.getDay();
+  const dim=new Date(calY,calM+1,0).getDate();
+  const today=ymd(new Date());
+  let monthDays=0, monthDan=0;
+  for(let i=0;i<start;i++){ const e=document.createElement('div'); e.className='day out'; g.appendChild(e); }
+  for(let d=1;d<=dim;d++){
+    const key=calY+'-'+String(calM+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const cnt=log[key]||0;
+    if(cnt>0){ monthDays++; monthDan+=cnt; }
+    const e=document.createElement('div');
+    let nvCls='';
+    if(novena){
+      const s=new Date(novena.start+'T00:00:00');
+      const cur=new Date(calY,calM,d);
+      const di=Math.floor((cur-s)/86400000);
+      if(di>=0 && di<novena.days) nvCls=' nv'+(cnt>=novena.perDay?' nvmet':'');
+    }
+    e.className='day'+(cnt>0?' done':'')+(key===today?' today':'')+(key===selDay?' sel':'')+nvCls;
+    e.innerHTML='<span>'+d+'</span><span class="mark">'+(cnt>0?cnt:'')+'</span>';
+    e.onclick=()=>{ selDay=key; drawCal(); };
+    g.appendChild(e);
+  }
+  /* 연속 일수·누적 */
+  let streak=0; const t=new Date();
+  for(;;){ const k=ymd(t); if((log[k]||0)>0){ streak++; t.setDate(t.getDate()-1); } else break; }
+  let totalDan=0; for(const k in log) totalDan+=log[k];
+  $('calStats').innerHTML='이번 달 <b>'+monthDays+'일</b>, <b>'+monthDan+'단</b>'
+    +' · 지금까지 모두 <b>'+totalDan+'단</b>을 봉헌하셨습니다.'
+    +(streak>0? '<br>오늘까지 <b>'+streak+'일</b> 연속입니다. 🌹':'')
+    +(novena? '<br>🕯 '+nvStatusText():'');
+  /* 편집기 */
+  const ed=$('calEdit');
+  if(selDay){
+    ed.classList.add('open');
+    const[y,m,dd]=selDay.split('-');
+    $('calEditDate').textContent=(+m)+'월 '+(+dd)+'일';
+    $('calEditCnt').textContent=(log[selDay]||0)+'단';
+  }else ed.classList.remove('open');
+}
+$('btnCal').onclick=()=>{ closeMore(); openCal(); };
+$('calClose').onclick=()=>$('calOverlay').classList.remove('open');
+$('calPrev').onclick=()=>{ calM--; if(calM<0){calM=11;calY--;} selDay=null; drawCal(); };
+$('calNext').onclick=()=>{ calM++; if(calM>11){calM=0;calY++;} selDay=null; drawCal(); };
+
+/* ═══ 시작 ═══ */
+(async()=>{
+  await loadLog();
+  await loadVoices();
+  await loadSettings();
+  await loadNovena();
+  buildSteps(); refreshHead();
+  await tryResume();
+  updateGoalLine(); show();
+})();
+</script>
+</body>
+</html>
