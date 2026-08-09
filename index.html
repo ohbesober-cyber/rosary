@@ -565,6 +565,7 @@ function buildSteps(){
   steps.push({p:P.lord});
   for(let i=1;i<=3;i++) steps.push({p:P.hail, bead:i, of:3, sub:'성모송 '+i+' / 3'});
   steps.push({p:P.glory});
+  steps.push({p:P.fatima});
   for(let d=0; d<5; d++){
     steps.push({p:{t:'제'+(d+1)+'단 묵상', x:M.m[d]}, sub:M.name+' 제'+(d+1)+'단', med:true});
     steps.push({p:P.lord, sub:M.name+' 제'+(d+1)+'단'});
