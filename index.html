@@ -335,12 +335,186 @@
   #doneMsg.show{display:block;}
   #doneMsg .big{font-size:1.6rem;color:var(--gold);letter-spacing:.2em;margin-bottom:14px;font-family:'Noto Serif KR',serif;}
 
+  /* ── 홈 화면 ── */
+  body.home header, body.home #main, body.home #panel{display:none;}
+  #homeScreen{display:none;flex:1 1 auto;overflow-y:auto;}
+  body.home #homeScreen{display:block;}
+  #homeInner{max-width:520px;margin:0 auto;padding:18px 16px calc(30px + env(safe-area-inset-bottom));}
+  .hhead{text-align:center;margin-bottom:14px;position:relative;padding-bottom:12px;}
+  .hhead::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+    width:150px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.55;}
+  .hhead h1{
+    font-family:'Noto Serif KR',serif;font-weight:700;font-size:1.4rem;
+    letter-spacing:.42em;text-indent:.42em;
+    background:linear-gradient(180deg,#f8e3a8 20%,var(--gold) 75%,#c9a144);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  body.light .hhead h1{background:linear-gradient(180deg,#c99b35 20%,#a37a24 75%,#8a6318);
+    -webkit-background-clip:text;background-clip:text;}
+  .hhead .sub{font-size:.72rem;color:var(--ink-dim);letter-spacing:.1em;margin-top:5px;}
+  .hcard{
+    background:var(--blue);border:1px solid var(--line);border-radius:16px;
+    padding:16px;margin-bottom:14px;
+  }
+  .secTitle{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'Noto Serif KR',serif;font-size:.9rem;color:var(--gold);
+    letter-spacing:.15em;margin-bottom:10px;
+  }
+  .secTitle button{padding:5px 12px;font-size:.75rem;}
+  /* 나무 */
+  #treeSvgWrap{display:flex;justify-content:center;}
+  #treeSvgWrap svg{width:min(78vw,300px);height:auto;}
+  @keyframes treeSway{0%,100%{transform:rotate(-1.2deg);}50%{transform:rotate(1.2deg);}}
+  @keyframes leafFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+  #treeNameBadge{text-align:center;margin-bottom:2px;}
+  #treeNameBadge span{
+    background:rgba(232,193,90,.12);color:var(--gold-bright);
+    font-size:.85rem;font-weight:700;padding:5px 16px;border-radius:20px;letter-spacing:.1em;
+  }
+  #treeMeta{font-size:.7rem;color:var(--ink-dim);text-align:center;margin-bottom:8px;}
+  #treeStageBadge{text-align:center;margin-bottom:6px;}
+  #treeStageBadge span{font-size:.7rem;color:var(--ink-mid);background:var(--blue-panel);
+    border:1px solid var(--line);padding:3px 12px;border-radius:12px;}
+  #growMsg{
+    display:none;text-align:center;margin:6px 0;padding:9px 14px;
+    background:rgba(232,193,90,.12);border-radius:12px;
+    font-size:.85rem;font-weight:700;color:var(--gold-bright);
+  }
+  #growMsg.show{display:block;}
+  #treeNext{text-align:center;font-size:.7rem;color:var(--ink-dim);margin:8px 0 10px;
+    padding:6px 10px;background:var(--blue-panel);border-radius:10px;}
+  #treeToday{
+    background:rgba(217,138,154,.1);border-radius:12px;padding:11px 14px;margin-bottom:10px;
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:.82rem;color:var(--rose);line-height:1.5;
+  }
+  #treeToday b{font-size:1.4rem;color:var(--rose);}
+  .tstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .tstats>div{background:var(--blue-panel);border:1px solid var(--line);border-radius:12px;
+    padding:10px 6px;text-align:center;}
+  .tstats .ico{font-size:1.05rem;}
+  .tstats .num{font-size:1.15rem;font-weight:700;color:var(--gold-bright);margin:2px 0;}
+  .tstats .lb{font-size:.62rem;color:var(--ink-dim);}
+  /* 나무 심기 */
+  #treePlant{text-align:center;padding:14px 4px;}
+  #treePlant .seed{font-size:3rem;margin-bottom:10px;}
+  #treePlant p{font-size:.8rem;color:var(--ink-mid);line-height:1.8;margin-bottom:14px;}
+  #treePlant input{
+    width:100%;max-width:280px;font-family:inherit;text-align:center;
+    background:var(--blue-panel);border:1px solid var(--line);border-radius:12px;
+    color:var(--ink-mid);padding:11px;font-size:.95rem;margin-bottom:10px;
+  }
+  /* 지향 목록 */
+  .intent{
+    background:var(--blue-panel);border:1px solid var(--line);border-radius:12px;
+    padding:11px 13px;margin-bottom:8px;cursor:pointer;
+  }
+  .intent .t1{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .intent .nm{font-size:.88rem;color:var(--ink-mid);flex:1;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .intent .tag{font-size:.6rem;padding:2px 8px;border-radius:8px;flex:0 0 auto;
+    border:1px solid var(--line);color:var(--ink-dim);}
+  .intent .tag.grp{color:var(--rose);border-color:var(--rose);}
+  .intent .t2{font-size:.68rem;color:var(--ink-dim);margin-top:5px;display:flex;justify-content:space-between;}
+  .intent .pbar{height:4px;background:var(--line);border-radius:2px;margin-top:7px;overflow:hidden;}
+  .intent .pfill{height:100%;background:linear-gradient(90deg,var(--rose),var(--gold-bright));}
+  .intent.doneIt{opacity:.6;}
+  #intentEmpty{font-size:.75rem;color:var(--ink-dim);text-align:center;padding:8px 0;}
+  /* 홈 하단 버튼 */
+  .homeBtns{margin-top:4px;}
+  .homeBtns .primary.big{width:100%;max-width:none;padding:14px 0;font-size:1.05rem;border-radius:14px;}
+  .homeBtns .row{margin-top:9px;}
+  /* 프로필 */
+  #pfOverlay{
+    position:fixed;inset:0;background:rgba(12,15,30,.96);
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;z-index:50;
+  }
+  body.light #pfOverlay{background:rgba(245,238,225,.97);}
+  #pfOverlay.open{display:flex;}
+  #pfCard{width:100%;max-width:380px;background:var(--blue);border:1px solid var(--line);
+    border-radius:18px;padding:26px 22px;text-align:center;}
+  #pfCard h2{font-family:'Noto Serif KR',serif;color:var(--gold);letter-spacing:.2em;
+    font-size:1.05rem;margin-bottom:8px;}
+  #pfCard p{font-size:.75rem;color:var(--ink-dim);line-height:1.8;margin-bottom:16px;}
+  #pfCard input{
+    width:100%;font-family:inherit;background:var(--blue-panel);
+    border:1px solid var(--line);border-radius:12px;color:var(--ink-mid);
+    padding:12px;font-size:.95rem;margin-bottom:10px;text-align:center;
+  }
+  #pfCard .hintS{font-size:.65rem;color:var(--ink-dim);margin:-4px 0 10px;}
+  #hGreet{font-size:.75rem;color:var(--ink-mid);text-align:center;margin-bottom:12px;letter-spacing:.05em;}
+  #hGreet b{color:var(--gold-bright);}
+
   @media (max-width:480px){
     #prayer{font-size:calc(var(--fs,1.5rem) * .9);}
   }
 </style>
 </head>
 <body>
+
+<div id="homeScreen">
+ <div id="homeInner">
+  <div class="hhead">
+    <h1>묵 주 기 도</h1>
+    <div class="sub" id="hDate"></div>
+  </div>
+  <div id="hGreet"></div>
+
+  <div class="hcard" id="treeCard">
+    <div id="treePlant">
+      <div class="seed">🌱</div>
+      <p>나의 기도 나무를 심어 볼까요?<br>기도를 봉헌할수록 나무가 자라고,<br>단수가 쌓이면 꽃이 피고, 지향을 성만하면 열매가 열려요.</p>
+      <input id="treeNameInput" placeholder="나무 이름을 지어 주세요" maxlength="12">
+      <button id="btnPlant" class="primary" style="width:100%;max-width:280px;">나무 심기 🌱</button>
+    </div>
+    <div id="treeShow" hidden>
+      <div id="treeNameBadge"><span></span></div>
+      <div id="treeMeta"></div>
+      <div id="treeStageBadge"><span></span></div>
+      <div id="growMsg"></div>
+      <div id="treeSvgWrap"></div>
+      <div id="treeNext"></div>
+      <div id="treeToday"><span id="treeTodayTxt"></span><b id="treeTodayNum">0</b></div>
+      <div class="tstats">
+        <div><div class="ico">🌱</div><div class="num" id="stIntent">0</div><div class="lb">진행 지향</div></div>
+        <div><div class="ico">🌸</div><div class="num" id="stDan">0</div><div class="lb">총 단수</div></div>
+        <div><div class="ico">🍎</div><div class="num" id="stDone">0</div><div class="lb">완료 지향</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hcard">
+    <div class="secTitle">🕯 기도 지향 <button id="btnAddIntent">＋ 새 지향</button></div>
+    <div id="intentList"></div>
+  </div>
+
+  <div class="homeBtns">
+    <button id="btnStartPray" class="primary big">📿 기도 시작</button>
+    <div class="row">
+      <button id="btnHomeCal">달력</button>
+      <button id="btnHomeSet">설정 ⚙</button>
+      <button id="btnProfile">내 정보</button>
+    </div>
+  </div>
+ </div>
+</div>
+
+<div id="pfOverlay">
+  <div id="pfCard">
+    <h2>처음 오셨군요</h2>
+    <p>기도 나무와 그룹 기도에서 쓰일<br>이름과 아이디를 정해 주세요.</p>
+    <input id="pfName" placeholder="이름 (예: 데레사)" maxlength="10">
+    <input id="pfId" placeholder="아이디 (영문·숫자 3~15자)" maxlength="15" autocapitalize="off">
+    <input id="pfPw" type="password" placeholder="비밀번호 (6자 이상)" maxlength="30">
+    <div class="hintS">처음이면 새 계정이 만들어지고, 기존 아이디면 로그인됩니다.<br>기록이 서버에 보관되어 폰을 바꿔도 이어집니다.</div>
+    <div id="pfStatus" class="hintS" style="color:var(--gold);"></div>
+    <button id="pfSave" class="primary" style="width:100%;">시작하기 🌹</button>
+    <button id="pfSkip" style="width:100%;margin-top:8px;">나중에 (이 기기에만 저장)</button>
+    <button id="pfLogout" style="width:100%;margin-top:8px;display:none;">로그아웃</button>
+  </div>
+</div>
 
 <header>
   <h1>묵 주 기 도</h1>
@@ -368,6 +542,7 @@
 <div id="panel">
   <div id="bar"><div id="barFill"></div></div>
   <div class="row">
+    <button id="btnGoHome">⌂ 홈</button>
     <button id="btnPrev">이전</button>
     <button id="btnNext" class="primary">다음 ›</button>
     <button id="btnMore">설정 ⚙</button>
@@ -479,8 +654,15 @@
 
 <div id="nvOverlay">
   <div id="nvCard">
-    <h2>기도 지향</h2>
+    <h2 id="nvHead">기도 지향</h2>
     <div class="nvrow"><label>지향</label><input type="text" id="nvTitle" placeholder="예) 가족의 건강을 위하여"></div>
+    <div class="nvrow"><label>구분</label>
+      <select id="nvScope">
+        <option value="personal">개인 기도</option>
+        <option value="group">그룹 기도</option>
+      </select>
+      <span id="nvScopeNote" style="font-size:.68rem;color:var(--ink-dim);"></span>
+    </div>
     <div class="nvrow"><label>형식</label>
       <select id="nvPreset">
         <option value="9">9일기도</option>
@@ -494,7 +676,7 @@
     <div id="nvStatus"></div>
     <div class="row">
       <button id="nvSave" class="primary">저장</button>
-      <button id="nvClear">지향 해제</button>
+      <button id="nvClear">삭제</button>
       <button id="nvClose">닫기</button>
     </div>
   </div>
@@ -503,6 +685,9 @@
 <input type="file" id="voiceFile" accept="audio/*" hidden>
 <div id="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script>
 /* ═══ 기도문 ═══ */
 const P = {
@@ -1045,6 +1230,7 @@ document.addEventListener('pointerdown',e=>{
     if(e.target!==$(id)) return;
     if(kind==='vo'){ if(recId&&mediaRec) mediaRec.stop(); voiceAudio.pause(); }
     $(id).classList.remove('open');
+    if(document.body.classList.contains('home')) renderHome();
   });
 });
 $('btnDone').onclick=async e=>{
@@ -1069,6 +1255,7 @@ $('btnEnd').onclick=async e=>{
   idx=0; finished=false; buildSteps(); show();
   updateGoalLine();
   toast('오늘 모두 '+(log[ymd(new Date())]||0)+'단 봉헌'+bmTxt);
+  showHome();
 };
 $('main').onclick=e=>{ if(e.target.closest('#doneMsg'))return; $('btnNext').click(); };
 $('fontSize').oninput=e=>$('prayer').style.setProperty('--fs',e.target.value+'rem');
@@ -1109,13 +1296,17 @@ async function markToday(n=1){
   const prev=log[t]||0;
   log[t]=prev+n;
   await kvSet('rosary-log-v2',JSON.stringify(log));
+  scheduleSync();
   updateGoalLine();
+  if(document.body.classList.contains('home')) renderHome();
   if(settings.goal>0 && prev<settings.goal && log[t]>=settings.goal)
     toast('🌹 오늘 목표 '+settings.goal+'단을 채우셨습니다!');
-  if(novena){
-    const di=nvDayIndex();
-    if(di>=0 && di<novena.days && prev<novena.perDay && log[t]>=novena.perDay)
-      toast('🕯 지향 기도 '+(di+1)+'일째 몫을 채우셨습니다');
+  for(const it of activeIntents()){
+    const di=iDayIndex(it);
+    if(di>=0 && di<it.days && prev<it.perDay && log[t]>=it.perDay){
+      toast('🕯 「'+it.title+'」 '+(di+1)+'일째 몫을 채우셨습니다');
+      break;
+    }
   }
 }
 
@@ -1153,10 +1344,12 @@ async function tryResume(){
       /* 이미 지난 단은 봉헌 처리된 것으로 간주(중복 방지) */
       steps.forEach((s,i)=>{ if(i<idx && s.dEnd) counted.add(s.dNo); });
       refreshHead();
+      return true;
     }else{
       clearBM();
     }
   }catch(e){}
+  return false;
 }
 
 /* ═══ 설정(봉헌 방식·목표) ═══ */
@@ -1188,14 +1381,62 @@ $('goalInput').onchange=e=>{
 };
 
 /* ═══ 지향 기도(9일기도 등) ═══ */
-let novena=null;   /* {title,start,days,perDay} */
-async function loadNovena(){
-  try{ const v=await kvGet('rosary-novena-v1'); if(v) novena=JSON.parse(v); }catch(e){}
+/* ═══ 기도 지향 (여러 개, 개인/그룹) ═══ */
+const FIREBASE_CONFIG={
+  apiKey: "AIzaSyBhP0ZauwUcu8YzGnBGw_Rw_iMJywzIYxw",
+  authDomain: "rosaryapp-4f969.firebaseapp.com",
+  databaseURL: "https://rosaryapp-4f969-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "rosaryapp-4f969",
+  storageBucket: "rosaryapp-4f969.firebasestorage.app",
+  messagingSenderId: "560157832893",
+  appId: "1:560157832893:web:b75cd826a6795a848069d4"
+};
+let intents=[];               /* [{id,title,days,start,perDay,scope,done,achieved,end}] */
+let editIntentId=null;
+async function loadIntents(){
+  try{
+    const v=await kvGet('rosary-intents-v1');
+    if(v){ intents=JSON.parse(v)||[]; }
+    else{
+      /* 구버전 단일 지향 이전 */
+      const old=await kvGet('rosary-novena-v1');
+      if(old){
+        const d=JSON.parse(old);
+        intents=[{id:'m'+Date.now(),title:d.title,days:d.days,start:d.start,perDay:d.perDay,scope:'personal',done:false,achieved:null,end:null}];
+        await saveIntents();
+      }
+    }
+  }catch(e){}
+  sweepIntents();
 }
-function nvDayIndex(){
-  if(!novena) return -1;
-  const s=new Date(novena.start+'T00:00:00');
+async function saveIntents(){ await kvSet('rosary-intents-v1',JSON.stringify(intents)); scheduleSync(); }
+function iDayIndex(it){
+  const s=new Date(it.start+'T00:00:00');
   return Math.floor((new Date()-s)/86400000);
+}
+function iAchieved(it){
+  let met=0;
+  const s=new Date(it.start+'T00:00:00');
+  for(let i=0;i<it.days;i++){
+    const d=new Date(s); d.setDate(s.getDate()+i);
+    if(d>new Date()) break;
+    if((log[ymd(d)]||0)>=it.perDay) met++;
+  }
+  return met;
+}
+function activeIntents(){ return intents.filter(it=>!it.done); }
+function doneIntents(){ return intents.filter(it=>it.done); }
+async function sweepIntents(){
+  /* 기간이 끝난 지향 → 완료(열매) 처리 */
+  let changed=false;
+  for(const it of intents){
+    if(!it.done && iDayIndex(it)>=it.days){
+      it.done=true; it.achieved=iAchieved(it); it.end=ymd(new Date());
+      changed=true;
+      toast('🍎 「'+it.title+'」 지향 기도를 마쳤습니다! ('+it.achieved+'/'+it.days+'일)');
+    }
+  }
+  if(changed) await saveIntents();
 }
 function updateGoalLine(){
   const t=ymd(new Date()), cnt=log[t]||0;
@@ -1203,59 +1444,75 @@ function updateGoalLine(){
   if(settings.goal>0) parts.push('오늘 '+cnt+' / '+settings.goal+'단');
   else if(cnt>0) parts.push('오늘 '+cnt+'단');
   if(bmLabel && idx===0) parts.push('📖 책갈피: '+bmLabel);
-  if(novena){
-    const di=nvDayIndex();
-    if(di>=0 && di<novena.days)
-      parts.push('<span class="nv">🕯 '+novena.title+' · '+novena.days+'일기도 '+(di+1)+'일째 ('+cnt+'/'+novena.perDay+'단)</span>');
-    else if(di>=novena.days)
-      parts.push('<span class="nv">🕯 '+novena.title+' — 기간을 마쳤습니다 ✝</span>');
-    else
-      parts.push('<span class="nv">🕯 '+novena.title+' · '+novena.start+' 시작 예정</span>');
-  }
+  activeIntents().slice(0,2).forEach(it=>{
+    const di=iDayIndex(it);
+    if(di>=0 && di<it.days)
+      parts.push('<span class="nv">🕯 '+it.title+' · '+it.days+'일 중 '+(di+1)+'일째 ('+cnt+'/'+it.perDay+'단)</span>');
+    else if(di<0)
+      parts.push('<span class="nv">🕯 '+it.title+' · '+it.start+' 시작</span>');
+  });
   $('goalLine').innerHTML=parts.join('<br>');
 }
-function nvStatusText(){
-  if(!novena) return '설정된 지향 기도가 없습니다.';
-  let met=0;
-  const s=new Date(novena.start+'T00:00:00');
-  for(let i=0;i<novena.days;i++){
-    const d=new Date(s); d.setDate(s.getDate()+i);
-    if(d>new Date()) break;
-    if((log[ymd(d)]||0)>=novena.perDay) met++;
-  }
-  const di=nvDayIndex();
-  const pos = di<0 ? '시작 전' : di>=novena.days ? '기간 종료' : (di+1)+'일째';
-  return '『'+novena.title+'』 '+novena.days+'일 중 <b>'+met+'일</b> 달성 · 현재 '+pos;
+function intentsStatusText(){
+  const a=activeIntents(), d=doneIntents();
+  if(!a.length && !d.length) return '';
+  let s='';
+  a.forEach(it=>{
+    const di=iDayIndex(it);
+    const pos=di<0?'시작 전':di>=it.days?'기간 종료':(di+1)+'일째';
+    s+='🕯 『'+it.title+'』 '+it.days+'일 중 <b>'+iAchieved(it)+'일</b> 달성 · '+pos+'<br>';
+  });
+  if(d.length) s+='🍎 완료된 지향 <b>'+d.length+'개</b>';
+  return s;
 }
-$('btnNovena').onclick=()=>{ closeMore();
-  if(novena){
-    $('nvTitle').value=novena.title;
-    $('nvDays').value=novena.days;
-    $('nvPreset').value=(novena.days===9||novena.days===54)?String(novena.days):'0';
-    $('nvStart').value=novena.start;
-    $('nvPerDay').value=novena.perDay;
-  }else{
-    $('nvStart').value=ymd(new Date());
-  }
-  $('nvStatus').innerHTML=nvStatusText();
+/* 편집기 */
+function openIntentEditor(it){
+  editIntentId=it?it.id:null;
+  $('nvHead').textContent=it?'지향 수정':'새 기도 지향';
+  $('nvTitle').value=it?it.title:'';
+  $('nvScope').value=it?(it.scope||'personal'):'personal';
+  $('nvDays').value=it?it.days:9;
+  $('nvPreset').value=it&&(it.days===9||it.days===54)?String(it.days):(it?'0':'9');
+  $('nvStart').value=it?it.start:ymd(new Date());
+  $('nvPerDay').value=it?it.perDay:1;
+  $('nvClear').style.display=it?'':'none';
+  $('nvStatus').innerHTML=intentsStatusText();
+  scopeNote();
   $('nvOverlay').classList.add('open');
-};
+}
+function scopeNote(){
+  $('nvScopeNote').textContent =
+    $('nvScope').value==='group'
+      ? (FIREBASE_CONFIG? '' : '그룹 공유는 곧 열립니다')
+      : '';
+}
+$('nvScope').onchange=scopeNote;
+$('btnAddIntent').onclick=()=>openIntentEditor(null);
+$('btnNovena').onclick=()=>{ closeMore(); openIntentEditor(null); };
 $('nvPreset').onchange=e=>{ if(e.target.value!=='0') $('nvDays').value=e.target.value; };
 $('nvSave').onclick=async()=>{
   const title=$('nvTitle').value.trim()||'기도 지향';
   const days=Math.max(1,parseInt($('nvDays').value)||9);
   const start=$('nvStart').value||ymd(new Date());
   const perDay=Math.max(1,parseInt($('nvPerDay').value)||1);
-  novena={title,days,start,perDay};
-  await kvSet('rosary-novena-v1',JSON.stringify(novena));
-  updateGoalLine(); toast('지향 기도를 봉헌합니다 🕯');
+  const scope=$('nvScope').value;
+  if(editIntentId){
+    const it=intents.find(x=>x.id===editIntentId);
+    if(it){ Object.assign(it,{title,days,start,perDay,scope}); it.done=false; it.achieved=null; it.end=null; }
+  }else{
+    intents.push({id:'i'+Date.now(),title,days,start,perDay,scope,done:false,achieved:null,end:null});
+  }
+  await saveIntents(); await sweepIntents();
+  updateGoalLine(); renderHome(); toast('지향 기도를 봉헌합니다 🕯');
   $('nvOverlay').classList.remove('open');
 };
 $('nvClear').onclick=async()=>{
-  novena=null;
-  try{ if(window.storage) await window.storage.delete('rosary-novena-v1'); }catch(e){}
-  try{ localStorage.removeItem('rosary-novena-v1'); }catch(e){}
-  updateGoalLine(); $('nvOverlay').classList.remove('open');
+  if(editIntentId){
+    if(!confirm('이 지향을 삭제할까요?')) return;
+    intents=intents.filter(x=>x.id!==editIntentId);
+    await saveIntents();
+  }
+  updateGoalLine(); renderHome(); $('nvOverlay').classList.remove('open');
 };
 $('nvClose').onclick=()=>$('nvOverlay').classList.remove('open');
 
@@ -1293,7 +1550,10 @@ async function adjustDay(delta){
   const v=Math.max((log[selDay]||0)+delta,0);
   if(v===0) delete log[selDay]; else log[selDay]=v;
   await kvSet('rosary-log-v2',JSON.stringify(log));
+  scheduleSync();
+  scheduleSync();
   updateGoalLine();
+  if(document.body.classList.contains('home')) renderHome();
   drawCal(); rangeStats();
 }
 $('calMinus').onclick=()=>adjustDay(-1);
@@ -1316,11 +1576,12 @@ function drawCal(){
     if(cnt>0){ monthDays++; monthDan+=cnt; }
     const e=document.createElement('div');
     let nvCls='';
-    if(novena){
-      const s=new Date(novena.start+'T00:00:00');
+    const nv0=activeIntents()[0];
+    if(nv0){
+      const s=new Date(nv0.start+'T00:00:00');
       const cur=new Date(calY,calM,d);
       const di=Math.floor((cur-s)/86400000);
-      if(di>=0 && di<novena.days) nvCls=' nv'+(cnt>=novena.perDay?' nvmet':'');
+      if(di>=0 && di<nv0.days) nvCls=' nv'+(cnt>=nv0.perDay?' nvmet':'');
     }
     e.className='day'+(cnt>0?' done':'')+(key===today?' today':'')+(key===selDay?' sel':'')+nvCls;
     e.innerHTML='<span>'+d+'</span><span class="mark">'+(cnt>0?cnt:'')+'</span>';
@@ -1334,7 +1595,7 @@ function drawCal(){
   $('calStats').innerHTML='이번 달 <b>'+monthDays+'일</b>, <b>'+monthDan+'단</b>'
     +' · 지금까지 모두 <b>'+totalDan+'단</b>을 봉헌하셨습니다.'
     +(streak>0? '<br>오늘까지 <b>'+streak+'일</b> 연속입니다. 🌹':'')
-    +(novena? '<br>🕯 '+nvStatusText():'');
+    +(intents.length? '<br>'+intentsStatusText():'');
   /* 편집기 */
   const ed=$('calEdit');
   if(selDay){
@@ -1345,19 +1606,387 @@ function drawCal(){
   }else ed.classList.remove('open');
 }
 $('btnCal').onclick=()=>{ closeMore(); openCal(); };
-$('calClose').onclick=()=>$('calOverlay').classList.remove('open');
+$('calClose').onclick=()=>{ $('calOverlay').classList.remove('open');
+  if(document.body.classList.contains('home')) renderHome(); };
 $('calPrev').onclick=()=>{ calM--; if(calM<0){calM=11;calY--;} selDay=null; drawCal(); };
 $('calNext').onclick=()=>{ calM++; if(calM>11){calM=0;calY++;} selDay=null; drawCal(); };
+
+/* ═══ 프로필 · Firebase 인증 · 서버 동기화 ═══ */
+let user=null;         /* {uid,name} */
+let fb=null, fbUser=null, syncTimer=null;
+function fbInit(){
+  try{
+    if(!FIREBASE_CONFIG || !window.firebase) return null;
+    firebase.initializeApp(FIREBASE_CONFIG);
+    return { auth:firebase.auth(), db:firebase.database() };
+  }catch(e){ return null; }
+}
+function fbEmail(uid){ return uid.toLowerCase()+'@rosary-tree.app'; }
+function setPfStatus(){
+  const s=$('pfStatus');
+  s.textContent = fbUser ? '☁ 서버에 연결되어 있습니다 ('+(user?user.uid:'')+')'
+                : fb ? '' : '⚠ 서버 연결 불가 — 기기에만 저장됩니다';
+  $('pfLogout').style.display = fbUser ? '' : 'none';
+  $('pfPw').style.display = fbUser ? 'none' : '';
+  $('pfSkip').style.display = fbUser ? 'none' : '';
+}
+async function loadUser(){
+  try{ const v=await kvGet('rosary-user-v1'); if(v) user=JSON.parse(v); }catch(e){}
+  fb=fbInit();
+  if(fb){
+    fb.auth.onAuthStateChanged(async u=>{
+      fbUser=u;
+      setPfStatus();
+      if(u){ await syncDown(); scheduleSync(); toast('☁ 서버와 연결되었습니다'); renderHome(); }
+    });
+  }
+  if(!user){ $('pfOverlay').classList.add('open'); setPfStatus(); }
+  else{
+    greet();
+    /* 기존 사용자가 아직 서버 미연결이면 한 번 안내 */
+    if(fb && !fb.auth.currentUser && !settings.localOnly){
+      setTimeout(()=>{
+        if(!fbUser){
+          $('pfName').value=user.name; $('pfId').value=user.uid;
+          $('pfOverlay').classList.add('open'); setPfStatus();
+        }
+      },1200);
+    }
+  }
+}
+function greet(){
+  $('hGreet').innerHTML= user? '<b>'+user.name+'</b>님, 오늘도 평화를 빕니다 🌹'
+    +(fbUser?' <span style="color:var(--ink-dim)">☁</span>':'') : '';
+}
+$('pfSave').onclick=async()=>{
+  const name=$('pfName').value.trim();
+  const uid=$('pfId').value.trim();
+  const pw=$('pfPw').value;
+  if(!name){ alert('이름을 입력해 주세요.'); return; }
+  if(!/^[A-Za-z0-9_]{3,15}$/.test(uid)){ alert('아이디는 영문·숫자·밑줄 3~15자로 정해 주세요.'); return; }
+  user={uid,name};
+  await kvSet('rosary-user-v1',JSON.stringify(user));
+  if(fb && !fbUser){
+    if(pw.length<6){ alert('비밀번호는 6자 이상으로 정해 주세요.\n(서버 저장 없이 쓰시려면 [나중에]를 눌러 주세요)'); return; }
+    $('pfStatus').textContent='서버에 연결하는 중…';
+    try{
+      try{
+        await fb.auth.createUserWithEmailAndPassword(fbEmail(uid),pw);
+      }catch(e){
+        if(e.code==='auth/email-already-in-use'){
+          await fb.auth.signInWithEmailAndPassword(fbEmail(uid),pw);
+        }else throw e;
+      }
+      settings.localOnly=false; saveSettings();
+    }catch(e){
+      const msg = e.code==='auth/wrong-password'||e.code==='auth/invalid-credential' ? '비밀번호가 맞지 않습니다.'
+        : e.code==='auth/network-request-failed' ? '네트워크 연결을 확인해 주세요.'
+        : '서버 연결에 실패했습니다. ('+(e.code||e.message)+')';
+      alert(msg); setPfStatus(); return;
+    }
+  }
+  $('pfOverlay').classList.remove('open');
+  greet(); renderHome(); toast(name+'님, 환영합니다 🌹');
+};
+$('pfSkip').onclick=async()=>{
+  const name=$('pfName').value.trim(), uid=$('pfId').value.trim();
+  if(!user){
+    if(!name){ alert('이름을 입력해 주세요.'); return; }
+    if(!/^[A-Za-z0-9_]{3,15}$/.test(uid)){ alert('아이디는 영문·숫자·밑줄 3~15자로 정해 주세요.'); return; }
+    user={uid,name};
+    await kvSet('rosary-user-v1',JSON.stringify(user));
+  }
+  settings.localOnly=true; saveSettings();
+  $('pfOverlay').classList.remove('open');
+  greet(); renderHome();
+};
+$('pfLogout').onclick=async()=>{
+  if(!confirm('서버 연결을 끊을까요?\n기록은 이 기기에 남아 있습니다.')) return;
+  try{ await fb.auth.signOut(); }catch(e){}
+  settings.localOnly=true; saveSettings();
+  setPfStatus(); greet();
+};
+$('btnProfile').onclick=()=>{
+  if(user){ $('pfName').value=user.name; $('pfId').value=user.uid; }
+  $('pfPw').value='';
+  setPfStatus();
+  $('pfOverlay').classList.add('open');
+};
+
+/* ── 서버 동기화: 로컬이 즉시 저장, 서버가 보관소 ── */
+function scheduleSync(){
+  if(!fb || !fbUser) return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(syncUp,1500);
+}
+async function syncUp(){
+  if(!fb || !fbUser) return;
+  try{
+    await fb.db.ref('u/'+fbUser.uid).set({
+      profile:user, log, intents, tree, updated:Date.now()
+    });
+  }catch(e){}
+}
+async function syncDown(){
+  if(!fb || !fbUser) return;
+  try{
+    const snap=await fb.db.ref('u/'+fbUser.uid).get();
+    const d=snap.val();
+    if(!d) return;
+    /* 로그: 날짜별 큰 값으로 병합 */
+    if(d.log){
+      let ch=false;
+      for(const k in d.log){
+        const v=Math.max(log[k]||0, d.log[k]||0);
+        if(v!==(log[k]||0)){ log[k]=v; ch=true; }
+      }
+      if(ch){ await kvSet('rosary-log-v2',JSON.stringify(log)); updateGoalLine(); }
+    }
+    /* 지향: id 기준 합집합(로컬 우선) */
+    if(Array.isArray(d.intents)){
+      const ids=new Set(intents.map(x=>x.id));
+      let ch=false;
+      d.intents.forEach(it=>{ if(it&&it.id&&!ids.has(it.id)){ intents.push(it); ch=true; } });
+      if(ch) await saveIntents();
+    }
+    /* 나무: 없으면 서버 것 채택 */
+    if(d.tree && d.tree.treeName && !(tree&&tree.treeName)){
+      tree=d.tree; await saveTree();
+    }
+    /* 프로필: 로컬이 없을 때만 */
+    if(d.profile && !user){ user=d.profile; await kvSet('rosary-user-v1',JSON.stringify(user)); }
+    sweepIntents();
+  }catch(e){}
+}
+
+/* ═══ 기도 나무 ═══ */
+let tree=null;   /* {treeName,startDate,lastStage} */
+async function loadTree(){
+  try{ const v=await kvGet('rosary-tree-v1'); if(v) tree=JSON.parse(v); }catch(e){}
+}
+async function saveTree(){ await kvSet('rosary-tree-v1',JSON.stringify(tree)); scheduleSync(); }
+$('btnPlant').onclick=async()=>{
+  const nm=$('treeNameInput').value.trim();
+  if(!nm){ alert('나무 이름을 지어 주세요.'); return; }
+  tree={treeName:nm,startDate:new Date().toISOString(),lastStage:0};
+  await saveTree(); renderHome();
+  toast('🌱 '+nm+' 나무를 심었습니다');
+};
+function treeMetrics(){
+  let total=0; for(const k in log) total+=log[k];
+  return {
+    total,
+    today: log[ymd(new Date())]||0,
+    act: activeIntents().length,
+    done: doneIntents().length
+  };
+}
+function treeStageOf(total){
+  return total>=300?3: total>=100?2: total>=20?1:0;
+}
+/* ── 나무 SVG (상담앱 이식) ── */
+const FLOWER_POS=[
+  [],
+  [{cx:113,cy:200,p:'#FF9EB5',r:4},{cx:185,cy:196,p:'#FFB5D5',r:4},{cx:150,cy:183,p:'#FFC5E0',r:3.5},{cx:100,cy:207,p:'#FFAEC5',r:3}],
+  [{cx:82,cy:162,p:'#FF9EB5',r:5},{cx:218,cy:156,p:'#FFB5D5',r:5},{cx:148,cy:114,p:'#FFC5E0',r:5},{cx:107,cy:170,p:'#FFAEC5',r:4},{cx:193,cy:163,p:'#FFB5D5',r:4},{cx:135,cy:125,p:'#FFC5E0',r:3.5},{cx:165,cy:122,p:'#FF9EB5',r:3.5},{cx:65,cy:168,p:'#FFAEC5',r:3.5}],
+  [{cx:78,cy:136,p:'#FF9EB5',r:5},{cx:222,cy:128,p:'#FFB5D5',r:5},{cx:148,cy:86,p:'#FFC5E0',r:5},{cx:105,cy:155,p:'#FFAEC5',r:4.5},{cx:195,cy:148,p:'#FFB5D5',r:4.5},{cx:130,cy:105,p:'#FFC5E0',r:4},{cx:170,cy:103,p:'#FF9EB5',r:4},{cx:60,cy:145,p:'#FFAEC5',r:3.5}]
+];
+const FRUIT_POS=[
+  [],
+  [{cx:130,cy:210,r:7},{cx:170,cy:207,r:7}],
+  [{cx:100,cy:184,r:8},{cx:200,cy:177,r:8},{cx:160,cy:140,r:7},{cx:118,cy:192,r:6.5},{cx:182,cy:187,r:6.5},{cx:148,cy:126,r:6}],
+  [{cx:95,cy:163,r:9},{cx:205,cy:156,r:9},{cx:162,cy:113,r:8},{cx:112,cy:172,r:8},{cx:188,cy:168,r:8},{cx:150,cy:100,r:7}]
+];
+function flowerSvg(f){
+  return '<g><circle cx="'+f.cx+'" cy="'+f.cy+'" r="'+f.r+'" fill="white"/>'
+    +'<circle cx="'+f.cx+'" cy="'+f.cy+'" r="'+f.r*0.6+'" fill="#FFD700"/>'
+    +'<circle cx="'+(f.cx-f.r*0.9)+'" cy="'+f.cy+'" r="'+f.r*0.7+'" fill="'+f.p+'" opacity="0.9"/>'
+    +'<circle cx="'+(f.cx+f.r*0.9)+'" cy="'+f.cy+'" r="'+f.r*0.7+'" fill="'+f.p+'" opacity="0.9"/>'
+    +'<circle cx="'+f.cx+'" cy="'+(f.cy-f.r*0.9)+'" r="'+f.r*0.7+'" fill="'+f.p+'" opacity="0.9"/>'
+    +'<circle cx="'+f.cx+'" cy="'+(f.cy+f.r*0.9)+'" r="'+f.r*0.7+'" fill="'+f.p+'" opacity="0.9"/></g>';
+}
+function fruitSvg(fr){
+  return '<g><circle cx="'+fr.cx+'" cy="'+fr.cy+'" r="'+fr.r+'" fill="url(#fg1)"/>'
+    +'<path d="M'+fr.cx+' '+(fr.cy-fr.r)+' Q'+(fr.cx+2)+' '+(fr.cy-fr.r-3)+' '+(fr.cx+4)+' '+(fr.cy-fr.r-2)+'" stroke="#4A7C3F" stroke-width="1.2" fill="none" stroke-linecap="round"/></g>';
+}
+const LF='style="animation:leafFloat 3s ease-in-out infinite;';
+const TREE_BODY=[
+  /* 0 새싹 */
+  '<path d="M150 280 Q150 265 150 255" stroke="#8B5E1A" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  +'<ellipse cx="140" cy="250" rx="10" ry="6" fill="#5BAD6A" transform="rotate(-30 140 250)"/>'
+  +'<ellipse cx="160" cy="248" rx="10" ry="6" fill="#4A9E5C" transform="rotate(30 160 248)"/>'
+  +'<circle cx="150" cy="244" r="7" fill="#3D8C4E" opacity="0.9"/>',
+  /* 1 작은 나무 */
+  '<path d="M144 280 Q143 260 144 240 Q145 220 146 205" stroke="#A0722A" stroke-width="8" fill="none" stroke-linecap="round"/>'
+  +'<path d="M156 280 Q157 260 156 240 Q155 220 154 205" stroke="#A0722A" stroke-width="8" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 280 Q150 260 150 240 Q150 220 150 205" stroke="#8B5E1A" stroke-width="5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M146 235 Q130 220 118 215" stroke="#9B6820" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  +'<path d="M154 230 Q168 215 178 210" stroke="#9B6820" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  +'<g '+LF+'animation-delay:.3s"><circle cx="118" cy="208" r="18" fill="#4A9E5C" opacity="0.9"/><circle cx="107" cy="214" r="13" fill="#5BAD6A" opacity="0.85"/><circle cx="128" cy="200" r="15" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<g '+LF+'animation-delay:.6s"><circle cx="178" cy="203" r="18" fill="#4A9E5C" opacity="0.9"/><circle cx="190" cy="210" r="13" fill="#5BAD6A" opacity="0.85"/><circle cx="168" cy="197" r="15" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<g '+LF+'animation-delay:.1s"><circle cx="150" cy="192" r="22" fill="#3D8C4E" opacity="0.95"/><circle cx="138" cy="202" r="16" fill="#4A9E5C" opacity="0.9"/><circle cx="162" cy="200" r="16" fill="#4A9E5C" opacity="0.9"/></g>',
+  /* 2 중간 나무 */
+  '<path d="M142 280 Q140 255 141 228 Q142 200 143 178" stroke="#A0722A" stroke-width="11" fill="none" stroke-linecap="round"/>'
+  +'<path d="M158 280 Q160 255 159 228 Q158 200 157 178" stroke="#A0722A" stroke-width="11" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 280 Q150 255 150 228 Q150 200 150 178" stroke="#8B5E1A" stroke-width="7" fill="none" stroke-linecap="round"/>'
+  +'<path d="M144 220 Q125 202 108 194" stroke="#9B6820" stroke-width="5.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M108 194 Q95 186 85 178" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M156 212 Q175 194 192 186" stroke="#9B6820" stroke-width="5.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M192 186 Q205 178 215 172" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M148 185 Q138 166 130 156" stroke="#9B6820" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<path d="M152 183 Q162 164 170 154" stroke="#9B6820" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 180 Q150 160 150 148" stroke="#9B6820" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<g '+LF+'animation-delay:.2s"><circle cx="90" cy="172" r="26" fill="#4A9E5C" opacity="0.9"/><circle cx="76" cy="180" r="18" fill="#5BAD6A" opacity="0.85"/><circle cx="103" cy="161" r="21" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<g '+LF+'animation-delay:.5s"><circle cx="210" cy="166" r="24" fill="#4A9E5C" opacity="0.9"/><circle cx="223" cy="175" r="18" fill="#5BAD6A" opacity="0.85"/><circle cx="198" cy="157" r="20" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<g '+LF+'animation-delay:.8s"><circle cx="110" cy="172" r="18" fill="#5BAD6A" opacity="0.85"/><circle cx="120" cy="163" r="16" fill="#3D8C4E" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:1s"><circle cx="190" cy="165" r="18" fill="#5BAD6A" opacity="0.85"/><circle cx="180" cy="157" r="16" fill="#3D8C4E" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:.3s"><circle cx="150" cy="126" r="24" fill="#3D8C4E" opacity="0.95"/><circle cx="136" cy="138" r="18" fill="#4A9E5C" opacity="0.9"/><circle cx="164" cy="135" r="18" fill="#4A9E5C" opacity="0.9"/><circle cx="150" cy="142" r="14" fill="#5BAD6A" opacity="0.85"/></g>',
+  /* 3 큰 나무 */
+  '<path d="M140 280 Q125 277 115 285" stroke="#8B6914" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<path d="M160 280 Q175 277 185 285" stroke="#8B6914" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<path d="M138 280 Q135 245 137 210 Q139 175 140 148" stroke="#A0722A" stroke-width="13" fill="none" stroke-linecap="round"/>'
+  +'<path d="M162 280 Q165 245 163 210 Q161 175 160 148" stroke="#A0722A" stroke-width="13" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 280 Q150 245 150 210 Q150 175 150 148" stroke="#8B5E1A" stroke-width="9" fill="none" stroke-linecap="round"/>'
+  +'<path d="M143 208 Q120 183 100 173" stroke="#9B6820" stroke-width="7" fill="none" stroke-linecap="round"/>'
+  +'<path d="M100 173 Q85 163 75 153" stroke="#9B6820" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M157 198 Q180 173 200 163" stroke="#9B6820" stroke-width="7" fill="none" stroke-linecap="round"/>'
+  +'<path d="M200 163 Q215 153 225 146" stroke="#9B6820" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M141 183 Q118 166 105 156" stroke="#9B6820" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M155 173 Q172 156 185 148" stroke="#9B6820" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M148 156 Q135 136 125 126" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M152 153 Q165 133 175 123" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 150 Q150 128 150 113" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<g '+LF+'animation-delay:.2s"><circle cx="82" cy="148" r="30" fill="#4A9E5C" opacity="0.9"/><circle cx="68" cy="156" r="21" fill="#5BAD6A" opacity="0.85"/><circle cx="95" cy="136" r="25" fill="#3D8C4E" opacity="0.9"/><circle cx="72" cy="136" r="19" fill="#6BBE78" opacity="0.8"/><circle cx="88" cy="163" r="17" fill="#4A9E5C" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:.5s"><circle cx="218" cy="140" r="28" fill="#4A9E5C" opacity="0.9"/><circle cx="232" cy="148" r="21" fill="#5BAD6A" opacity="0.85"/><circle cx="205" cy="130" r="23" fill="#3D8C4E" opacity="0.9"/><circle cx="228" cy="130" r="19" fill="#6BBE78" opacity="0.8"/><circle cx="212" cy="156" r="17" fill="#4A9E5C" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:.8s"><circle cx="105" cy="148" r="21" fill="#5BAD6A" opacity="0.85"/><circle cx="92" cy="156" r="17" fill="#4A9E5C" opacity="0.9"/><circle cx="115" cy="140" r="18" fill="#3D8C4E" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:1s"><circle cx="185" cy="141" r="21" fill="#5BAD6A" opacity="0.85"/><circle cx="197" cy="150" r="17" fill="#4A9E5C" opacity="0.9"/><circle cx="175" cy="134" r="18" fill="#3D8C4E" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:.3s"><circle cx="150" cy="98" r="27" fill="#3D8C4E" opacity="0.95"/><circle cx="135" cy="110" r="21" fill="#4A9E5C" opacity="0.9"/><circle cx="165" cy="106" r="21" fill="#4A9E5C" opacity="0.9"/><circle cx="150" cy="116" r="17" fill="#5BAD6A" opacity="0.85"/><circle cx="138" cy="93" r="19" fill="#3D8C4E" opacity="0.9"/><circle cx="162" cy="93" r="19" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<path d="M100 280 Q105 268 110 280" stroke="#6BAE7A" stroke-width="2" fill="none"/>'
+  +'<path d="M185 280 Q190 269 195 280" stroke="#6BAE7A" stroke-width="2" fill="none"/>'
+];
+function butterflySvg(stage){
+  if(stage<2) return '';
+  const y=stage===2?110:85, x=stage===2?55:40;
+  return '<g '+LF.replace('3s','2.5s')+'animation-delay:1s">'
+    +'<path d="M'+x+' '+y+' Q'+(x+7)+' '+(y-12)+' '+(x+15)+' '+y+' Q'+(x+7)+' '+(y-6)+' '+x+' '+y+'" fill="#FFD700" opacity="0.85"/>'
+    +'<path d="M'+(x+15)+' '+y+' Q'+(x+22)+' '+(y-12)+' '+(x+30)+' '+y+' Q'+(x+22)+' '+(y-6)+' '+(x+15)+' '+y+'" fill="#FFB347" opacity="0.85"/>'
+    +'<line x1="'+(x+15)+'" y1="'+(y-6)+'" x2="'+(x+15)+'" y2="'+(y+4)+'" stroke="#8B4513" stroke-width="1.2"/></g>';
+}
+const STAGE_LABEL=['🌱 새싹','🌿 작은 나무','🌳 중간 나무','🌲 큰 나무'];
+const GROW_MSGS=['','🌿 새싹이 작은 나무가 되었어요!','🌳 중간 나무로 자랐어요!','🌲 드디어 큰 나무가 되었어요! 🎉'];
+function renderTree(){
+  const m=treeMetrics();
+  const stage=treeStageOf(m.total);
+  const flowersN=Math.floor(m.total/50);
+  const fpos=FLOWER_POS[stage]||[], frpos=FRUIT_POS[stage]||[];
+  const vf=Math.min(flowersN,fpos.length), vfr=Math.min(m.done,frpos.length);
+  let inner='<ellipse cx="150" cy="285" rx="75" ry="10" fill="#D4C9B8" opacity="0.5"/>'
+    +'<ellipse cx="150" cy="283" rx="55" ry="7" fill="#C4B89F" opacity="0.4"/>'
+    +'<g style="animation:treeSway 4s ease-in-out infinite;transform-origin:150px 280px">'
+    +TREE_BODY[stage]
+    +fpos.slice(0,vf).map(flowerSvg).join('')
+    +frpos.slice(0,vfr).map(fruitSvg).join('')
+    +butterflySvg(stage)
+    +'</g>';
+  $('treeSvgWrap').innerHTML=
+    '<svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><radialGradient id="fg1" cx="35%" cy="35%"><stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#C0392B"/></radialGradient></defs>'
+    +inner+'</svg>';
+  /* 배지·안내 */
+  $('treeNameBadge').querySelector('span').textContent=tree.treeName;
+  const days=Math.max(1,Math.floor((Date.now()-new Date(tree.startDate))/86400000)+1);
+  $('treeMeta').textContent='심은 지 '+days+'일 · 총 '+m.total+'단의 물';
+  $('treeStageBadge').querySelector('span').textContent=STAGE_LABEL[stage];
+  const nx= stage===0? (20-m.total)+'단 더 봉헌하면 작은 나무로 자라요'
+        : stage===1? (100-m.total)+'단 더 봉헌하면 중간 나무로 자라요'
+        : stage===2? (300-m.total)+'단 더 봉헌하면 큰 나무로 자라요'
+        : '가장 큰 나무에 도달했어요! 🎉 (50단마다 꽃이 피어요)';
+  $('treeNext').textContent=nx;
+  $('treeTodayTxt').innerHTML='오늘 <b>'+tree.treeName+'</b>에게<br>'
+    +(m.today>0? '기도의 물을 '+m.today+'번 주었어요 💧' : '기도의 물을 줄 준비가 됐어요 🌿');
+  $('treeTodayNum').textContent=m.today;
+  $('stIntent').textContent=m.act;
+  $('stDan').textContent=m.total;
+  $('stDone').textContent=m.done;
+  /* 성장 축하 */
+  if(tree.lastStage!=null && stage>tree.lastStage){
+    const g=$('growMsg'); g.textContent=GROW_MSGS[stage]; g.classList.add('show');
+    setTimeout(()=>g.classList.remove('show'),4000);
+  }
+  if(tree.lastStage!==stage){ tree.lastStage=stage; saveTree(); }
+}
+
+/* ═══ 홈 렌더 ═══ */
+function fmtScope(it){ return it.scope==='group'?'그룹':'개인'; }
+function renderIntents(){
+  const box=$('intentList'); box.innerHTML='';
+  const act=activeIntents(), done=doneIntents();
+  if(!act.length && !done.length){
+    box.innerHTML='<div id="intentEmpty">아직 지향이 없습니다. ＋ 새 지향으로 시작해 보세요.</div>';
+    return;
+  }
+  act.forEach(it=>{
+    const di=iDayIndex(it);
+    const prog=Math.min(Math.max((di+1)/it.days,0),1);
+    const e=document.createElement('div'); e.className='intent';
+    e.innerHTML='<div class="t1"><span class="nm">🕯 '+it.title+'</span>'
+      +'<span class="tag'+(it.scope==='group'?' grp':'')+'">'+fmtScope(it)+'</span></div>'
+      +'<div class="t2"><span>'+it.days+'일기도 · 하루 '+it.perDay+'단</span>'
+      +'<span>'+(di<0? it.start+' 시작' : (di+1)+' / '+it.days+'일 · 달성 '+iAchieved(it)+'일')+'</span></div>'
+      +'<div class="pbar"><div class="pfill" style="width:'+(prog*100)+'%"></div></div>';
+    e.onclick=()=>openIntentEditor(it);
+    box.appendChild(e);
+  });
+  done.slice(-3).reverse().forEach(it=>{
+    const e=document.createElement('div'); e.className='intent doneIt';
+    e.innerHTML='<div class="t1"><span class="nm">🍎 '+it.title+'</span>'
+      +'<span class="tag">완료</span></div>'
+      +'<div class="t2"><span>'+it.days+'일 중 '+it.achieved+'일 달성</span><span>'+(it.end||'')+'</span></div>';
+    e.onclick=()=>openIntentEditor(it);
+    box.appendChild(e);
+  });
+}
+function renderHome(){
+  const n=new Date();
+  $('hDate').textContent=MYST[mystKey].name+' · '+n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일';
+  greet();
+  if(tree&&tree.treeName){
+    $('treePlant').hidden=true; $('treeShow').hidden=false;
+    renderTree();
+  }else{
+    $('treePlant').hidden=false; $('treeShow').hidden=true;
+  }
+  renderIntents();
+  $('btnStartPray').textContent = (idx>0&&idx<steps.length) ? '📖 이어서 기도하기' : '📿 기도 시작';
+}
+
+/* ═══ 화면 전환 ═══ */
+function showHome(){
+  if(kOn){ kOn=false; holdWake(false); stopVoice(); updateAutoBtn(); }
+  document.body.classList.add('home');
+  renderHome();
+}
+function showPray(){
+  document.body.classList.remove('home');
+  show();
+}
+$('btnStartPray').onclick=showPray;
+$('btnGoHome').onclick=showHome;
+$('btnHomeCal').onclick=openCal;
+$('btnHomeSet').onclick=()=>{ $('more').classList.add('open'); };
 
 /* ═══ 시작 ═══ */
 (async()=>{
   await loadLog();
   await loadVoices();
   await loadSettings();
-  await loadNovena();
+  await loadIntents();
+  await loadUser();
+  await loadTree();
   buildSteps(); refreshHead();
-  await tryResume();
+  const resumed=await tryResume();
   updateGoalLine(); show();
+  if(resumed) showPray(); else showHome();
 })();
 </script>
 </body>
