@@ -28,20 +28,55 @@
     --ink-dim:#b3a88f;
     --ink-mid:#6e6450;
     --line:#e6dcc5;
+    --bg1:#fdf9f0; --bg2:#faf5ea; --bg3:#f3ead6;
+    --prayer:#4a4234;
+    --ovl:rgba(245,238,225,.96);
+  }
+  body.rose{
+    --blue-deep:#fbf1f2; --blue:#f7e9eb; --blue-panel:#fffafb;
+    --gold:#b8823c; --gold-bright:#d09a4a;
+    --rose:#c25b74;
+    --ink-dim:#c9adb4; --ink-mid:#6e585d; --line:#eed9dd;
+    --bg1:#fdf6f6; --bg2:#faeeee; --bg3:#f5e2e5;
+    --prayer:#4b393d; --ovl:rgba(248,236,238,.96);
+  }
+  body.sky{
+    --blue-deep:#f2f7fc; --blue:#ebf3fa; --blue-panel:#fbfdff;
+    --gold:#4a7cae; --gold-bright:#6d9cc9;
+    --rose:#c0787f;
+    --ink-dim:#a9bccd; --ink-mid:#4f6273; --line:#d9e6f1;
+    --bg1:#f6fafd; --bg2:#ecf4fb; --bg3:#dfecf7;
+    --prayer:#38495a; --ovl:rgba(235,243,250,.96);
+  }
+  body.lavender{
+    --blue-deep:#f6f3fa; --blue:#f0ebf7; --blue-panel:#fcfaff;
+    --gold:#7d68a8; --gold-bright:#9a85c4;
+    --rose:#b877a0;
+    --ink-dim:#bcb2ce; --ink-mid:#5c5470; --line:#e3dcf0;
+    --bg1:#f9f6fc; --bg2:#f1ecf8; --bg3:#e7e0f2;
+    --prayer:#443e52; --ovl:rgba(240,235,248,.96);
+  }
+  body.forest{
+    --blue-deep:#f3f7f0; --blue:#ecf3e8; --blue-panel:#fbfdf9;
+    --gold:#5c7d46; --gold-bright:#7ba05c;
+    --rose:#c07a6a;
+    --ink-dim:#b4c1a6; --ink-mid:#53614a; --line:#dbe6d1;
+    --bg1:#f6faf3; --bg2:#edf4e9; --bg3:#e0ecdb;
+    --prayer:#3d4635; --ovl:rgba(237,244,233,.96);
   }
   body.light{
-    background:linear-gradient(180deg,#fdf9f0 0%,#faf5ea 45%,#f3ead6 100%) !important;
+    background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%) !important;
   }
-  body.light #prayer{color:#4a4234;}
+  body.light #prayer{color:var(--prayer);}
   body.light #panel{background:rgba(252,248,238,.8);}
   body.light #main{background:radial-gradient(ellipse 70% 45% at 50% 42%,rgba(184,137,47,.07),transparent 70%);}
   body.light header h1{
-    background:linear-gradient(180deg,#c99b35 20%,#a37a24 75%,#8a6318);
+    background:linear-gradient(180deg,var(--gold-bright) 15%,var(--gold) 70%,var(--gold));
     -webkit-background-clip:text;background-clip:text;
-    text-shadow:0 0 22px rgba(184,137,47,.15);
+    text-shadow:0 0 22px rgba(120,110,80,.12);
   }
   body.light #calOverlay, body.light #nvOverlay, body.light #voiceOverlay{
-    background:rgba(245,238,225,.96);
+    background:var(--ovl);
   }
   body.light #toast{background:var(--blue-panel);}
   body.light #prayer.karaoke .ch.done{text-shadow:0 0 10px rgba(184,137,47,.2);}
@@ -349,7 +384,7 @@
     background:linear-gradient(180deg,#f8e3a8 20%,var(--gold) 75%,#c9a144);
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   }
-  body.light .hhead h1{background:linear-gradient(180deg,#c99b35 20%,#a37a24 75%,#8a6318);
+  body.light .hhead h1{background:linear-gradient(180deg,var(--gold-bright) 15%,var(--gold) 70%,var(--gold));
     -webkit-background-clip:text;background-clip:text;}
   .hhead .sub{font-size:.72rem;color:var(--ink-dim);letter-spacing:.1em;margin-top:5px;}
   .hcard{
@@ -431,7 +466,7 @@
     display:none;flex-direction:column;align-items:center;justify-content:center;
     padding:24px;z-index:50;
   }
-  body.light #pfOverlay{background:rgba(245,238,225,.97);}
+  body.light #pfOverlay{background:var(--ovl);}
   #pfOverlay.open{display:flex;}
   #pfCard{width:100%;max-width:380px;background:var(--blue);border:1px solid var(--line);
     border-radius:18px;padding:26px 22px;text-align:center;}
@@ -444,6 +479,27 @@
     padding:12px;font-size:.95rem;margin-bottom:10px;text-align:center;
   }
   #pfCard .hintS{font-size:.65rem;color:var(--ink-dim);margin:-4px 0 10px;}
+  #pickOverlay{
+    position:fixed;inset:0;background:var(--ovl,rgba(12,15,30,.94));
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px 16px;z-index:35;
+  }
+  body:not(.light) #pickOverlay{background:rgba(12,15,30,.94);}
+  #pickOverlay.open{display:flex;}
+  #pickCard{width:100%;max-width:420px;}
+  #pickCard h2{font-family:'Noto Serif KR',serif;color:var(--gold);
+    letter-spacing:.2em;font-size:1rem;text-align:center;margin-bottom:14px;}
+  .pick{
+    background:var(--blue);border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;margin-bottom:9px;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .pick:active{border-color:var(--gold);}
+  .pick .pn{font-size:.92rem;color:var(--ink-mid);flex:1;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pick .pd{font-size:.68rem;color:var(--ink-dim);flex:0 0 auto;}
+  .pick.none .pn{color:var(--ink-dim);}
+  #pickCancel{width:100%;max-width:420px;margin-top:10px;}
   #hGreet{font-size:.75rem;color:var(--ink-mid);text-align:center;margin-bottom:12px;letter-spacing:.05em;}
   #hGreet b{color:var(--gold-bright);}
 
@@ -499,6 +555,14 @@
     </div>
   </div>
  </div>
+</div>
+
+<div id="pickOverlay">
+  <div id="pickCard">
+    <h2>어느 지향으로 봉헌할까요?</h2>
+    <div id="pickList"></div>
+  </div>
+  <button id="pickCancel">돌아가기</button>
 </div>
 
 <div id="pfOverlay">
@@ -609,8 +673,12 @@
     </label>
     <label class="small">테마
       <select id="themeSel">
-        <option value="night">은은한 밤</option>
-        <option value="light">화사한 낮</option>
+        <option value="light">☀️ 화사한 낮 (기본)</option>
+        <option value="rose">🌹 장미 정원</option>
+        <option value="sky">🕊 맑은 하늘</option>
+        <option value="lavender">💜 라벤더</option>
+        <option value="forest">🌿 초록 숲</option>
+        <option value="night">🌙 은은한 밤</option>
       </select>
     </label>
     <button id="btnRestart">처음부터</button>
@@ -878,7 +946,7 @@ $('readSel').onchange=e=>{
 };
 $('themeSel').onchange=e=>{
   settings.theme=e.target.value; saveSettings();
-  document.body.classList.toggle('light', settings.theme==='light');
+  applyTheme(settings.theme);
 };
 $('contSel').onchange=e=>{
   settings.cont=(e.target.value==='cont'); saveSettings();
@@ -1255,6 +1323,7 @@ $('btnEnd').onclick=async e=>{
   idx=0; finished=false; buildSteps(); show();
   updateGoalLine();
   toast('오늘 모두 '+(log[ymd(new Date())]||0)+'단 봉헌'+bmTxt);
+  curIntent=null;
   showHome();
 };
 $('main').onclick=e=>{ if(e.target.closest('#doneMsg'))return; $('btnNext').click(); };
@@ -1301,7 +1370,10 @@ async function markToday(n=1){
   if(document.body.classList.contains('home')) renderHome();
   if(settings.goal>0 && prev<settings.goal && log[t]>=settings.goal)
     toast('🌹 오늘 목표 '+settings.goal+'단을 채우셨습니다!');
-  for(const it of activeIntents()){
+  const noti = curIntent
+    ? activeIntents().filter(it=>it.id===curIntent)
+    : activeIntents();
+  for(const it of noti){
     const di=iDayIndex(it);
     if(di>=0 && di<it.days && prev<it.perDay && log[t]>=it.perDay){
       toast('🕯 「'+it.title+'」 '+(di+1)+'일째 몫을 채우셨습니다');
@@ -1353,16 +1425,25 @@ async function tryResume(){
 }
 
 /* ═══ 설정(봉헌 방식·목표) ═══ */
-let settings={mode:'manual', goal:0, spirit:'pet', read:'none', theme:'night', cont:false};
+let settings={mode:'manual', goal:0, spirit:'pet', read:'none', theme:'light', cont:false};
+const THEMES=['light','rose','sky','lavender','forest','night'];
+function applyTheme(t){
+  if(!THEMES.includes(t)) t='light';
+  document.body.classList.remove('light','rose','sky','lavender','forest');
+  if(t!=='night'){
+    document.body.classList.add('light');
+    if(t!=='light') document.body.classList.add(t);
+  }
+}
 async function loadSettings(){
   try{ const v=await kvGet('rosary-settings-v1'); if(v) Object.assign(settings,JSON.parse(v)); }catch(e){}
   $('modeSel').value=settings.mode;
   $('goalInput').value=settings.goal;
   $('spiritSel').value=settings.spirit||'pet';
   $('readSel').value=settings.read||'none';
-  $('themeSel').value=settings.theme||'night';
+  $('themeSel').value=THEMES.includes(settings.theme)?settings.theme:'light';
   voiceOn=(settings.read==='rec');
-  document.body.classList.toggle('light', settings.theme==='light');
+  applyTheme(settings.theme);
   $('contSel').value=settings.cont?'cont':'stop';
 }
 async function saveSettings(){ await kvSet('rosary-settings-v1',JSON.stringify(settings)); }
@@ -1431,7 +1512,7 @@ async function sweepIntents(){
   let changed=false;
   for(const it of intents){
     if(!it.done && iDayIndex(it)>=it.days){
-      it.done=true; it.achieved=iAchieved(it); it.end=ymd(new Date());
+      it.done=true; it.achieved=iAchieved(it); it.end=ymd(new Date()); it.up=Date.now();
       changed=true;
       toast('🍎 「'+it.title+'」 지향 기도를 마쳤습니다! ('+it.achieved+'/'+it.days+'일)');
     }
@@ -1444,7 +1525,10 @@ function updateGoalLine(){
   if(settings.goal>0) parts.push('오늘 '+cnt+' / '+settings.goal+'단');
   else if(cnt>0) parts.push('오늘 '+cnt+'단');
   if(bmLabel && idx===0) parts.push('📖 책갈피: '+bmLabel);
-  activeIntents().slice(0,2).forEach(it=>{
+  const showIts = curIntent
+    ? activeIntents().filter(it=>it.id===curIntent)
+    : activeIntents().slice(0,2);
+  showIts.forEach(it=>{
     const di=iDayIndex(it);
     if(di>=0 && di<it.days)
       parts.push('<span class="nv">🕯 '+it.title+' · '+it.days+'일 중 '+(di+1)+'일째 ('+cnt+'/'+it.perDay+'단)</span>');
@@ -1498,9 +1582,9 @@ $('nvSave').onclick=async()=>{
   const scope=$('nvScope').value;
   if(editIntentId){
     const it=intents.find(x=>x.id===editIntentId);
-    if(it){ Object.assign(it,{title,days,start,perDay,scope}); it.done=false; it.achieved=null; it.end=null; }
+    if(it){ Object.assign(it,{title,days,start,perDay,scope,up:Date.now()}); it.done=false; it.achieved=null; it.end=null; }
   }else{
-    intents.push({id:'i'+Date.now(),title,days,start,perDay,scope,done:false,achieved:null,end:null});
+    intents.push({id:'i'+Date.now(),title,days,start,perDay,scope,done:false,achieved:null,end:null,up:Date.now()});
   }
   await saveIntents(); await sweepIntents();
   updateGoalLine(); renderHome(); toast('지향 기도를 봉헌합니다 🕯');
@@ -1549,6 +1633,7 @@ async function adjustDay(delta){
   if(!selDay) return;
   const v=Math.max((log[selDay]||0)+delta,0);
   if(v===0) delete log[selDay]; else log[selDay]=v;
+  logEdit[selDay]=Date.now(); await saveLogEdit();
   await kvSet('rosary-log-v2',JSON.stringify(log));
   scheduleSync();
   scheduleSync();
@@ -1614,6 +1699,11 @@ $('calNext').onclick=()=>{ calM++; if(calM>11){calM=0;calY++;} selDay=null; draw
 /* ═══ 프로필 · Firebase 인증 · 서버 동기화 ═══ */
 let user=null;         /* {uid,name} */
 let fb=null, fbUser=null, syncTimer=null;
+let logEdit={};   /* {date: 수동 편집 시각} — 의도적 수정이 병합에서 이기도록 */
+async function loadLogEdit(){
+  try{ const v=await kvGet('rosary-logedit-v1'); if(v) logEdit=JSON.parse(v)||{}; }catch(e){}
+}
+async function saveLogEdit(){ await kvSet('rosary-logedit-v1',JSON.stringify(logEdit)); }
 function fbInit(){
   try{
     if(!FIREBASE_CONFIG || !window.firebase) return null;
@@ -1723,7 +1813,7 @@ async function syncUp(){
   if(!fb || !fbUser) return;
   try{
     await fb.db.ref('u/'+fbUser.uid).set({
-      profile:user, log, intents, tree, updated:Date.now()
+      profile:user, log, logEdit, intents, tree, updated:Date.now()
     });
   }catch(e){}
 }
@@ -1733,20 +1823,35 @@ async function syncDown(){
     const snap=await fb.db.ref('u/'+fbUser.uid).get();
     const d=snap.val();
     if(!d) return;
-    /* 로그: 날짜별 큰 값으로 병합 */
-    if(d.log){
-      let ch=false;
-      for(const k in d.log){
-        const v=Math.max(log[k]||0, d.log[k]||0);
-        if(v!==(log[k]||0)){ log[k]=v; ch=true; }
-      }
+    /* 로그 병합: 수동 편집 시각이 최신인 쪽이 이기고, 둘 다 없으면 큰 값(기도 기록 보존) */
+    const sEdit=d.logEdit||{};
+    {
+      let ch=false, chE=false;
+      const dates=new Set([...Object.keys(log),...Object.keys(d.log||{})]);
+      dates.forEach(k=>{
+        const lv=log[k]||0, sv=(d.log&&d.log[k])||0;
+        const lt=logEdit[k]||0, st=sEdit[k]||0;
+        let v;
+        if(lt>st) v=lv;              /* 이 기기의 의도적 수정이 최신 */
+        else if(st>lt) v=sv;         /* 다른 기기의 의도적 수정이 최신 */
+        else v=Math.max(lv,sv);      /* 자연 누적끼리는 큰 값 = 기도 기록은 절대 줄지 않음 */
+        if(v!==(log[k]||0)){ if(v===0) delete log[k]; else log[k]=v; ch=true; }
+        const t=Math.max(lt,st);
+        if(t && t!==(logEdit[k]||0)){ logEdit[k]=t; chE=true; }
+      });
       if(ch){ await kvSet('rosary-log-v2',JSON.stringify(log)); updateGoalLine(); }
+      if(chE) await saveLogEdit();
     }
-    /* 지향: id 기준 합집합(로컬 우선) */
+    /* 지향 병합: 같은 id는 최근 수정본, 새 것은 합류 */
     if(Array.isArray(d.intents)){
-      const ids=new Set(intents.map(x=>x.id));
+      const map=new Map(intents.map(x=>[x.id,x]));
       let ch=false;
-      d.intents.forEach(it=>{ if(it&&it.id&&!ids.has(it.id)){ intents.push(it); ch=true; } });
+      d.intents.forEach(it=>{
+        if(!it||!it.id) return;
+        const mine=map.get(it.id);
+        if(!mine){ intents.push(it); ch=true; }
+        else if((it.up||0)>(mine.up||0)){ Object.assign(mine,it); ch=true; }
+      });
       if(ch) await saveIntents();
     }
     /* 나무: 없으면 서버 것 채택 */
@@ -1970,7 +2075,31 @@ function showPray(){
   document.body.classList.remove('home');
   show();
 }
-$('btnStartPray').onclick=showPray;
+/* ── 기도 지향 선택 ── */
+let curIntent=null;   /* 이번 기도가 봉헌되는 지향 id (없으면 null) */
+function openPick(){
+  const act=activeIntents();
+  if(!act.length){ curIntent=null; showPray(); return; }
+  if(idx>0 && idx<steps.length){ showPray(); return; }  /* 이어서 하기는 곧장 */
+  const box=$('pickList'); box.innerHTML='';
+  act.forEach(it=>{
+    const di=iDayIndex(it);
+    const e=document.createElement('div'); e.className='pick';
+    e.innerHTML='<span class="pn">🕯 '+it.title+'</span>'
+      +'<span class="pd">'+(di<0? it.start+' 시작' : (di+1)+'/'+it.days+'일 · 오늘 '+(log[ymd(new Date())]||0)+'/'+it.perDay+'단')+'</span>';
+    e.onclick=()=>{ curIntent=it.id; $('pickOverlay').classList.remove('open'); showPray();
+      toast('🕯 「'+it.title+'」 지향으로 봉헌합니다'); };
+    box.appendChild(e);
+  });
+  const n=document.createElement('div'); n.className='pick none';
+  n.innerHTML='<span class="pn">지향 없이 기도하기</span>';
+  n.onclick=()=>{ curIntent=null; $('pickOverlay').classList.remove('open'); showPray(); };
+  box.appendChild(n);
+  $('pickOverlay').classList.add('open');
+}
+$('pickCancel').onclick=()=>$('pickOverlay').classList.remove('open');
+$('pickOverlay').addEventListener('click',e=>{ if(e.target===$('pickOverlay')) $('pickOverlay').classList.remove('open'); });
+$('btnStartPray').onclick=openPick;
 $('btnGoHome').onclick=showHome;
 $('btnHomeCal').onclick=openCal;
 $('btnHomeSet').onclick=()=>{ $('more').classList.add('open'); };
@@ -1978,6 +2107,7 @@ $('btnHomeSet').onclick=()=>{ $('more').classList.add('open'); };
 /* ═══ 시작 ═══ */
 (async()=>{
   await loadLog();
+  await loadLogEdit();
   await loadVoices();
   await loadSettings();
   await loadIntents();
