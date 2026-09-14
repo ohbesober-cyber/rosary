@@ -500,6 +500,48 @@
   .pick .pd{font-size:.68rem;color:var(--ink-dim);flex:0 0 auto;}
   .pick.none .pn{color:var(--ink-dim);}
   #pickCancel{width:100%;max-width:420px;margin-top:10px;}
+  /* ── 기도 모임 ── */
+  .grp{
+    background:var(--blue-panel);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin-bottom:8px;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .grp .gn{font-size:.9rem;color:var(--ink-mid);}
+  .grp .gc{font-size:.65rem;color:var(--ink-dim);}
+  #grpOverlay{
+    position:fixed;inset:0;background:var(--ovl,rgba(12,15,30,.94));
+    display:none;flex-direction:column;align-items:center;
+    padding:22px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y:auto;z-index:35;
+  }
+  body:not(.light) #grpOverlay{background:rgba(12,15,30,.95);}
+  #grpOverlay.open{display:flex;}
+  #grpCard{width:100%;max-width:440px;}
+  #grpCard h2{font-family:'Noto Serif KR',serif;color:var(--gold);letter-spacing:.15em;
+    font-size:1.05rem;text-align:center;margin-bottom:4px;}
+  #grpCode{text-align:center;font-size:.72rem;color:var(--ink-dim);margin-bottom:14px;}
+  #grpCode b{color:var(--rose);letter-spacing:.2em;font-size:.9rem;}
+  #grpCode button{padding:3px 10px;font-size:.65rem;margin-left:6px;}
+  .gday{font-size:.75rem;color:var(--gold);letter-spacing:.1em;margin:12px 0 7px;
+    font-family:'Noto Serif KR',serif;}
+  .frow{
+    background:var(--blue);border:1px solid var(--line);border-radius:12px;
+    padding:10px 13px;margin-bottom:7px;
+  }
+  .frow .f1{display:flex;justify-content:space-between;align-items:center;}
+  .frow .fn{font-size:.85rem;color:var(--ink-mid);}
+  .frow .fn small{color:var(--ink-dim);font-size:.68rem;}
+  .frow .fd{font-size:.95rem;font-weight:700;color:var(--gold-bright);}
+  .frow .fi{font-size:.66rem;color:var(--rose);margin-top:2px;}
+  .stkRow{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;align-items:center;}
+  .stk{
+    border:1px solid var(--line);background:transparent;border-radius:14px;
+    padding:2px 9px;font-size:.8rem;cursor:pointer;
+  }
+  .stk.got{border-color:var(--gold);background:rgba(232,193,90,.1);}
+  .stk .c{font-size:.65rem;color:var(--ink-dim);margin-left:2px;}
+  #grpEmpty{font-size:.75rem;color:var(--ink-dim);text-align:center;padding:14px 0;}
+  #grpBtns{display:flex;gap:8px;justify-content:center;margin-top:14px;}
   #hGreet{font-size:.75rem;color:var(--ink-mid);text-align:center;margin-bottom:12px;letter-spacing:.05em;}
   #hGreet b{color:var(--gold-bright);}
 
@@ -546,6 +588,16 @@
     <div id="intentList"></div>
   </div>
 
+  <div class="hcard">
+    <div class="secTitle">🤝 기도 모임
+      <span>
+        <button id="btnGrpMake">모임 만들기</button>
+        <button id="btnGrpJoin">코드로 참여</button>
+      </span>
+    </div>
+    <div id="grpList"></div>
+  </div>
+
   <div class="homeBtns">
     <button id="btnStartPray" class="primary big">📿 기도 시작</button>
     <div class="row">
@@ -563,6 +615,18 @@
     <div id="pickList"></div>
   </div>
   <button id="pickCancel">돌아가기</button>
+</div>
+
+<div id="grpOverlay">
+  <div id="grpCard">
+    <h2 id="grpName"></h2>
+    <div id="grpCode">초대 코드 <b id="grpCodeV"></b><button id="grpCopy">복사</button></div>
+    <div id="grpFeed"></div>
+    <div id="grpBtns">
+      <button id="grpLeave">모임 나가기</button>
+      <button id="grpClose">닫기</button>
+    </div>
+  </div>
 </div>
 
 <div id="pfOverlay">
@@ -731,6 +795,7 @@
         <option value="personal">개인 기도</option>
         <option value="group">그룹 기도</option>
       </select>
+      <select id="nvGroup" style="display:none;"></select>
       <span id="nvScopeNote" style="font-size:.68rem;color:var(--ink-dim);"></span>
     </div>
     <div class="nvrow"><label>형식</label>
@@ -1368,6 +1433,7 @@ async function markToday(n=1){
   log[t]=prev+n;
   await kvSet('rosary-log-v2',JSON.stringify(log));
   scheduleSync();
+  clearTimeout(window.__pdT); window.__pdT=setTimeout(pushDaily,1200);
   updateGoalLine();
   if(document.body.classList.contains('home')) renderHome();
   if(settings.goal>0 && prev<settings.goal && log[t]>=settings.goal)
@@ -1428,7 +1494,7 @@ async function tryResume(){
 
 /* ═══ 설정(봉헌 방식·목표) ═══ */
 let settings={mode:'manual', goal:0, spirit:'pet', read:'none', theme:'light', cont:false};
-const APP_VER='2.2';
+const APP_VER='2.3';
 document.querySelectorAll('.appver').forEach(e=>e.textContent=APP_VER);
 const THEMES=['light','rose','sky','lavender','forest','night'];
 function applyTheme(t){
@@ -1569,10 +1635,24 @@ function openIntentEditor(it){
   $('nvOverlay').classList.add('open');
 }
 function scopeNote(){
-  $('nvScopeNote').textContent =
-    $('nvScope').value==='group'
-      ? (FIREBASE_CONFIG? '' : '그룹 공유는 곧 열립니다')
-      : '';
+  const grp=$('nvScope').value==='group';
+  const sel=$('nvGroup');
+  sel.style.display=grp?'':'none';
+  if(grp){
+    sel.innerHTML='';
+    const gids=Object.keys(myGroups);
+    if(!gids.length){
+      sel.innerHTML='<option value="">모임이 없습니다</option>';
+      $('nvScopeNote').textContent='먼저 홈에서 모임을 만들거나 참여해 주세요';
+    }else{
+      gids.forEach(gid=>{
+        const o=document.createElement('option');
+        o.value=gid; o.textContent=myGroups[gid].name;
+        sel.appendChild(o);
+      });
+      $('nvScopeNote').textContent='모임원 모두에게 공유됩니다';
+    }
+  }else $('nvScopeNote').textContent='';
 }
 $('nvScope').onchange=scopeNote;
 $('btnAddIntent').onclick=()=>openIntentEditor(null);
@@ -1584,12 +1664,18 @@ $('nvSave').onclick=async()=>{
   const start=$('nvStart').value||ymd(new Date());
   const perDay=Math.max(1,parseInt($('nvPerDay').value)||1);
   const scope=$('nvScope').value;
+  const gid = scope==='group' ? ($('nvGroup').value||null) : null;
+  if(scope==='group' && !gid){ alert('공유할 모임을 선택해 주세요.'); return; }
+  const gname = gid? myGroups[gid].name : null;
+  let saved;
   if(editIntentId){
     const it=intents.find(x=>x.id===editIntentId);
-    if(it){ Object.assign(it,{title,days,start,perDay,scope,up:Date.now()}); it.done=false; it.achieved=null; it.end=null; }
+    if(it){ Object.assign(it,{title,days,start,perDay,scope,gid,gname,up:Date.now()}); it.done=false; it.achieved=null; it.end=null; saved=it; }
   }else{
-    intents.push({id:'i'+Date.now(),title,days,start,perDay,scope,done:false,achieved:null,end:null,up:Date.now()});
+    saved={id:'i'+Date.now(),title,days,start,perDay,scope,gid,gname,done:false,achieved:null,end:null,up:Date.now()};
+    intents.push(saved);
   }
+  if(saved && saved.gid) pushGroupIntent(saved);
   await saveIntents(); await sweepIntents();
   updateGoalLine(); renderHome(); toast('지향 기도를 봉헌합니다 🕯');
   $('nvOverlay').classList.remove('open');
@@ -1640,6 +1726,7 @@ async function adjustDay(delta){
   logEdit[selDay]=Date.now(); await saveLogEdit();
   await kvSet('rosary-log-v2',JSON.stringify(log));
   scheduleSync();
+  clearTimeout(window.__pdT); window.__pdT=setTimeout(pushDaily,1200);
   scheduleSync();
   updateGoalLine();
   if(document.body.classList.contains('home')) renderHome();
@@ -1817,7 +1904,7 @@ async function syncUp(){
   if(!fb || !fbUser) return;
   try{
     await fb.db.ref('u/'+fbUser.uid).set({
-      profile:user, log, logEdit, intents, tree, updated:Date.now()
+      profile:user, log, logEdit, intents, tree, groups:myGroups, updated:Date.now()
     });
   }catch(e){}
 }
@@ -1864,6 +1951,13 @@ async function syncDown(){
     }
     /* 프로필: 로컬이 없을 때만 */
     if(d.profile && !user){ user=d.profile; await kvSet('rosary-user-v1',JSON.stringify(user)); }
+    /* 모임 합류 상태 복원 */
+    if(d.groups){
+      let ch=false;
+      for(const gid in d.groups){ if(!myGroups[gid]){ myGroups[gid]=d.groups[gid]; ch=true; } }
+      if(ch){ await kvSet('rosary-groups-v1',JSON.stringify(myGroups)); renderGroups(); }
+      Object.keys(myGroups).forEach(gid=>pullGroupIntents(gid));
+    }
     sweepIntents();
   }catch(e){}
 }
@@ -2025,6 +2119,187 @@ function renderTree(){
   if(tree.lastStage!==stage){ tree.lastStage=stage; saveTree(); }
 }
 
+/* ═══ 기도 모임 (Firebase) ═══ */
+let myGroups={};            /* {gid:{name,code}} */
+let grpOpen=null, grpRefs=[];
+const STICKERS=['🌹','🙏','💛','💪'];
+async function loadGroups(){
+  try{ const v=await kvGet('rosary-groups-v1'); if(v) myGroups=JSON.parse(v)||{}; }catch(e){}
+}
+async function saveGroups(){ await kvSet('rosary-groups-v1',JSON.stringify(myGroups)); scheduleSync(); }
+function needFb(){
+  if(!fb || !fbUser){ alert('모임 기능은 로그인 후 사용할 수 있습니다.\n[내 정보]에서 서버에 연결해 주세요.'); return true; }
+  return false;
+}
+function genCode(){
+  const C='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let s='';
+  for(let i=0;i<6;i++) s+=C[Math.floor(Math.random()*C.length)];
+  return s;
+}
+$('btnGrpMake').onclick=async()=>{
+  if(needFb()) return;
+  const name=(prompt('모임 이름을 정해 주세요 (예: 성모회 묵주기도)')||'').trim();
+  if(!name) return;
+  const code=genCode();
+  const gid='g'+Date.now()+Math.floor(Math.random()*1000);
+  try{
+    await fb.db.ref('g/'+gid+'/members/'+fbUser.uid).set({name:user.name,uid:user.uid,joined:Date.now()});
+    await fb.db.ref('g/'+gid+'/info').set({name,code,owner:fbUser.uid,created:Date.now()});
+    await fb.db.ref('codes/'+code).set(gid);
+    myGroups[gid]={name,code}; await saveGroups();
+    renderGroups(); pushDaily();
+    alert('모임이 만들어졌습니다!\n\n초대 코드: '+code+'\n\n이 코드를 도반들께 알려 주세요.');
+  }catch(e){ alert('모임 만들기에 실패했습니다. ('+(e.code||e.message)+')'); }
+};
+$('btnGrpJoin').onclick=async()=>{
+  if(needFb()) return;
+  const code=(prompt('초대 코드 6자리를 입력해 주세요')||'').trim().toUpperCase();
+  if(!/^[A-Z0-9]{6}$/.test(code)){ if(code) alert('코드는 영문·숫자 6자리입니다.'); return; }
+  try{
+    const snap=await fb.db.ref('codes/'+code).get();
+    const gid=snap.val();
+    if(!gid){ alert('코드를 찾을 수 없습니다. 다시 확인해 주세요.'); return; }
+    await fb.db.ref('g/'+gid+'/members/'+fbUser.uid).set({name:user.name,uid:user.uid,joined:Date.now()});
+    const info=(await fb.db.ref('g/'+gid+'/info').get()).val()||{};
+    myGroups[gid]={name:info.name||'기도 모임',code};
+    await saveGroups(); renderGroups(); pushDaily();
+    await pullGroupIntents(gid);
+    toast('🤝 「'+myGroups[gid].name+'」에 참여했습니다');
+  }catch(e){ alert('참여에 실패했습니다. ('+(e.code||e.message)+')'); }
+};
+function renderGroups(){
+  const box=$('grpList'); if(!box) return;
+  box.innerHTML='';
+  const gids=Object.keys(myGroups);
+  if(!gids.length){
+    box.innerHTML='<div id="grpEmpty">아직 모임이 없습니다.<br>모임을 만들어 초대 코드를 나누거나, 코드를 받아 참여해 보세요.</div>';
+    return;
+  }
+  gids.forEach(gid=>{
+    const g=myGroups[gid];
+    const e=document.createElement('div'); e.className='grp';
+    e.innerHTML='<span class="gn">🤝 '+g.name+'</span><span class="gc">'+g.code+' ›</span>';
+    e.onclick=()=>openGroup(gid);
+    box.appendChild(e);
+  });
+}
+/* 내 오늘 봉헌을 모임 현황판에 올림 */
+function pushDaily(){
+  if(!fb || !fbUser) return;
+  const t=ymd(new Date());
+  let intentT='';
+  if(curIntent){ const it=intents.find(x=>x.id===curIntent); if(it&&it.gid) intentT=it.title; }
+  Object.keys(myGroups).forEach(gid=>{
+    fb.db.ref('g/'+gid+'/daily/'+t+'/'+fbUser.uid)
+      .set({name:user.name,uid:user.uid,dan:log[t]||0,ts:Date.now(),intent:intentT})
+      .catch(()=>{});
+  });
+}
+/* 그룹 지향 공유: 저장 시 올리고, 열람 시 내려받기 */
+async function pushGroupIntent(it){
+  if(!fb || !fbUser || !it.gid) return;
+  try{ await fb.db.ref('g/'+it.gid+'/intents/'+it.id).set(it); }catch(e){}
+}
+async function pullGroupIntents(gid){
+  if(!fb || !fbUser) return;
+  try{
+    const snap=await fb.db.ref('g/'+gid+'/intents').get();
+    const d=snap.val(); if(!d) return;
+    const map=new Map(intents.map(x=>[x.id,x]));
+    let ch=false;
+    Object.values(d).forEach(it=>{
+      if(!it||!it.id) return;
+      const mine=map.get(it.id);
+      if(!mine){ intents.push(it); ch=true; }
+      else if((it.up||0)>(mine.up||0)){ Object.assign(mine,it); ch=true; }
+    });
+    if(ch){ await saveIntents(); renderHome(); }
+  }catch(e){}
+}
+/* 모임 화면 */
+function detachGrp(){ grpRefs.forEach(r=>{try{r.off();}catch(e){}}); grpRefs=[]; grpOpen=null; }
+async function openGroup(gid){
+  if(needFb()) return;
+  grpOpen=gid;
+  const g=myGroups[gid];
+  $('grpName').textContent='🤝 '+g.name;
+  $('grpCodeV').textContent=g.code;
+  $('grpFeed').innerHTML='<div id="grpEmpty">불러오는 중…</div>';
+  $('grpOverlay').classList.add('open');
+  pushDaily();
+  await pullGroupIntents(gid);
+  const t=ymd(new Date());
+  const y=ymd(new Date(Date.now()-86400000));
+  const dr=fb.db.ref('g/'+gid+'/daily/'+t);
+  const yr=fb.db.ref('g/'+gid+'/daily/'+y);
+  const sr=fb.db.ref('g/'+gid+'/stickers/'+t);
+  let today={}, yest={}, stk={};
+  const draw=()=>drawGrpFeed(gid,t,y,today,yest,stk);
+  dr.on('value',s=>{ today=s.val()||{}; draw(); });
+  yr.once('value').then(s=>{ yest=s.val()||{}; draw(); });
+  sr.on('value',s=>{ stk=s.val()||{}; draw(); });
+  grpRefs=[dr,sr];
+}
+function drawGrpFeed(gid,t,y,today,yest,stk){
+  if(grpOpen!==gid) return;
+  const box=$('grpFeed'); box.innerHTML='';
+  const sec=(label,data,date,withStk)=>{
+    const h=document.createElement('div'); h.className='gday'; h.textContent=label;
+    box.appendChild(h);
+    const rows=Object.entries(data).sort((a,b)=>(b[1].dan||0)-(a[1].dan||0));
+    if(!rows.length){
+      const e=document.createElement('div'); e.id='grpEmpty';
+      e.textContent='아직 봉헌 기록이 없습니다.';
+      box.appendChild(e); return;
+    }
+    rows.forEach(([au,m])=>{
+      const e=document.createElement('div'); e.className='frow';
+      e.innerHTML='<div class="f1"><span class="fn">'+(m.name||'')+' <small>@'+(m.uid||'')+'</small></span>'
+        +'<span class="fd">'+(m.dan||0)+'단</span></div>'
+        +(m.intent? '<div class="fi">🕯 '+m.intent+'</div>':'');
+      if(withStk){
+        const row=document.createElement('div'); row.className='stkRow';
+        const got=(stk[au])||{};
+        const counts={};
+        Object.values(got).forEach(em=>counts[em]=(counts[em]||0)+1);
+        STICKERS.forEach(em=>{
+          const b=document.createElement('button');
+          b.className='stk'+(got[fbUser.uid]===em?' got':'');
+          b.innerHTML=em+(counts[em]?'<span class="c">'+counts[em]+'</span>':'');
+          b.onclick=ev=>{
+            ev.stopPropagation();
+            const ref=fb.db.ref('g/'+gid+'/stickers/'+t+'/'+au+'/'+fbUser.uid);
+            if(got[fbUser.uid]===em) ref.remove(); else ref.set(em);
+          };
+          row.appendChild(b);
+        });
+        e.appendChild(row);
+      }
+      box.appendChild(e);
+    });
+  };
+  sec('오늘의 봉헌',today,t,true);
+  if(Object.keys(yest).length) sec('어제',yest,y,false);
+}
+$('grpClose').onclick=()=>{ detachGrp(); $('grpOverlay').classList.remove('open'); renderHome(); };
+$('grpOverlay').addEventListener('click',e=>{
+  if(e.target===$('grpOverlay')){ detachGrp(); $('grpOverlay').classList.remove('open'); renderHome(); }
+});
+$('grpCopy').onclick=async()=>{
+  const g=myGroups[grpOpen]; if(!g) return;
+  const msg='「'+g.name+'」 묵주기도 모임에 초대합니다 🌹\n초대 코드: '+g.code+'\n'+location.origin+location.pathname;
+  try{ await navigator.clipboard.writeText(msg); toast('초대 글이 복사되었습니다'); }
+  catch(e){ prompt('아래 내용을 복사해 주세요', msg); }
+};
+$('grpLeave').onclick=async()=>{
+  const g=myGroups[grpOpen]; if(!g) return;
+  if(!confirm('「'+g.name+'」 모임에서 나갈까요?')) return;
+  try{ await fb.db.ref('g/'+grpOpen+'/members/'+fbUser.uid).remove(); }catch(e){}
+  delete myGroups[grpOpen]; await saveGroups();
+  detachGrp(); $('grpOverlay').classList.remove('open');
+  renderGroups(); renderHome();
+};
+
 /* ═══ 홈 렌더 ═══ */
 function fmtScope(it){ return it.scope==='group'?'그룹':'개인'; }
 function renderIntents(){
@@ -2039,7 +2314,7 @@ function renderIntents(){
     const prog=Math.min(Math.max((di+1)/it.days,0),1);
     const e=document.createElement('div'); e.className='intent';
     e.innerHTML='<div class="t1"><span class="nm">🕯 '+it.title+'</span>'
-      +'<span class="tag'+(it.scope==='group'?' grp':'')+'">'+fmtScope(it)+'</span></div>'
+      +'<span class="tag'+(it.scope==='group'?' grp':'')+'">'+(it.gname||fmtScope(it))+'</span></div>'
       +'<div class="t2"><span>'+it.days+'일기도 · 하루 '+it.perDay+'단</span>'
       +'<span>'+(di<0? it.start+' 시작' : (di+1)+' / '+it.days+'일 · 달성 '+iAchieved(it)+'일')+'</span></div>'
       +'<div class="pbar"><div class="pfill" style="width:'+(prog*100)+'%"></div></div>';
@@ -2066,6 +2341,7 @@ function renderHome(){
     $('treePlant').hidden=false; $('treeShow').hidden=true;
   }
   renderIntents();
+  renderGroups();
   $('btnStartPray').textContent = (idx>0&&idx<steps.length) ? '📖 이어서 기도하기' : '📿 기도 시작';
 }
 
@@ -2115,6 +2391,7 @@ $('btnHomeSet').onclick=()=>{ $('more').classList.add('open'); };
   await loadVoices();
   await loadSettings();
   await loadIntents();
+  await loadGroups();
   await loadUser();
   await loadTree();
   buildSteps(); refreshHead();
