@@ -577,6 +577,7 @@
     <button id="pfSave" class="primary" style="width:100%;">시작하기 🌹</button>
     <button id="pfSkip" style="width:100%;margin-top:8px;">나중에 (이 기기에만 저장)</button>
     <button id="pfLogout" style="width:100%;margin-top:8px;display:none;">로그아웃</button>
+    <div style="font-size:.6rem;color:var(--ink-dim);margin-top:10px;">버전 <span class="appver"></span></div>
   </div>
 </div>
 
@@ -683,6 +684,7 @@
     </label>
     <button id="btnRestart">처음부터</button>
   </div>
+  <div style="text-align:center;font-size:.62rem;color:var(--ink-dim);margin-top:6px;">버전 <span class="appver"></span></div>
   <button class="close" id="moreClose">닫기</button>
 </div>
 
@@ -1426,6 +1428,8 @@ async function tryResume(){
 
 /* ═══ 설정(봉헌 방식·목표) ═══ */
 let settings={mode:'manual', goal:0, spirit:'pet', read:'none', theme:'light', cont:false};
+const APP_VER='2.2';
+document.querySelectorAll('.appver').forEach(e=>e.textContent=APP_VER);
 const THEMES=['light','rose','sky','lavender','forest','night'];
 function applyTheme(t){
   if(!THEMES.includes(t)) t='light';
