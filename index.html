@@ -2085,24 +2085,74 @@ function easterDate(y){
   return new Date(y,mo-1,da);
 }
 let seasonPreview=null;   /* 미리보기용 (저장 안 됨) */
+function adventStart(y){            /* 대림 제1주일 = 12/24 이전(포함) 마지막 주일 - 3주 */
+  const x=new Date(y,11,24);
+  return new Date(y,11,24-x.getDay()-21);
+}
+function adventWeek(){              /* 1~4주 (미리보기 등 대림 밖이면 4) */
+  const n=new Date(), t0=new Date(n.getFullYear(),n.getMonth(),n.getDate());
+  const w=Math.floor((t0-adventStart(t0.getFullYear()))/86400000/7)+1;
+  return (w>=1&&w<=4)?w:4;
+}
 function seasonNow(){
   if(seasonPreview!==null) return seasonPreview;
   const n=new Date(), y=n.getFullYear(), mo=n.getMonth()+1, da=n.getDate();
-  if((mo===12&&da>=15)||(mo===1&&da<=6)) return 'xmas';
-  const e=easterDate(mo===1?y-0:y);
-  const diff=(n-e)/86400000;
-  if(diff>=0&&diff<=49) return 'easter';
+  const t0=new Date(y,mo-1,da);
+  if((mo===12&&da>=24)||(mo===1&&da<=6)) return 'xmas';
+  if((mo===11||mo===12)&&t0>=adventStart(y)) return 'advent';
+  const diff=Math.round((t0-easterDate(y))/86400000);
+  if(diff===49) return 'pentecost';             /* 성령 강림 대축일 */
+  if(diff>=0&&diff<49) return 'easter';
+  if(diff>=-7&&diff<0) return 'holyweek';       /* 주님 수난 성지 주일 ~ 성토요일 */
+  if(diff>=-46&&diff<0) return 'lent';          /* 재의 수요일 ~ */
   if(mo===5) return 'may';
+  if(mo===6) return 'june';
   if(mo===10) return 'october';
+  if(mo===11) return 'november';
   return '';
 }
-const SEASON_LABEL={xmas:'🎄 성탄 시기',easter:'🐣 부활 시기',may:'🌹 성모 성월',october:'📿 묵주기도 성월'};
+const SEASON_LABEL={
+  advent:'🕯️ 대림 시기', xmas:'🎄 성탄 시기',
+  lent:'✝️ 사순 시기', holyweek:'🌿 성주간', easter:'🐣 부활 시기', pentecost:'🔥 성령 강림 대축일',
+  may:'🌹 성모 성월', june:'❤️ 예수 성심 성월', october:'📿 묵주기도 성월', november:'🕯️ 위령 성월'
+};
+/* 줄기에 두르는 천(띠) */
+function sashSvg(stage,c,d){
+  const g=[{y:268,w:8,h:4},{y:258,w:26,h:9},{y:248,w:36,h:11},{y:241,w:46,h:13}][stage];
+  const x1=150-g.w/2, x2=150+g.w/2, y=g.y, h=g.h, t=h*0.9;
+  let s='<path d="M'+x1+' '+(y-h/2)+' Q150 '+(y-h/2+2)+' '+x2+' '+(y-h/2)+' L'+x2+' '+(y+h/2)+' Q150 '+(y+h/2+2)+' '+x1+' '+(y+h/2)+' Z" fill="'+c+'" opacity="0.95"/>'
+       +'<path d="M'+x1+' '+(y+1)+' Q150 '+(y+3)+' '+x2+' '+(y+1)+'" stroke="'+d+'" stroke-width="0.8" fill="none" opacity="0.6"/>';
+  const kx=x2+1, ky=y;
+  s+='<path d="M'+kx+' '+ky+' q'+(t*0.8)+' -'+(t*0.7)+' '+(t*1.5)+' '+(t*0.2)+' q-'+(t*0.7)+' 0 -'+(t*1.5)+' -'+(t*0.2)+' Z" fill="'+c+'"/>'
+    +'<path d="M'+kx+' '+ky+' q'+(t*0.6)+' '+(t*0.9)+' '+(t*0.9)+' '+(t*1.8)+' q-'+(t*0.5)+' -'+(t*0.7)+' -'+(t*0.9)+' -'+(t*1.8)+' Z" fill="'+d+'"/>'
+    +'<circle cx="'+kx+'" cy="'+ky+'" r="'+(h*0.3)+'" fill="'+d+'"/>';
+  return s;
+}
+/* 초 (lit=true면 불꽃) */
+function candleSvg(x,base,h,c,lit,w){
+  w=w||4;
+  let s='<rect x="'+(x-w/2)+'" y="'+(base-h)+'" width="'+w+'" height="'+h+'" rx="1" fill="'+c+'"/>'
+       +'<line x1="'+x+'" y1="'+(base-h)+'" x2="'+x+'" y2="'+(base-h-2)+'" stroke="#4a3a2a" stroke-width="0.8"/>';
+  if(lit) s+='<g style="animation:leafFloat 1.6s ease-in-out infinite"><path d="M'+x+' '+(base-h-9)+' q3.2 4.5 0 7.5 q-3.2 -3 0 -7.5 Z" fill="#FFB347" opacity="0.95"/><path d="M'+x+' '+(base-h-6.5)+' q1.5 2.5 0 4.5 q-1.5 -2 0 -4.5 Z" fill="#FFF6C0"/></g>';
+  return s;
+}
+/* 작은 나무 십자가 */
+function crossSvg(x,base,h){
+  return '<line x1="'+x+'" y1="'+base+'" x2="'+x+'" y2="'+(base-h)+'" stroke="#7A5230" stroke-width="3" stroke-linecap="round"/>'
+       +'<line x1="'+(x-h*0.32)+'" y1="'+(base-h*0.68)+'" x2="'+(x+h*0.32)+'" y2="'+(base-h*0.68)+'" stroke="#7A5230" stroke-width="3" stroke-linecap="round"/>';
+}
 function seasonSvg(stage){
   const s=seasonNow(); if(!s) return '';
   const fp=FLOWER_POS[stage]||[];
   const topY=[236,168,100,68][stage];
   let out='';
-  if(s==='xmas'){
+  if(s==='advent'){
+    out+=sashSvg(stage,'#7B3F9E','#4E2469');
+    /* 대림초 4개: 1·2·4주 보라, 3주 장미색 */
+    const wk=adventWeek(), cols=['#8E4FB0','#8E4FB0','#D98FB0','#8E4FB0'];
+    out+='<ellipse cx="80" cy="281" rx="26" ry="5" fill="#4A8C4E" opacity="0.8"/>';
+    [62,74,86,98].forEach((cx,i)=>{ out+=candleSvg(cx,281,i===2?14:13,cols[i],i<wk); });
+  }else if(s==='xmas'){
     fp.forEach(f=>{ out+='<ellipse cx="'+f.cx+'" cy="'+(f.cy-3)+'" rx="'+(f.r+2.5)+'" ry="'+(f.r*0.65)+'" fill="white" opacity="0.9"/>'; });
     out+='<ellipse cx="150" cy="'+(topY+8)+'" rx="10" ry="4.5" fill="white" opacity="0.92"/>';
     if(stage>=1){
@@ -2114,6 +2164,16 @@ function seasonSvg(stage){
        +'<text x="228" y="120" font-size="9" opacity="0.65">❄</text>'
        +'<text x="55" y="200" font-size="8" opacity="0.55">❄</text>'
        +'<text x="245" y="215" font-size="10" opacity="0.6">❄</text></g>';
+  }else if(s==='lent'||s==='holyweek'){
+    out+=sashSvg(stage,'#6B3A8C','#3F1F55');
+    out+=crossSvg(222,282,22);
+    if(s==='holyweek'){            /* 성지가지 */
+      out+='<g style="animation:leafFloat 3.2s ease-in-out infinite">'
+         +'<path d="M78 282 Q70 262 58 250" stroke="#5E9E52" stroke-width="2" fill="none" stroke-linecap="round"/>'
+         +'<path d="M74 272 Q66 268 60 270 M72 266 Q64 260 59 262 M70 259 Q63 253 60 254 M75 270 Q80 262 86 262 M73 263 Q77 255 83 256 M71 257 Q73 250 78 249" stroke="#6BAE7A" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+         +'<path d="M84 282 Q92 262 104 250" stroke="#5E9E52" stroke-width="2" fill="none" stroke-linecap="round"/>'
+         +'<path d="M88 272 Q96 268 102 270 M90 266 Q98 260 103 262 M92 259 Q99 253 102 254 M87 270 Q82 262 76 262 M89 263 Q85 255 79 256 M91 257 Q89 250 84 249" stroke="#6BAE7A" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>';
+    }
   }else if(s==='easter'){
     out+='<g style="animation:leafFloat 3.2s ease-in-out infinite">'
        +'<circle cx="72" cy="120" r="3.2" fill="#FFB5D5" opacity="0.85"/>'
@@ -2129,6 +2189,22 @@ function seasonSvg(stage){
         +'<path d="M246 '+y2+' Q253 '+(y2-11)+' 260 '+y2+' Q253 '+(y2-5)+' 246 '+y2+'" fill="#FF9EB5" opacity="0.85"/>'
         +'<line x1="246" y1="'+(y2-5)+'" x2="246" y2="'+(y2+4)+'" stroke="#8B4513" stroke-width="1"/></g>';
     }
+  }else if(s==='pentecost'){
+    /* 가지마다 붉은 불꽃 */
+    fp.forEach((f,i)=>{
+      out+='<g style="animation:leafFloat 1.4s ease-in-out infinite;animation-delay:'+(i*0.2)+'s">'
+         +'<path d="M'+f.cx+' '+(f.cy-f.r-12)+' q5.5 6 0 12 q-5.5 -5 0 -12 Z" fill="#E8452F" opacity="0.92"/>'
+         +'<path d="M'+f.cx+' '+(f.cy-f.r-8)+' q2.5 3.5 0 7 q-2.5 -3 0 -7 Z" fill="#FFB347"/></g>';
+    });
+    /* 흰 비둘기 */
+    const dy=topY-14;
+    out+='<g style="animation:leafFloat 2.6s ease-in-out infinite">'
+       +'<ellipse cx="150" cy="'+dy+'" rx="8" ry="4" fill="white"/>'
+       +'<circle cx="157" cy="'+(dy-2)+'" r="2.8" fill="white"/>'
+       +'<path d="M160 '+(dy-2)+' l3 1 l-3 1 Z" fill="#F0A030"/>'
+       +'<path d="M148 '+(dy-2)+' q-6 -12 -14 -8 q6 3 9 10 Z" fill="white"/>'
+       +'<path d="M144 '+(dy+1)+' q-5 6 -11 6 q4 -2 8 -6 Z" fill="white" opacity="0.9"/>'
+       +'<circle cx="158" cy="'+(dy-2.6)+'" r="0.6" fill="#333"/></g>';
   }else if(s==='may'||s==='october'){
     const rp=(FRUIT_POS[stage]||[]).slice(0,3);
     rp.forEach(p=>{
@@ -2136,6 +2212,28 @@ function seasonSvg(stage){
          +'<circle cx="'+p.cx+'" cy="'+(p.cy-2)+'" r="'+(p.r*0.45)+'" fill="#B93350"/>'
          +'<circle cx="'+(p.cx-1)+'" cy="'+(p.cy-3)+'" r="'+(p.r*0.2)+'" fill="#F3899E"/></g>';
     });
+  }else if(s==='june'){
+    /* 예수 성심: 나무 꼭대기의 붉은 심장과 작은 불꽃 */
+    const hy=topY-6, r=stage===0?4:6;
+    out+='<g style="animation:leafFloat 2.4s ease-in-out infinite">'
+       +'<path d="M150 '+(hy+r*1.3)+' C'+(150-r*1.8)+' '+(hy-r*0.2)+' '+(150-r*1.1)+' '+(hy-r*1.4)+' 150 '+(hy-r*0.4)+' C'+(150+r*1.1)+' '+(hy-r*1.4)+' '+(150+r*1.8)+' '+(hy-r*0.2)+' 150 '+(hy+r*1.3)+' Z" fill="#D8322F" stroke="#A81E1E" stroke-width="0.6"/>'
+       +'<path d="M150 '+(hy-r*1.9)+' q'+(r*0.5)+' '+(r*0.6)+' 0 '+(r*1.2)+' q-'+(r*0.5)+' -'+(r*0.5)+' 0 -'+(r*1.2)+' Z" fill="#FFB347"/>'
+       +'<circle cx="'+(150-r*0.5)+'" cy="'+(hy-r*0.1)+'" r="'+(r*0.22)+'" fill="#FF8A80" opacity="0.8"/></g>';
+    out+='<g style="animation:leafFloat 3.4s ease-in-out infinite;animation-delay:.6s">'
+       +'<text x="66" y="150" font-size="9" fill="#E05A5A" opacity="0.7">♥</text>'
+       +'<text x="230" y="130" font-size="8" fill="#E05A5A" opacity="0.65">♥</text>'
+       +'<text x="240" y="230" font-size="7" fill="#E05A5A" opacity="0.6">♥</text></g>';
+  }else if(s==='november'){
+    /* 위령 성월: 흰 국화와 촛불 */
+    const rp=(FRUIT_POS[stage]||[]).slice(0,3);
+    rp.forEach(p=>{
+      const r=p.r*0.8; let g='<g>';
+      for(let k=0;k<8;k++){ const a=k*Math.PI/4;
+        g+='<ellipse cx="'+(p.cx+Math.cos(a)*r*0.55)+'" cy="'+(p.cy-2+Math.sin(a)*r*0.55)+'" rx="'+(r*0.5)+'" ry="'+(r*0.24)+'" fill="white" opacity="0.95" transform="rotate('+(k*45)+' '+(p.cx+Math.cos(a)*r*0.55)+' '+(p.cy-2+Math.sin(a)*r*0.55)+')"/>'; }
+      out+=g+'<circle cx="'+p.cx+'" cy="'+(p.cy-2)+'" r="'+(r*0.3)+'" fill="#F2D06B"/></g>';
+    });
+    out+='<ellipse cx="220" cy="282" rx="14" ry="3.5" fill="#8A7355" opacity="0.7"/>'
+       +candleSvg(214,281,17,'#EAD9A6',true,5.5)+candleSvg(227,281,12,'#EAD9A6',true,4.5);
   }
   return out;
 }
@@ -2368,7 +2466,7 @@ $('grpLeave').onclick=async()=>{
 };
 
 /* 나무 배지 탭 → 계절 미리보기 순환 */
-const SEASON_CYCLE=[null,'xmas','easter','may',''];
+const SEASON_CYCLE=[null,'advent','xmas','lent','holyweek','easter','pentecost','may','june','october','november',''];
 $('treeStageBadge').onclick=()=>{
   const i=SEASON_CYCLE.indexOf(seasonPreview);
   seasonPreview=SEASON_CYCLE[(i+1)%SEASON_CYCLE.length];
