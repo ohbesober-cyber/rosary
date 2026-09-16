@@ -2136,6 +2136,53 @@ function candleSvg(x,base,h,c,lit,w){
   if(lit) s+='<g style="animation:leafFloat 1.6s ease-in-out infinite"><path d="M'+x+' '+(base-h-9)+' q3.2 4.5 0 7.5 q-3.2 -3 0 -7.5 Z" fill="#FFB347" opacity="0.95"/><path d="M'+x+' '+(base-h-6.5)+' q1.5 2.5 0 4.5 q-1.5 -2 0 -4.5 Z" fill="#FFF6C0"/></g>';
   return s;
 }
+/* 달걀 */
+function eggSvg(cx,cy,r,c,d){
+  return '<g><path d="M'+cx+' '+(cy-r*1.3)+' C'+(cx+r*1.05)+' '+(cy-r*1.3)+' '+(cx+r)+' '+(cy+r)+' '+cx+' '+(cy+r)+' C'+(cx-r)+' '+(cy+r)+' '+(cx-r*1.05)+' '+(cy-r*1.3)+' '+cx+' '+(cy-r*1.3)+' Z" fill="'+c+'"/>'
+    +'<path d="M'+(cx-r*0.85)+' '+(cy-r*0.15)+' q'+(r*0.45)+' -'+(r*0.4)+' '+(r*0.85)+' 0 q'+(r*0.4)+' '+(r*0.4)+' '+(r*0.85)+' 0" stroke="'+d+'" stroke-width="'+(r*0.18)+'" fill="none"/>'
+    +'<circle cx="'+(cx-r*0.35)+'" cy="'+(cy+r*0.45)+'" r="'+(r*0.14)+'" fill="'+d+'"/><circle cx="'+(cx+r*0.35)+'" cy="'+(cy+r*0.45)+'" r="'+(r*0.14)+'" fill="'+d+'"/>'
+    +'<circle cx="'+cx+'" cy="'+(cy-r*0.7)+'" r="'+(r*0.14)+'" fill="'+d+'"/>'
+    +'<ellipse cx="'+(cx-r*0.35)+'" cy="'+(cy-r*0.75)+'" rx="'+(r*0.18)+'" ry="'+(r*0.3)+'" fill="white" opacity="0.5" transform="rotate(-20 '+(cx-r*0.35)+' '+(cy-r*0.75)+')"/></g>';
+}
+/* 장미 */
+function roseSvg(cx,cy,r){
+  let g='<g><ellipse cx="'+(cx-r*0.95)+'" cy="'+(cy+r*0.75)+'" rx="'+(r*0.8)+'" ry="'+(r*0.42)+'" fill="#4A9E5C" transform="rotate(-35 '+(cx-r*0.95)+' '+(cy+r*0.75)+')"/>'
+    +'<ellipse cx="'+(cx+r*0.95)+'" cy="'+(cy+r*0.75)+'" rx="'+(r*0.8)+'" ry="'+(r*0.42)+'" fill="#3D8C4E" transform="rotate(35 '+(cx+r*0.95)+' '+(cy+r*0.75)+')"/>';
+  /* 바깥 꽃잎 5장 */
+  for(let k=0;k<5;k++){ const a=-Math.PI/2+k*Math.PI*2/5;
+    g+='<circle cx="'+(cx+Math.cos(a)*r*0.55)+'" cy="'+(cy+Math.sin(a)*r*0.55)+'" r="'+(r*0.6)+'" fill="#D6455E"/>'; }
+  g+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*0.72)+'" fill="#E8607A"/>'
+    +'<circle cx="'+(cx+r*0.12)+'" cy="'+(cy-r*0.08)+'" r="'+(r*0.45)+'" fill="#D6455E"/>'
+    +'<circle cx="'+(cx-r*0.05)+'" cy="'+(cy+r*0.05)+'" r="'+(r*0.26)+'" fill="#E8607A"/>'
+    +'<circle cx="'+(cx+r*0.06)+'" cy="'+cy+'" r="'+(r*0.12)+'" fill="#B93350"/>'
+    +'<circle cx="'+(cx-r*0.35)+'" cy="'+(cy-r*0.4)+'" r="'+(r*0.14)+'" fill="#F7B8C8" opacity="0.8"/></g>';
+  return g;
+}
+/* 기도하시는 성모님 (base: 발끝 y, h: 전체 높이) */
+function marySvg(cx,base,h){
+  const u=h/40, top=base-h;
+  const y=(v)=>top+v*u, x=(v)=>cx+v*u;
+  return '<g style="animation:leafFloat 4s ease-in-out infinite">'
+    /* 후광 */
+    +'<circle cx="'+cx+'" cy="'+y(7)+'" r="'+(7*u)+'" fill="none" stroke="#F2C94C" stroke-width="'+(1.2*u)+'" opacity="0.85"/>'
+    /* 푸른 망토 (머리 위부터 발끝까지) */
+    +'<path d="M'+cx+' '+y(1.5)+' C'+x(-8)+' '+y(1.5)+' '+x(-9)+' '+y(14)+' '+x(-10)+' '+y(22)+' C'+x(-12)+' '+y(32)+' '+x(-13)+' '+y(38)+' '+x(-13)+' '+y(40)+' L'+x(13)+' '+y(40)+' C'+x(13)+' '+y(38)+' '+x(12)+' '+y(32)+' '+x(10)+' '+y(22)+' C'+x(9)+' '+y(14)+' '+x(8)+' '+y(1.5)+' '+cx+' '+y(1.5)+' Z" fill="#4F7BC8"/>'
+    +'<path d="M'+x(-13)+' '+y(40)+' L'+x(13)+' '+y(40)+' C'+x(12)+' '+y(36)+' '+x(9)+' '+y(30)+' '+x(9)+' '+y(26)+' L'+x(-9)+' '+y(26)+' C'+x(-9)+' '+y(30)+' '+x(-12)+' '+y(36)+' '+x(-13)+' '+y(40)+' Z" fill="#3E66AD" opacity="0.6"/>'
+    /* 흰 속옷 */
+    +'<path d="M'+x(-4.5)+' '+y(14)+' C'+x(-6)+' '+y(22)+' '+x(-6.5)+' '+y(32)+' '+x(-6)+' '+y(40)+' L'+x(6)+' '+y(40)+' C'+x(6.5)+' '+y(32)+' '+x(6)+' '+y(22)+' '+x(4.5)+' '+y(14)+' Z" fill="#F6F1E6"/>'
+    /* 얼굴 */
+    +'<ellipse cx="'+cx+'" cy="'+y(8)+'" rx="'+(4*u)+'" ry="'+(4.8*u)+'" fill="#F5D9C3"/>'
+    +'<path d="M'+x(-4.2)+' '+y(7)+' C'+x(-4)+' '+y(3)+' '+x(4)+' '+y(3)+' '+x(4.2)+' '+y(7)+' C'+x(2)+' '+y(5)+' '+x(-2)+' '+y(5)+' '+x(-4.2)+' '+y(7)+' Z" fill="#4F7BC8"/>'
+    +'<path d="M'+x(-1.8)+' '+y(8.5)+' q.6 .8 1.2 0 M'+x(0.6)+' '+y(8.5)+' q.6 .8 1.2 0" stroke="#6B4A3A" stroke-width="'+(0.6*u)+'" fill="none" stroke-linecap="round"/>'
+    +'<path d="M'+x(-1)+' '+y(10.8)+' q1 .8 2 0" stroke="#D08A7A" stroke-width="'+(0.5*u)+'" fill="none" stroke-linecap="round"/>'
+    /* 모아 쥔 손 */
+    +'<path d="M'+x(-2.2)+' '+y(23)+' C'+x(-2.6)+' '+y(19)+' '+x(-1)+' '+y(17)+' '+cx+' '+y(17)+' C'+x(1)+' '+y(17)+' '+x(2.6)+' '+y(19)+' '+x(2.2)+' '+y(23)+' Z" fill="#F5D9C3"/>'
+    +'<line x1="'+cx+'" y1="'+y(17.5)+'" x2="'+cx+'" y2="'+y(22.5)+'" stroke="#E5BFA8" stroke-width="'+(0.5*u)+'"/>'
+    /* 묵주 */
+    +'<path d="M'+x(1.5)+' '+y(22)+' C'+x(3.5)+' '+y(25)+' '+x(4)+' '+y(29)+' '+x(2.5)+' '+y(31)+'" stroke="#C9A24A" stroke-width="'+(0.5*u)+'" fill="none" stroke-dasharray="'+(0.7*u)+' '+(0.9*u)+'"/>'
+    +'<line x1="'+x(2.5)+'" y1="'+y(31)+'" x2="'+x(2.5)+'" y2="'+y(33.5)+'" stroke="#C9A24A" stroke-width="'+(0.7*u)+'"/><line x1="'+x(1.6)+'" y1="'+y(32)+'" x2="'+x(3.4)+'" y2="'+y(32)+'" stroke="#C9A24A" stroke-width="'+(0.7*u)+'"/>'
+    +'</g>';
+}
 /* 작은 나무 십자가 */
 function crossSvg(x,base,h){
   return '<line x1="'+x+'" y1="'+base+'" x2="'+x+'" y2="'+(base-h)+'" stroke="#7A5230" stroke-width="3" stroke-linecap="round"/>'
@@ -2179,16 +2226,22 @@ function seasonSvg(stage){
        +'<circle cx="72" cy="120" r="3.2" fill="#FFB5D5" opacity="0.85"/>'
        +'<circle cx="236" cy="145" r="2.8" fill="#FFC5E0" opacity="0.8"/>'
        +'<circle cx="58" cy="228" r="2.6" fill="#FF9EB5" opacity="0.75"/>'
-       +'<circle cx="243" cy="238" r="3" fill="#FFB5D5" opacity="0.8"/>'
-       +'<circle cx="95" cy="262" r="2.4" fill="#FFC5E0" opacity="0.7"/>'
-       +'<circle cx="205" cy="266" r="2.6" fill="#FF9EB5" opacity="0.7"/></g>';
-    if(stage>=1){
-      const y2=topY+30;
-      out+='<g style="animation:leafFloat 2.8s ease-in-out infinite;animation-delay:.5s">'
-        +'<path d="M232 '+y2+' Q239 '+(y2-11)+' 246 '+y2+' Q239 '+(y2-5)+' 232 '+y2+'" fill="#FFB5D5" opacity="0.85"/>'
-        +'<path d="M246 '+y2+' Q253 '+(y2-11)+' 260 '+y2+' Q253 '+(y2-5)+' 246 '+y2+'" fill="#FF9EB5" opacity="0.85"/>'
-        +'<line x1="246" y1="'+(y2-5)+'" x2="246" y2="'+(y2+4)+'" stroke="#8B4513" stroke-width="1"/></g>';
-    }
+       +'<circle cx="243" cy="238" r="3" fill="#FFB5D5" opacity="0.8"/></g>';
+    /* 나무에 달린 달걀 */
+    (FRUIT_POS[stage]||[]).slice(0,3).forEach((p,i)=>{ out+=eggSvg(p.cx,p.cy-1,p.r*0.85,['#A8D8EA','#FFE49C','#C9B6E8'][i],['#5A9BC4','#E8A23C','#8E6BC4'][i]); });
+    /* 땅 위 달걀 */
+    out+=eggSvg(216,276,6,'#FFD3E0','#E0759A')+eggSvg(230,278,5.2,'#C5E8C3','#5E9E52')+eggSvg(243,275,5.5,'#FFE49C','#E8A23C');
+    /* 토끼 */
+    out+='<g style="animation:leafFloat 2.8s ease-in-out infinite;animation-delay:.4s">'
+       +'<ellipse cx="70" cy="272" rx="11" ry="9.5" fill="white" stroke="#E4D9CC" stroke-width="0.8"/>'
+       +'<circle cx="62" cy="261" r="7.5" fill="white" stroke="#E4D9CC" stroke-width="0.8"/>'
+       +'<ellipse cx="58" cy="248" rx="2.8" ry="8" fill="white" stroke="#E4D9CC" stroke-width="0.8" transform="rotate(-12 58 248)"/>'
+       +'<ellipse cx="58" cy="248" rx="1.3" ry="5.5" fill="#FFC5D5" transform="rotate(-12 58 248)"/>'
+       +'<ellipse cx="65" cy="248" rx="2.8" ry="8" fill="white" stroke="#E4D9CC" stroke-width="0.8" transform="rotate(10 65 248)"/>'
+       +'<ellipse cx="65" cy="248" rx="1.3" ry="5.5" fill="#FFC5D5" transform="rotate(10 65 248)"/>'
+       +'<circle cx="59.5" cy="260" r="1" fill="#333"/><circle cx="57" cy="263" r="1.1" fill="#F29BB0"/>'
+       +'<path d="M54 264.5 q-3 -.5 -5 -1.5 M54 265.5 q-3 .5 -5 1.2" stroke="#BBB" stroke-width="0.6"/>'
+       +'<circle cx="80" cy="273" r="3.5" fill="white" stroke="#E4D9CC" stroke-width="0.8"/></g>';
   }else if(s==='pentecost'){
     /* 가지마다 붉은 불꽃 */
     fp.forEach((f,i)=>{
@@ -2205,13 +2258,18 @@ function seasonSvg(stage){
        +'<path d="M148 '+(dy-2)+' q-6 -12 -14 -8 q6 3 9 10 Z" fill="white"/>'
        +'<path d="M144 '+(dy+1)+' q-5 6 -11 6 q4 -2 8 -6 Z" fill="white" opacity="0.9"/>'
        +'<circle cx="158" cy="'+(dy-2.6)+'" r="0.6" fill="#333"/></g>';
-  }else if(s==='may'||s==='october'){
-    const rp=(FRUIT_POS[stage]||[]).slice(0,3);
-    rp.forEach(p=>{
-      out+='<g><circle cx="'+p.cx+'" cy="'+(p.cy-2)+'" r="'+(p.r*0.75)+'" fill="#D6455E"/>'
-         +'<circle cx="'+p.cx+'" cy="'+(p.cy-2)+'" r="'+(p.r*0.45)+'" fill="#B93350"/>'
-         +'<circle cx="'+(p.cx-1)+'" cy="'+(p.cy-3)+'" r="'+(p.r*0.2)+'" fill="#F3899E"/></g>';
-    });
+  }else if(s==='may'){
+    /* 성모 성월: 장미 */
+    (FRUIT_POS[stage]||[]).slice(0,3).forEach(p=>{ out+=roseSvg(p.cx,p.cy-2,p.r*0.85); });
+    out+=roseSvg(150,topY+8,stage===0?3.5:5.5);
+    out+='<g style="animation:leafFloat 3.4s ease-in-out infinite">'
+       +'<ellipse cx="68" cy="130" rx="3" ry="1.8" fill="#E8607A" opacity="0.7" transform="rotate(30 68 130)"/>'
+       +'<ellipse cx="238" cy="160" rx="3" ry="1.8" fill="#D6455E" opacity="0.7" transform="rotate(-25 238 160)"/>'
+       +'<ellipse cx="55" cy="232" rx="2.6" ry="1.6" fill="#E8607A" opacity="0.6" transform="rotate(50 55 232)"/>'
+       +'<ellipse cx="248" cy="240" rx="2.8" ry="1.7" fill="#D6455E" opacity="0.65" transform="rotate(-40 248 240)"/></g>';
+  }else if(s==='october'){
+    /* 묵주기도 성월: 기도하시는 성모님 */
+    out+=marySvg(226,284,stage===0?38:52);
   }else if(s==='june'){
     /* 예수 성심: 나무 꼭대기의 붉은 심장과 작은 불꽃 */
     const hy=topY-6, r=stage===0?4:6;
