@@ -580,6 +580,7 @@
         <div><div class="ico">🌸</div><div class="num" id="stDan">0</div><div class="lb">총 단수</div></div>
         <div><div class="ico">🍎</div><div class="num" id="stDone">0</div><div class="lb">완료 지향</div></div>
       </div>
+      <button id="btnTreeShare" style="width:100%;margin-top:10px;">🖼 나무 자랑하기</button>
     </div>
   </div>
 
@@ -836,7 +837,7 @@ const P = {
   spiritP:{t:'꽃다발 봉헌 (청원)', x:'<span class="rubric">(청원기도를 바칠 때)</span> 너그러우신 어머니, 신령성체의 기도로 묶어 바치는 이 영적 꽃다발을 받으소서. 그리고 제가 하느님께 청하는 모든 은혜를 받아 누리도록 함께 기억하며 빌어 주소서. 또한 저를 온갖 위험과 고통 중에서 돌보아 주시며 제가 죽을 때에 저를 저버리지 마옵소서. <span class="amen">아멘.</span>'},
   spiritT:{t:'꽃다발 봉헌 (감사)', x:'<span class="rubric">(감사기도를 바칠 때)</span> 너그러우신 어머니, 신령성체의 기도로 묶어 바치는 이 영적 꽃다발을 받으소서. 그리고 저를 위해 하느님께 은혜를 빌어 주심에 감사드리오니 받아 주소서. 또한 은혜를 내려 주신 하느님께 감사드리는 저와 함께해 주소서. <span class="amen">아멘.</span>'},
   salve:{t:'성모찬송', x:'모후이시며 사랑이 넘친 어머니, 우리의 생명, 기쁨, 희망이시여, 당신 우러러 하와의 그 자손들이 눈물을 흘리며 부르짖나이다, 슬픔의 골짜기에서. 우리들의 보호자 성모님, 불쌍한 저희를 인자로운 눈으로 굽어보소서. 귀양살이 끝날 때에 당신의 아들 우리 주 예수님 뵙게 하소서. 너그러우시고, 자애로우시며 오! 아름다우신 동정 마리아님.'},
-  salveOra:{t:'마침 기도', x:'<span class="rubric">○</span> 천주의 성모님, 저희를 위하여 빌어 주시어 <span class="rubric">●</span> 그리스도께서 약속하신 영원한 생명을 얻게 하소서. <span class="rubric">† 기도합시다.</span> 하느님, 외아드님께서 삶과 죽음과 부활로 저희에게 영원한 구원을 마련해 주셨나이다. 복되신 동정 마리아와 함께 이 신비를 묵상하며 묵주기도를 바치오니 저희가 그 가르침을 따라 영원한 생명을 얻게 하소서. 우리 주 그리스도를 통하여 비나이다. <span class="amen">◎ 아멘.</span>'}
+  salveOra:{t:'마침 기도', x:'<span class="rubric">○</span> 천주의 성모님, 저희를 위하여 빌어 주시어 <span class="rubric">●</span> 그리스도께서 약속하신 영원한 생명을 얻게 하소서. <span class="rubric">† 기도합시다.</span> 하느님, 외아드님이 삶과 죽음과 부활로 저희에게 영원한 구원을 마련해 주셨나이다. 복되신 동정 마리아와 함께 이 신비를 묵상하며 묵주기도를 바치오니 저희가 그 가르침을 따라 영원한 생명을 얻게 하소서. 우리 주 그리스도를 통하여 비나이다. <span class="amen">◎ 아멘.</span>'}
 };
 
 /* ═══ 신비 ═══ */
@@ -1494,7 +1495,7 @@ async function tryResume(){
 
 /* ═══ 설정(봉헌 방식·목표) ═══ */
 let settings={mode:'manual', goal:0, spirit:'pet', read:'none', theme:'light', cont:false};
-const APP_VER='2.3';
+const APP_VER='2.5';
 document.querySelectorAll('.appver').forEach(e=>e.textContent=APP_VER);
 const THEMES=['light','rose','sky','lavender','forest','night'];
 function applyTheme(t){
@@ -2075,6 +2076,69 @@ function butterflySvg(stage){
     +'<path d="M'+(x+15)+' '+y+' Q'+(x+22)+' '+(y-12)+' '+(x+30)+' '+y+' Q'+(x+22)+' '+(y-6)+' '+(x+15)+' '+y+'" fill="#FFB347" opacity="0.85"/>'
     +'<line x1="'+(x+15)+'" y1="'+(y-6)+'" x2="'+(x+15)+'" y2="'+(y+4)+'" stroke="#8B4513" stroke-width="1.2"/></g>';
 }
+/* ── 계절·전례 시기 장식 ── */
+function easterDate(y){
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,
+        f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,
+        i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),
+        mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;
+  return new Date(y,mo-1,da);
+}
+let seasonPreview=null;   /* 미리보기용 (저장 안 됨) */
+function seasonNow(){
+  if(seasonPreview!==null) return seasonPreview;
+  const n=new Date(), y=n.getFullYear(), mo=n.getMonth()+1, da=n.getDate();
+  if((mo===12&&da>=15)||(mo===1&&da<=6)) return 'xmas';
+  const e=easterDate(mo===1?y-0:y);
+  const diff=(n-e)/86400000;
+  if(diff>=0&&diff<=49) return 'easter';
+  if(mo===5) return 'may';
+  if(mo===10) return 'october';
+  return '';
+}
+const SEASON_LABEL={xmas:'🎄 성탄 시기',easter:'🐣 부활 시기',may:'🌹 성모 성월',october:'📿 묵주기도 성월'};
+function seasonSvg(stage){
+  const s=seasonNow(); if(!s) return '';
+  const fp=FLOWER_POS[stage]||[];
+  const topY=[236,168,100,68][stage];
+  let out='';
+  if(s==='xmas'){
+    fp.forEach(f=>{ out+='<ellipse cx="'+f.cx+'" cy="'+(f.cy-3)+'" rx="'+(f.r+2.5)+'" ry="'+(f.r*0.65)+'" fill="white" opacity="0.9"/>'; });
+    out+='<ellipse cx="150" cy="'+(topY+8)+'" rx="10" ry="4.5" fill="white" opacity="0.92"/>';
+    if(stage>=1){
+      const sy=topY-10;
+      out+='<path d="M150 '+(sy-8)+' L152.4 '+(sy-2.4)+' L158 '+(sy-2.4)+' L153.5 '+(sy+1.2)+' L155.4 '+(sy+7)+' L150 '+(sy+3.6)+' L144.6 '+(sy+7)+' L146.5 '+(sy+1.2)+' L142 '+(sy-2.4)+' L147.6 '+(sy-2.4)+' Z" fill="#FFD700" stroke="#E8B923" stroke-width="0.6"/>';
+    }
+    out+='<g style="animation:leafFloat 3.4s ease-in-out infinite">'
+       +'<text x="70" y="90" font-size="11" opacity="0.75">❄</text>'
+       +'<text x="228" y="120" font-size="9" opacity="0.65">❄</text>'
+       +'<text x="55" y="200" font-size="8" opacity="0.55">❄</text>'
+       +'<text x="245" y="215" font-size="10" opacity="0.6">❄</text></g>';
+  }else if(s==='easter'){
+    out+='<g style="animation:leafFloat 3.2s ease-in-out infinite">'
+       +'<circle cx="72" cy="120" r="3.2" fill="#FFB5D5" opacity="0.85"/>'
+       +'<circle cx="236" cy="145" r="2.8" fill="#FFC5E0" opacity="0.8"/>'
+       +'<circle cx="58" cy="228" r="2.6" fill="#FF9EB5" opacity="0.75"/>'
+       +'<circle cx="243" cy="238" r="3" fill="#FFB5D5" opacity="0.8"/>'
+       +'<circle cx="95" cy="262" r="2.4" fill="#FFC5E0" opacity="0.7"/>'
+       +'<circle cx="205" cy="266" r="2.6" fill="#FF9EB5" opacity="0.7"/></g>';
+    if(stage>=1){
+      const y2=topY+30;
+      out+='<g style="animation:leafFloat 2.8s ease-in-out infinite;animation-delay:.5s">'
+        +'<path d="M232 '+y2+' Q239 '+(y2-11)+' 246 '+y2+' Q239 '+(y2-5)+' 232 '+y2+'" fill="#FFB5D5" opacity="0.85"/>'
+        +'<path d="M246 '+y2+' Q253 '+(y2-11)+' 260 '+y2+' Q253 '+(y2-5)+' 246 '+y2+'" fill="#FF9EB5" opacity="0.85"/>'
+        +'<line x1="246" y1="'+(y2-5)+'" x2="246" y2="'+(y2+4)+'" stroke="#8B4513" stroke-width="1"/></g>';
+    }
+  }else if(s==='may'||s==='october'){
+    const rp=(FRUIT_POS[stage]||[]).slice(0,3);
+    rp.forEach(p=>{
+      out+='<g><circle cx="'+p.cx+'" cy="'+(p.cy-2)+'" r="'+(p.r*0.75)+'" fill="#D6455E"/>'
+         +'<circle cx="'+p.cx+'" cy="'+(p.cy-2)+'" r="'+(p.r*0.45)+'" fill="#B93350"/>'
+         +'<circle cx="'+(p.cx-1)+'" cy="'+(p.cy-3)+'" r="'+(p.r*0.2)+'" fill="#F3899E"/></g>';
+    });
+  }
+  return out;
+}
 const STAGE_LABEL=['🌱 새싹','🌿 작은 나무','🌳 중간 나무','🌲 큰 나무'];
 const GROW_MSGS=['','🌿 새싹이 작은 나무가 되었어요!','🌳 중간 나무로 자랐어요!','🌲 드디어 큰 나무가 되었어요! 🎉'];
 function renderTree(){
@@ -2090,6 +2154,7 @@ function renderTree(){
     +fpos.slice(0,vf).map(flowerSvg).join('')
     +frpos.slice(0,vfr).map(fruitSvg).join('')
     +butterflySvg(stage)
+    +seasonSvg(stage)
     +'</g>';
   $('treeSvgWrap').innerHTML=
     '<svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -2099,7 +2164,9 @@ function renderTree(){
   $('treeNameBadge').querySelector('span').textContent=tree.treeName;
   const days=Math.max(1,Math.floor((Date.now()-new Date(tree.startDate))/86400000)+1);
   $('treeMeta').textContent='심은 지 '+days+'일 · 총 '+m.total+'단의 물';
-  $('treeStageBadge').querySelector('span').textContent=STAGE_LABEL[stage];
+  const sn=seasonNow();
+  $('treeStageBadge').querySelector('span').textContent=
+    STAGE_LABEL[stage]+(sn?' · '+SEASON_LABEL[sn]:'')+(seasonPreview!==null?' 👁':'');
   const nx= stage===0? (20-m.total)+'단 더 봉헌하면 작은 나무로 자라요'
         : stage===1? (100-m.total)+'단 더 봉헌하면 중간 나무로 자라요'
         : stage===2? (300-m.total)+'단 더 봉헌하면 큰 나무로 자라요'
@@ -2298,6 +2365,86 @@ $('grpLeave').onclick=async()=>{
   delete myGroups[grpOpen]; await saveGroups();
   detachGrp(); $('grpOverlay').classList.remove('open');
   renderGroups(); renderHome();
+};
+
+/* 나무 배지 탭 → 계절 미리보기 순환 */
+const SEASON_CYCLE=[null,'xmas','easter','may',''];
+$('treeStageBadge').onclick=()=>{
+  const i=SEASON_CYCLE.indexOf(seasonPreview);
+  seasonPreview=SEASON_CYCLE[(i+1)%SEASON_CYCLE.length];
+  if(seasonPreview==='') seasonPreview=null,seasonPreviewOff();
+  else{
+    renderTree();
+    toast(seasonPreview===null?'실제 계절로 돌아왔습니다'
+      :'👁 미리보기: '+SEASON_LABEL[seasonPreview]+' (탭해서 넘기기)');
+  }
+};
+function seasonPreviewOff(){ renderTree(); toast('실제 계절로 돌아왔습니다'); }
+
+/* ═══ 나무 자랑하기: 이미지 만들어 카톡 등으로 공유 ═══ */
+$('btnTreeShare').onclick=async()=>{
+  if(!tree||!tree.treeName) return;
+  try{ await document.fonts.ready; }catch(e){}
+  const m=treeMetrics();
+  const cs=getComputedStyle(document.body);
+  const v=n=>cs.getPropertyValue(n).trim();
+  const isL=document.body.classList.contains('light');
+  const W=800,H=1080;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const x=cv.getContext('2d');
+  const bg=x.createLinearGradient(0,0,0,H);
+  if(isL){ bg.addColorStop(0,v('--bg1')||'#fdf9f0'); bg.addColorStop(.5,v('--bg2')||'#faf5ea'); bg.addColorStop(1,v('--bg3')||'#f3ead6'); }
+  else{ bg.addColorStop(0,'#1a2140'); bg.addColorStop(1,'#0e1226'); }
+  x.fillStyle=bg; x.fillRect(0,0,W,H);
+  const gold=v('--gold')||'#b8892f', bright=v('--gold-bright')||'#d4a63c';
+  const dim=v('--ink-dim')||'#b3a88f', mid=v('--ink-mid')||'#6e6450', rose=v('--rose')||'#c76a80';
+  x.strokeStyle=gold; x.globalAlpha=.5; x.lineWidth=2; x.strokeRect(30,30,W-60,H-60); x.globalAlpha=1;
+  x.textAlign='center';
+  x.fillStyle=bright; x.font='700 44px "Noto Serif KR",serif';
+  x.fillText('나 의  기 도  나 무',W/2,110);
+  x.fillStyle=rose; x.font='600 30px "Gowun Batang",serif';
+  x.fillText('🌳 '+tree.treeName,W/2,160);
+  const n=new Date();
+  x.fillStyle=dim; x.font='22px "Gowun Batang",serif';
+  const sn=seasonNow();
+  x.fillText(n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일'+(sn?' · '+SEASON_LABEL[sn]:''),W/2,196);
+  /* 나무 SVG → 이미지 */
+  const svgEl=$('treeSvgWrap').querySelector('svg');
+  await new Promise(res=>{
+    const img=new Image();
+    const blob=new Blob([svgEl.outerHTML],{type:'image/svg+xml'});
+    const url=URL.createObjectURL(blob);
+    img.onload=()=>{ x.drawImage(img,(W-520)/2,215,520,520); URL.revokeObjectURL(url); res(); };
+    img.onerror=()=>{ URL.revokeObjectURL(url); res(); };
+    img.src=url;
+  });
+  let streak=0; const tt=new Date();
+  for(;;){ const k=ymd(tt); if((log[k]||0)>0){ streak++; tt.setDate(tt.getDate()-1); } else break; }
+  x.fillStyle=gold; x.font='700 58px "Gowun Batang",serif';
+  x.fillText('총 '+m.total+'단 봉헌',W/2,810);
+  x.fillStyle=mid; x.font='26px "Gowun Batang",serif';
+  x.fillText('오늘 '+m.today+'단 · 완료 지향 '+m.done+'개'+(streak>0?' · '+streak+'일 연속':''),W/2,856);
+  x.fillStyle=dim; x.font='20px "Gowun Batang",serif';
+  x.fillText((user?user.name+'님의 묵주기도':''),W/2,905);
+  x.fillStyle=rose; x.font='24px serif'; x.fillText('🌹',W/2,950);
+  x.fillStyle=dim; x.font='18px "Gowun Batang",serif';
+  x.fillText(location.host+location.pathname,W/2,H-52);
+  cv.toBlob(async b=>{
+    const file=new File([b],'나의기도나무.png',{type:'image/png'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{
+        await navigator.share({files:[file],title:'나의 기도 나무',
+          text:'🌳 '+tree.treeName+' · 총 '+m.total+'단 봉헌\n'+location.href});
+        return;
+      }catch(e){ if(e.name==='AbortError') return; }
+    }
+    /* 공유 미지원: 이미지 저장 + 주소 복사 */
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b); a.download='나의기도나무.png'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    try{ await navigator.clipboard.writeText(location.href); toast('이미지를 저장하고 주소를 복사했습니다'); }
+    catch(e){ toast('이미지를 저장했습니다'); }
+  },'image/png');
 };
 
 /* ═══ 홈 렌더 ═══ */
