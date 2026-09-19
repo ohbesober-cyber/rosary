@@ -1,0 +1,2773 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>묵주기도</title>
+<meta name="theme-color" content="#fef5e3">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="묵주기도">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Gowun+Batang&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue-deep:#141a30;
+    --blue:#1c2445;
+    --blue-panel:#232c55;
+    --gold:#e8c15a;
+    --gold-bright:#f6d98a;
+    --rose:#d98a9a;
+    --ink-dim:#5a6488;
+    --ink-mid:#98a2c8;
+    --line:#2e3763;
+  }
+  body.light{
+    --blue-deep:#faf5ea;
+    --blue:#f4ecdb;
+    --blue-panel:#fffdf7;
+    --gold:#b8892f;
+    --gold-bright:#d4a63c;
+    --rose:#c76a80;
+    --ink-dim:#b3a88f;
+    --ink-mid:#6e6450;
+    --line:#e6dcc5;
+    --bg1:#fdf9f0; --bg2:#faf5ea; --bg3:#f3ead6;
+    --prayer:#4a4234;
+    --ovl:rgba(245,238,225,.96);
+  }
+  body.rose{
+    --blue-deep:#fbf1f2; --blue:#f7e9eb; --blue-panel:#fffafb;
+    --gold:#b8823c; --gold-bright:#d09a4a;
+    --rose:#c25b74;
+    --ink-dim:#c9adb4; --ink-mid:#6e585d; --line:#eed9dd;
+    --bg1:#fdf6f6; --bg2:#faeeee; --bg3:#f5e2e5;
+    --prayer:#4b393d; --ovl:rgba(248,236,238,.96);
+  }
+  body.sky{
+    --blue-deep:#f2f7fc; --blue:#ebf3fa; --blue-panel:#fbfdff;
+    --gold:#4a7cae; --gold-bright:#6d9cc9;
+    --rose:#c0787f;
+    --ink-dim:#a9bccd; --ink-mid:#4f6273; --line:#d9e6f1;
+    --bg1:#f6fafd; --bg2:#ecf4fb; --bg3:#dfecf7;
+    --prayer:#38495a; --ovl:rgba(235,243,250,.96);
+  }
+  body.lavender{
+    --blue-deep:#f6f3fa; --blue:#f0ebf7; --blue-panel:#fcfaff;
+    --gold:#7d68a8; --gold-bright:#9a85c4;
+    --rose:#b877a0;
+    --ink-dim:#bcb2ce; --ink-mid:#5c5470; --line:#e3dcf0;
+    --bg1:#f9f6fc; --bg2:#f1ecf8; --bg3:#e7e0f2;
+    --prayer:#443e52; --ovl:rgba(240,235,248,.96);
+  }
+  body.forest{
+    --blue-deep:#f3f7f0; --blue:#ecf3e8; --blue-panel:#fbfdf9;
+    --gold:#5c7d46; --gold-bright:#7ba05c;
+    --rose:#c07a6a;
+    --ink-dim:#b4c1a6; --ink-mid:#53614a; --line:#dbe6d1;
+    --bg1:#f6faf3; --bg2:#edf4e9; --bg3:#e0ecdb;
+    --prayer:#3d4635; --ovl:rgba(237,244,233,.96);
+  }
+  body.light{
+    background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%) !important;
+  }
+  body.light #prayer{color:var(--prayer);}
+  body.light #panel{background:rgba(252,248,238,.8);}
+  body.light #main{background:radial-gradient(ellipse 70% 45% at 50% 42%,rgba(184,137,47,.07),transparent 70%);}
+  body.light header h1{
+    background:linear-gradient(180deg,var(--gold-bright) 15%,var(--gold) 70%,var(--gold));
+    -webkit-background-clip:text;background-clip:text;
+    text-shadow:0 0 22px rgba(120,110,80,.12);
+  }
+  body.light #calOverlay, body.light #nvOverlay, body.light #voiceOverlay{
+    background:var(--ovl);
+  }
+  body.light #toast{background:var(--blue-panel);}
+  body.light #prayer.karaoke .ch.done{text-shadow:0 0 10px rgba(184,137,47,.2);}
+  body.light #prayer.karaoke .ch.cur{color:#8a6318;text-shadow:0 0 12px rgba(184,137,47,.35);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  @supports (height:100dvh){ html,body{height:100dvh;} }
+  body{
+    position:fixed;inset:0;width:100%;
+    background:linear-gradient(180deg,#181f3a 0%,var(--blue-deep) 45%,#0e1226 100%);
+    color:var(--ink-mid);
+    font-family:'Gowun Batang','Noto Serif KR',serif;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+
+  header{
+    padding:14px 16px 13px;text-align:center;
+    background:transparent;flex:0 0 auto;position:relative;
+  }
+  header::after{
+    content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+    width:150px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    opacity:.55;
+  }
+  header h1{
+    font-family:'Noto Serif KR',serif;font-weight:700;
+    font-size:1.5rem;letter-spacing:.42em;text-indent:.42em;
+    color:var(--gold-bright);
+    background:linear-gradient(180deg,#f8e3a8 20%,var(--gold) 75%,#c9a144);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 24px rgba(232,193,90,.22);
+    display:flex;align-items:center;justify-content:center;gap:14px;
+  }
+  header h1::before, header h1::after{
+    content:'';flex:0 0 34px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold));
+    opacity:.7;letter-spacing:0;text-indent:0;
+  }
+  header h1::after{
+    background:linear-gradient(90deg,var(--gold),transparent);
+  }
+  #mysteryName::before{content:'🌹 ';font-size:.7rem;}
+  #mysteryName{font-size:.82rem;color:var(--rose);letter-spacing:.2em;margin-top:7px;}
+  #dateLine{font-size:.7rem;color:var(--ink-dim);letter-spacing:.1em;margin-top:3px;}
+  #goalLine{font-size:.72rem;color:var(--gold);letter-spacing:.08em;margin-top:4px;line-height:1.6;}
+  #goalLine .nv{color:var(--rose);}
+  input[type=number],input[type=date],#nvTitle{
+    font-family:inherit;background:var(--blue-panel);color:var(--ink-mid);
+    border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.85rem;
+  }
+  input[type=number]{width:56px;text-align:center;}
+
+  /* ── 지향 기도 설정 ── */
+  #nvOverlay{
+    position:fixed;inset:0;background:rgba(12,15,30,.94);
+    display:none;flex-direction:column;align-items:center;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y:auto;z-index:30;
+  }
+  #nvOverlay.open{display:flex;}
+  #nvCard{width:100%;max-width:440px;}
+  #nvCard h2{font-family:'Noto Serif KR',serif;color:var(--gold);font-size:1.05rem;letter-spacing:.2em;text-align:center;margin-bottom:14px;}
+  .nvrow{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+  .nvrow label{font-size:.8rem;color:var(--ink-dim);min-width:64px;}
+  #nvTitle{flex:1;min-width:200px;}
+  #nvStatus{font-size:.78rem;color:var(--ink-mid);line-height:1.8;margin:10px 0;text-align:center;}
+  #nvStatus b{color:var(--rose);}
+  .day.nv{box-shadow:inset 0 -2px 0 var(--ink-dim);}
+  .day.nv.nvmet{box-shadow:inset 0 -2px 0 var(--rose);}
+  #rangeBox{
+    margin-top:14px;background:var(--blue);
+    border:1px solid var(--line);border-radius:12px;padding:12px;
+  }
+  #rangeBox .nvrow{margin-bottom:8px;}
+  #rgResult{font-size:.8rem;color:var(--ink-mid);text-align:center;line-height:1.9;}
+  #rgResult b{color:var(--gold);}
+
+  /* ── 기도 화면 ── */
+  #main{
+    flex:1 1 auto;overflow-y:auto;
+    display:flex;flex-direction:column;
+    padding:18px 6vw;text-align:center;
+    background:radial-gradient(ellipse 70% 45% at 50% 42%,rgba(232,193,90,.05),transparent 70%);
+  }
+  #mainInner{
+    margin:auto;   /* 내용이 짧으면 중앙, 길면 위부터 자연 스크롤 */
+    width:100%;
+    display:flex;flex-direction:column;align-items:center;
+  }
+  #stepTitle{
+    font-family:'Noto Serif KR',serif;
+    color:var(--gold);font-size:1rem;letter-spacing:.3em;text-indent:.3em;
+    margin-bottom:6px;
+  }
+  #stepTitle:not(:empty)::before{
+    content:'✛';display:block;
+    color:var(--rose);font-size:.75rem;letter-spacing:0;text-indent:0;
+    margin-bottom:10px;opacity:.75;
+  }
+  #stepSub{font-size:.78rem;color:var(--ink-dim);letter-spacing:.1em;margin-bottom:18px;}
+  #beads{display:flex;gap:9px;justify-content:center;margin-bottom:20px;min-height:14px;flex-wrap:wrap;}
+  #beads .bd{
+    width:14px;height:14px;border-radius:50%;
+    border:1px solid rgba(90,100,136,.6);
+    background:radial-gradient(circle at 35% 30%,rgba(152,162,200,.15),transparent 60%);
+    transition:all .25s;
+  }
+  #beads .bd.on{
+    background:radial-gradient(circle at 35% 30%,#fbe9b8,var(--gold) 70%);
+    border-color:var(--gold);
+    box-shadow:0 0 9px rgba(232,193,90,.45), inset 0 -1px 2px rgba(0,0,0,.25);
+  }
+  #beads .bd.now{
+    background:radial-gradient(circle at 35% 30%,#f3c4cf,var(--rose) 70%);
+    border-color:var(--rose);
+    box-shadow:0 0 11px rgba(217,138,154,.55), inset 0 -1px 2px rgba(0,0,0,.25);
+  }
+  #prayer{
+    max-width:600px;
+    font-size:var(--fs,1.5rem);
+    line-height:1.95;letter-spacing:.03em;word-break:keep-all;
+    color:#c9d1ee;
+  }
+  #prayer .amen{color:var(--gold);}
+  #prayer .rubric{color:var(--ink-dim);font-size:.8em;}
+  .vtext .rubric{color:var(--ink-dim);font-size:.85em;}
+  #prayer .ch{transition:color .1s linear;}
+  #prayer.karaoke .ch{color:var(--ink-dim);}
+  #prayer.karaoke .ch.done{color:var(--gold);text-shadow:0 0 12px rgba(232,193,90,.3);}
+  #prayer.karaoke .ch.cur{color:var(--gold-bright);text-shadow:0 0 16px rgba(246,217,138,.55);}
+
+  /* ── 하단 ── */
+  #panel{
+    flex:0 0 auto;background:rgba(28,36,69,.65);
+    backdrop-filter:blur(6px);
+    border-top:1px solid var(--line);
+    padding:8px 14px calc(10px + env(safe-area-inset-bottom));
+  }
+  #bar{
+    width:100%;max-width:680px;margin:0 auto 9px;
+    height:3px;background:var(--line);border-radius:2px;
+  }
+  #barFill{height:100%;width:0;background:linear-gradient(90deg,var(--rose),var(--gold-bright));border-radius:2px;transition:width .3s;}
+  .row{display:flex;gap:8px;max-width:680px;margin:0 auto;justify-content:center;align-items:center;flex-wrap:wrap;}
+  .row+.row{margin-top:7px;}
+  button{
+    font-family:inherit;background:transparent;color:var(--ink-mid);
+    border:1px solid var(--line);border-radius:999px;
+    padding:7px 15px;font-size:.85rem;cursor:pointer;letter-spacing:.06em;
+  }
+  button.auto{
+    font-weight:600;padding:7px 12px;
+    border-color:var(--gold);color:var(--gold);
+    white-space:nowrap;
+  }
+  #kSpeed{width:92px;}
+  #btnRefresh{padding:7px 11px;}
+  button.auto.playing{
+    background:rgba(232,193,90,.12);
+  }
+  button.primary{
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    color:#241c05;border-color:var(--gold);
+    font-weight:700;flex:1;max-width:300px;padding:10px 0;font-size:.98rem;
+    box-shadow:0 2px 10px rgba(232,193,90,.25);
+  }
+  button:disabled{opacity:.35;}
+  label.small{font-size:.75rem;color:var(--ink-dim);display:flex;align-items:center;gap:6px;}
+  #more{
+    display:none;
+    position:fixed;left:0;right:0;bottom:0;z-index:25;
+    background:var(--blue-panel);
+    border-top:1px solid var(--gold);
+    border-radius:16px 16px 0 0;
+    padding:16px 16px calc(20px + env(safe-area-inset-bottom));
+    box-shadow:0 -10px 40px rgba(0,0,0,.55);
+    max-height:70%;overflow-y:auto;
+  }
+  #more.open{display:block;}
+  #more .close{width:100%;max-width:680px;display:block;margin:6px auto 0;}
+  input[type=range]{accent-color:var(--gold);width:110px;}
+  select{
+    font-family:inherit;background:var(--blue-panel);color:var(--ink-mid);
+    border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.85rem;
+  }
+
+  /* ── 달력 ── */
+  #calOverlay{
+    position:fixed;inset:0;background:rgba(12,15,30,.94);
+    display:none;flex-direction:column;align-items:center;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y:auto;z-index:30;
+  }
+  #calOverlay.open{display:flex;}
+  #calCard{width:100%;max-width:420px;}
+  #calHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  #calHead h2{font-family:'Noto Serif KR',serif;color:var(--gold);font-size:1.05rem;letter-spacing:.15em;}
+  #calHead button{padding:8px 14px;}
+  #calGrid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+    background:var(--blue);border:1px solid var(--line);border-radius:12px;padding:12px 8px;
+  }
+  .dow{font-size:.7rem;color:var(--ink-dim);text-align:center;padding:4px 0;}
+  .dow.sun{color:var(--rose);}
+  .day{
+    aspect-ratio:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:2px;
+    font-size:.82rem;color:var(--ink-mid);border-radius:8px;
+  }
+  .day.out{opacity:.22;}
+  .day.today{outline:1px solid var(--gold);}
+  .day .mark{
+    min-width:15px;height:15px;border-radius:50%;
+    font-size:.62rem;line-height:15px;text-align:center;
+    color:transparent;background:transparent;
+  }
+  .day.done{color:var(--gold-bright);}
+  .day.done .mark{
+    background:var(--rose);color:#2a1220;font-weight:700;
+    box-shadow:0 0 8px rgba(217,138,154,.7);
+  }
+  #calStats{text-align:center;font-size:.8rem;color:var(--ink-dim);margin-top:14px;line-height:1.8;}
+  #calStats b{color:var(--gold);}
+  #calEdit{
+    display:none;margin-top:14px;
+    background:var(--blue);border:1px solid var(--line);border-radius:12px;
+    padding:12px;text-align:center;
+    align-items:center;justify-content:center;gap:14px;
+  }
+  #calEdit.open{display:flex;}
+  #calEdit span{font-size:.85rem;color:var(--ink-mid);}
+  #calEdit b{color:var(--gold);font-size:1.05rem;min-width:52px;}
+  #calEdit button{padding:6px 16px;font-size:1rem;}
+  .day{cursor:pointer;}
+  .day.sel{background:var(--blue-panel);outline:1px solid var(--rose);}
+  #toast{
+    position:fixed;left:50%;bottom:130px;transform:translateX(-50%);
+    background:var(--blue-panel);border:1px solid var(--gold);color:var(--gold-bright);
+    padding:10px 20px;border-radius:24px;font-size:.9rem;letter-spacing:.05em;
+    opacity:0;pointer-events:none;transition:opacity .3s;z-index:40;white-space:nowrap;
+  }
+  #toast.show{opacity:1;}
+
+  /* ── 목소리 녹음 ── */
+  #voiceOverlay{
+    position:fixed;inset:0;background:rgba(12,15,30,.94);
+    display:none;flex-direction:column;align-items:center;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y:auto;z-index:30;
+  }
+  #voiceOverlay.open{display:flex;}
+  #voiceCard{width:100%;max-width:460px;}
+  #voiceCard h2{
+    font-family:'Noto Serif KR',serif;color:var(--gold);
+    font-size:1.05rem;letter-spacing:.2em;text-align:center;margin-bottom:6px;
+  }
+  #voiceCard p.hint{font-size:.72rem;color:var(--ink-dim);text-align:center;margin-bottom:16px;line-height:1.7;}
+  .vitem{
+    background:var(--blue);border:1px solid var(--line);border-radius:12px;
+    margin-bottom:8px;overflow:hidden;
+  }
+  .vitem.recing{border-color:var(--rose);}
+  .vrow{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 12px;
+  }
+  .vrow .nm{flex:1;font-size:.9rem;color:var(--ink-mid);cursor:pointer;}
+  .vrow .nm .dot{color:var(--ink-dim);margin-right:6px;}
+  .vitem.has .nm .dot{color:var(--rose);}
+  .vrow button{padding:6px 11px;font-size:.78rem;}
+  .vrow button.recing{background:var(--rose);color:#2a1220;border-color:var(--rose);font-weight:700;animation:pulse 1.2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+  .vtext{
+    display:none;
+    padding:4px 16px 16px;
+    font-size:1.05rem;line-height:1.95;letter-spacing:.03em;
+    color:#c9d1ee;word-break:keep-all;
+    border-top:1px dashed var(--line);
+    padding-top:12px;margin:0 12px 12px;
+  }
+  .vtext .amen{color:var(--gold);}
+  .vitem.open .vtext{display:block;}
+  #voiceClose{margin-top:14px;width:100%;max-width:460px;}
+  #calClose{margin-top:18px;width:100%;max-width:420px;}
+
+  /* ── 완료 화면 ── */
+  #doneMsg{display:none;}
+  #doneMsg.show{display:block;}
+  #doneMsg .big{font-size:1.6rem;color:var(--gold);letter-spacing:.2em;margin-bottom:14px;font-family:'Noto Serif KR',serif;}
+
+  /* ── 홈 화면 ── */
+  body.home header, body.home #main, body.home #panel{display:none;}
+  #homeScreen{display:none;flex:1 1 auto;overflow-y:auto;}
+  body.home #homeScreen{display:block;}
+  #homeInner{max-width:520px;margin:0 auto;padding:18px 16px calc(30px + env(safe-area-inset-bottom));}
+  .hhead{text-align:center;margin-bottom:14px;position:relative;padding-bottom:12px;}
+  .hhead::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+    width:150px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.55;}
+  .hhead h1{
+    font-family:'Noto Serif KR',serif;font-weight:700;font-size:1.4rem;
+    letter-spacing:.42em;text-indent:.42em;
+    background:linear-gradient(180deg,#f8e3a8 20%,var(--gold) 75%,#c9a144);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  body.light .hhead h1{background:linear-gradient(180deg,var(--gold-bright) 15%,var(--gold) 70%,var(--gold));
+    -webkit-background-clip:text;background-clip:text;}
+  .hhead .sub{font-size:.72rem;color:var(--ink-dim);letter-spacing:.1em;margin-top:5px;}
+  .hcard{
+    background:var(--blue);border:1px solid var(--line);border-radius:16px;
+    padding:16px;margin-bottom:14px;
+  }
+  .secTitle{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'Noto Serif KR',serif;font-size:.9rem;color:var(--gold);
+    letter-spacing:.15em;margin-bottom:10px;
+  }
+  .secTitle button{padding:5px 12px;font-size:.75rem;}
+  /* 나무 */
+  #treeSvgWrap{display:flex;justify-content:center;}
+  #treeSvgWrap svg{width:min(78vw,300px);height:auto;}
+  @keyframes treeSway{0%,100%{transform:rotate(-1.2deg);}50%{transform:rotate(1.2deg);}}
+  @keyframes leafFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+  #treeNameBadge{text-align:center;margin-bottom:2px;}
+  #treeNameBadge span{
+    background:rgba(232,193,90,.12);color:var(--gold-bright);
+    font-size:.85rem;font-weight:700;padding:5px 16px;border-radius:20px;letter-spacing:.1em;
+  }
+  #treeMeta{font-size:.7rem;color:var(--ink-dim);text-align:center;margin-bottom:8px;}
+  #treeStageBadge{text-align:center;margin-bottom:6px;}
+  #treeStageBadge span{font-size:.7rem;color:var(--ink-mid);background:var(--blue-panel);
+    border:1px solid var(--line);padding:3px 12px;border-radius:12px;}
+  #growMsg{
+    display:none;text-align:center;margin:6px 0;padding:9px 14px;
+    background:rgba(232,193,90,.12);border-radius:12px;
+    font-size:.85rem;font-weight:700;color:var(--gold-bright);
+  }
+  #growMsg.show{display:block;}
+  #treeNext{text-align:center;font-size:.7rem;color:var(--ink-dim);margin:8px 0 10px;
+    padding:6px 10px;background:var(--blue-panel);border-radius:10px;}
+  #treeToday{
+    background:rgba(217,138,154,.1);border-radius:12px;padding:11px 14px;margin-bottom:10px;
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:.82rem;color:var(--rose);line-height:1.5;
+  }
+  #treeToday b{font-size:1.4rem;color:var(--rose);}
+  .tstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .tstats>div{background:var(--blue-panel);border:1px solid var(--line);border-radius:12px;
+    padding:10px 6px;text-align:center;}
+  .tstats .ico{font-size:1.05rem;}
+  .tstats .num{font-size:1.15rem;font-weight:700;color:var(--gold-bright);margin:2px 0;}
+  .tstats .lb{font-size:.62rem;color:var(--ink-dim);}
+  /* 나무 심기 */
+  #treePlant{text-align:center;padding:14px 4px;}
+  #treePlant .seed{font-size:3rem;margin-bottom:10px;}
+  #treePlant p{font-size:.8rem;color:var(--ink-mid);line-height:1.8;margin-bottom:14px;}
+  #treePlant input{
+    width:100%;max-width:280px;font-family:inherit;text-align:center;
+    background:var(--blue-panel);border:1px solid var(--line);border-radius:12px;
+    color:var(--ink-mid);padding:11px;font-size:.95rem;margin-bottom:10px;
+  }
+  /* 지향 목록 */
+  .intent{
+    background:var(--blue-panel);border:1px solid var(--line);border-radius:12px;
+    padding:11px 13px;margin-bottom:8px;cursor:pointer;
+  }
+  .intent .t1{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .intent .nm{font-size:.88rem;color:var(--ink-mid);flex:1;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .intent .tag{font-size:.6rem;padding:2px 8px;border-radius:8px;flex:0 0 auto;
+    border:1px solid var(--line);color:var(--ink-dim);}
+  .intent .tag.grp{color:var(--rose);border-color:var(--rose);}
+  .intent .t2{font-size:.68rem;color:var(--ink-dim);margin-top:5px;display:flex;justify-content:space-between;}
+  .intent .pbar{height:4px;background:var(--line);border-radius:2px;margin-top:7px;overflow:hidden;}
+  .intent .pfill{height:100%;background:linear-gradient(90deg,var(--rose),var(--gold-bright));}
+  .intent.doneIt{opacity:.6;}
+  #intentEmpty{font-size:.75rem;color:var(--ink-dim);text-align:center;padding:8px 0;}
+  /* 홈 하단 버튼 */
+  .homeBtns{margin-top:4px;}
+  .homeBtns .primary.big{width:100%;max-width:none;padding:14px 0;font-size:1.05rem;border-radius:14px;}
+  .homeBtns .row{margin-top:9px;}
+  /* 프로필 */
+  #pfOverlay{
+    position:fixed;inset:0;background:rgba(12,15,30,.96);
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;z-index:50;
+  }
+  body.light #pfOverlay{background:var(--ovl);}
+  #pfOverlay.open{display:flex;}
+  #pfCard{width:100%;max-width:380px;background:var(--blue);border:1px solid var(--line);
+    border-radius:18px;padding:26px 22px;text-align:center;}
+  #pfCard h2{font-family:'Noto Serif KR',serif;color:var(--gold);letter-spacing:.2em;
+    font-size:1.05rem;margin-bottom:8px;}
+  #pfCard p{font-size:.75rem;color:var(--ink-dim);line-height:1.8;margin-bottom:16px;}
+  #pfCard input{
+    width:100%;font-family:inherit;background:var(--blue-panel);
+    border:1px solid var(--line);border-radius:12px;color:var(--ink-mid);
+    padding:12px;font-size:.95rem;margin-bottom:10px;text-align:center;
+  }
+  #pfCard .hintS{font-size:.65rem;color:var(--ink-dim);margin:-4px 0 10px;}
+  #pickOverlay{
+    position:fixed;inset:0;background:var(--ovl,rgba(12,15,30,.94));
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px 16px;z-index:35;
+  }
+  body:not(.light) #pickOverlay{background:rgba(12,15,30,.94);}
+  #pickOverlay.open{display:flex;}
+  #pickCard{width:100%;max-width:420px;}
+  #pickCard h2{font-family:'Noto Serif KR',serif;color:var(--gold);
+    letter-spacing:.2em;font-size:1rem;text-align:center;margin-bottom:14px;}
+  .pick{
+    background:var(--blue);border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;margin-bottom:9px;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .pick:active{border-color:var(--gold);}
+  .pick .pn{font-size:.92rem;color:var(--ink-mid);flex:1;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pick .pd{font-size:.68rem;color:var(--ink-dim);flex:0 0 auto;}
+  .pick.none .pn{color:var(--ink-dim);}
+  #pickCancel{width:100%;max-width:420px;margin-top:10px;}
+  /* ── 기도 모임 ── */
+  .grp{
+    background:var(--blue-panel);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin-bottom:8px;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .grp .gn{font-size:.9rem;color:var(--ink-mid);}
+  .grp .gc{font-size:.65rem;color:var(--ink-dim);}
+  #grpOverlay{
+    position:fixed;inset:0;background:var(--ovl,rgba(12,15,30,.94));
+    display:none;flex-direction:column;align-items:center;
+    padding:22px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y:auto;z-index:35;
+  }
+  body:not(.light) #grpOverlay{background:rgba(12,15,30,.95);}
+  #grpOverlay.open{display:flex;}
+  #grpCard{width:100%;max-width:440px;}
+  #grpCard h2{font-family:'Noto Serif KR',serif;color:var(--gold);letter-spacing:.15em;
+    font-size:1.05rem;text-align:center;margin-bottom:4px;}
+  #grpCode{text-align:center;font-size:.72rem;color:var(--ink-dim);margin-bottom:14px;}
+  #grpCode b{color:var(--rose);letter-spacing:.2em;font-size:.9rem;}
+  #grpCode button{padding:3px 10px;font-size:.65rem;margin-left:6px;}
+  .gday{font-size:.75rem;color:var(--gold);letter-spacing:.1em;margin:12px 0 7px;
+    font-family:'Noto Serif KR',serif;}
+  .frow{
+    background:var(--blue);border:1px solid var(--line);border-radius:12px;
+    padding:10px 13px;margin-bottom:7px;
+  }
+  .frow .f1{display:flex;justify-content:space-between;align-items:center;}
+  .frow .fn{font-size:.85rem;color:var(--ink-mid);}
+  .frow .fn small{color:var(--ink-dim);font-size:.68rem;}
+  .frow .fd{font-size:.95rem;font-weight:700;color:var(--gold-bright);}
+  .frow .fi{font-size:.66rem;color:var(--rose);margin-top:2px;}
+  .stkRow{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;align-items:center;}
+  .stk{
+    border:1px solid var(--line);background:transparent;border-radius:14px;
+    padding:2px 9px;font-size:.8rem;cursor:pointer;
+  }
+  .stk.got{border-color:var(--gold);background:rgba(232,193,90,.1);}
+  .stk .c{font-size:.65rem;color:var(--ink-dim);margin-left:2px;}
+  #grpEmpty{font-size:.75rem;color:var(--ink-dim);text-align:center;padding:14px 0;}
+  #grpBtns{display:flex;gap:8px;justify-content:center;margin-top:14px;}
+  #hGreet{font-size:.75rem;color:var(--ink-mid);text-align:center;margin-bottom:12px;letter-spacing:.05em;}
+  #hGreet b{color:var(--gold-bright);}
+
+  @media (max-width:480px){
+    #prayer{font-size:calc(var(--fs,1.5rem) * .9);}
+  }
+</style>
+</head>
+<body>
+
+<div id="homeScreen">
+ <div id="homeInner">
+  <div class="hhead">
+    <h1>묵 주 기 도</h1>
+    <div class="sub" id="hDate"></div>
+  </div>
+  <div id="hGreet"></div>
+
+  <div class="hcard" id="treeCard">
+    <div id="treePlant">
+      <div class="seed">🌱</div>
+      <p>나의 기도 나무를 심어 볼까요?<br>기도를 봉헌할수록 나무가 자라고,<br>단수가 쌓이면 꽃이 피고, 지향을 성만하면 열매가 열려요.</p>
+      <input id="treeNameInput" placeholder="나무 이름을 지어 주세요" maxlength="12">
+      <button id="btnPlant" class="primary" style="width:100%;max-width:280px;">나무 심기 🌱</button>
+    </div>
+    <div id="treeShow" hidden>
+      <div id="treeNameBadge"><span></span></div>
+      <div id="treeMeta"></div>
+      <div id="treeStageBadge"><span></span></div>
+      <div id="growMsg"></div>
+      <div id="treeSvgWrap"></div>
+      <div id="treeNext"></div>
+      <div id="treeToday"><span id="treeTodayTxt"></span><b id="treeTodayNum">0</b></div>
+      <div class="tstats">
+        <div><div class="ico">🌱</div><div class="num" id="stIntent">0</div><div class="lb">진행 지향</div></div>
+        <div><div class="ico">🌸</div><div class="num" id="stDan">0</div><div class="lb">총 단수</div></div>
+        <div><div class="ico">🍎</div><div class="num" id="stDone">0</div><div class="lb">완료 지향</div></div>
+      </div>
+      <button id="btnTreeShare" style="width:100%;margin-top:10px;">🖼 나무 자랑하기</button>
+    </div>
+  </div>
+
+  <div class="hcard">
+    <div class="secTitle">🕯 기도 지향 <button id="btnAddIntent">＋ 새 지향</button></div>
+    <div id="intentList"></div>
+  </div>
+
+  <div class="hcard">
+    <div class="secTitle">🤝 기도 모임
+      <span>
+        <button id="btnGrpMake">모임 만들기</button>
+        <button id="btnGrpJoin">코드로 참여</button>
+      </span>
+    </div>
+    <div id="grpList"></div>
+  </div>
+
+  <div class="homeBtns">
+    <button id="btnStartPray" class="primary big">📿 기도 시작</button>
+    <div class="row">
+      <button id="btnHomeCal">달력</button>
+      <button id="btnHomeSet">설정 ⚙</button>
+      <button id="btnProfile">내 정보</button>
+    </div>
+  </div>
+ </div>
+</div>
+
+<div id="pickOverlay">
+  <div id="pickCard">
+    <h2>어느 지향으로 봉헌할까요?</h2>
+    <div id="pickList"></div>
+  </div>
+  <button id="pickCancel">돌아가기</button>
+</div>
+
+<div id="grpOverlay">
+  <div id="grpCard">
+    <h2 id="grpName"></h2>
+    <div id="grpCode">초대 코드 <b id="grpCodeV"></b><button id="grpCopy">복사</button></div>
+    <div id="grpFeed"></div>
+    <div id="grpBtns">
+      <button id="grpLeave">모임 나가기</button>
+      <button id="grpClose">닫기</button>
+    </div>
+  </div>
+</div>
+
+<div id="pfOverlay">
+  <div id="pfCard">
+    <h2>처음 오셨군요</h2>
+    <p>기도 나무와 그룹 기도에서 쓰일<br>이름과 아이디를 정해 주세요.</p>
+    <input id="pfName" placeholder="이름 (예: 데레사)" maxlength="10">
+    <input id="pfId" placeholder="아이디 (영문·숫자 3~15자)" maxlength="15" autocapitalize="off">
+    <input id="pfPw" type="password" placeholder="비밀번호 (6자 이상)" maxlength="30">
+    <div class="hintS">처음이면 새 계정이 만들어지고, 기존 아이디면 로그인됩니다.<br>기록이 서버에 보관되어 폰을 바꿔도 이어집니다.</div>
+    <div id="pfStatus" class="hintS" style="color:var(--gold);"></div>
+    <button id="pfSave" class="primary" style="width:100%;">시작하기 🌹</button>
+    <button id="pfSkip" style="width:100%;margin-top:8px;">나중에 (이 기기에만 저장)</button>
+    <button id="pfLogout" style="width:100%;margin-top:8px;display:none;">로그아웃</button>
+    <div style="font-size:.6rem;color:var(--ink-dim);margin-top:10px;">버전 <span class="appver"></span></div>
+  </div>
+</div>
+
+<header>
+  <h1>묵 주 기 도</h1>
+  <div id="mysteryName"></div>
+  <div id="dateLine"></div>
+  <div id="goalLine"></div>
+</header>
+
+<div id="main">
+ <div id="mainInner">
+  <div id="stepTitle"></div>
+  <div id="stepSub"></div>
+  <div id="beads"></div>
+  <div id="prayer"></div>
+  <div id="doneMsg">
+    <div class="big">기도를 마쳤습니다</div>
+    <p id="doneText"></p>
+    <div class="row" style="margin-top:20px;">
+      <button id="btnNextMyst" class="primary">다음 신비 이어가기</button>
+    </div>
+  </div>
+ </div>
+</div>
+
+<div id="panel">
+  <div id="bar"><div id="barFill"></div></div>
+  <div class="row">
+    <button id="btnGoHome">⌂ 홈</button>
+    <button id="btnPrev">이전</button>
+    <button id="btnNext" class="primary">다음 ›</button>
+    <button id="btnMore">설정 ⚙</button>
+  </div>
+  <div class="row">
+    <button id="btnAuto" class="auto">▶ 자동 읽기</button>
+    <label class="small">속도
+      <input type="range" id="kSpeed" min="1.5" max="7" step="0.5" value="3.5">
+    </label>
+    <button id="btnRefresh" title="음성·색칠 새로 고침">⟳</button>
+  </div>
+  <div class="row">
+    <button id="btnDone">🌹 1단 봉헌</button>
+    <button id="btnEnd">🙏 기도 끝내기</button>
+    <button id="btnCal">달력</button>
+  </div>
+</div>
+
+<div id="more">
+  <div class="row">
+    <label class="small">읽어 주기
+      <select id="readSel">
+        <option value="none">글자만 (음성 없음)</option>
+        <option value="rec">내 녹음</option>
+        <option value="tts">기계 음성 (TTS)</option>
+      </select>
+    </label>
+    <label class="small">신비 마친 뒤
+      <select id="contSel">
+        <option value="stop">잠시 멈춤</option>
+        <option value="cont">∞ 멈춤없이 계속</option>
+      </select>
+    </label>
+    <button id="btnVoiceRec">녹음</button>
+    <button id="btnNovena">기도 지향</button>
+  </div>
+  <div class="row">
+    <label class="small">봉헌
+      <select id="modeSel">
+        <option value="manual">수동(직접 체크)</option>
+        <option value="auto">자동(단마다 +1)</option>
+      </select>
+    </label>
+    <label class="small">오늘 목표 <input type="number" id="goalInput" min="0" max="99" value="0"> 단</label>
+    <label class="small">꽃다발 봉헌
+      <select id="spiritSel">
+        <option value="pet">청원기도</option>
+        <option value="thx">감사기도</option>
+      </select>
+    </label>
+  </div>
+  <div class="row">
+    <label class="small">신비 선택
+      <select id="mysterySel">
+        <option value="auto">오늘의 신비(자동)</option>
+        <option value="joyful">환희의 신비</option>
+        <option value="luminous">빛의 신비</option>
+        <option value="sorrowful">고통의 신비</option>
+        <option value="glorious">영광의 신비</option>
+      </select>
+    </label>
+    <label class="small">글자 크기
+      <input type="range" id="fontSize" min="1.1" max="2.4" step="0.1" value="1.5">
+    </label>
+    <label class="small">테마
+      <select id="themeSel">
+        <option value="light">☀️ 화사한 낮 (기본)</option>
+        <option value="rose">🌹 장미 정원</option>
+        <option value="sky">🕊 맑은 하늘</option>
+        <option value="lavender">💜 라벤더</option>
+        <option value="forest">🌿 초록 숲</option>
+        <option value="night">🌙 은은한 밤</option>
+      </select>
+    </label>
+    <button id="btnRestart">처음부터</button>
+  </div>
+  <div style="text-align:center;font-size:.62rem;color:var(--ink-dim);margin-top:6px;">버전 <span class="appver"></span></div>
+  <button class="close" id="moreClose">닫기</button>
+</div>
+
+<div id="calOverlay">
+  <div id="calCard">
+    <div id="calHead">
+      <button id="calPrev">‹</button>
+      <h2 id="calTitle"></h2>
+      <button id="calNext">›</button>
+    </div>
+    <div id="calGrid"></div>
+    <div id="calStats"></div>
+    <div id="calEdit">
+      <span id="calEditDate"></span>
+      <button id="calMinus">−</button>
+      <b id="calEditCnt">0단</b>
+      <button id="calPlus">＋</button>
+    </div>
+    <div id="rangeBox">
+      <div class="nvrow" style="justify-content:center;">
+        <input type="date" id="rgFrom"> ~ <input type="date" id="rgTo">
+      </div>
+      <div id="rgResult"></div>
+    </div>
+  </div>
+  <button id="calClose">닫기</button>
+</div>
+
+<div id="voiceOverlay">
+  <div id="voiceCard">
+    <h2>내 목소리 녹음</h2>
+    <p class="hint">기도문을 하나씩 또박또박 읽어 녹음해 주세요.<br>기도할 때 [내 목소리]를 켜면 녹음이 함께 재생됩니다.<br>● 녹음이 안 되는 환경에서는, 휴대폰 녹음 앱으로 녹음한 뒤 📁 버튼으로 파일을 불러오세요.</p>
+    <div id="voiceList"></div>
+  </div>
+  <button id="voiceClose">닫기</button>
+</div>
+
+<div id="nvOverlay">
+  <div id="nvCard">
+    <h2 id="nvHead">기도 지향</h2>
+    <div class="nvrow"><label>지향</label><input type="text" id="nvTitle" placeholder="예) 가족의 건강을 위하여"></div>
+    <div class="nvrow"><label>구분</label>
+      <select id="nvScope">
+        <option value="personal">개인 기도</option>
+        <option value="group">그룹 기도</option>
+      </select>
+      <select id="nvGroup" style="display:none;"></select>
+      <span id="nvScopeNote" style="font-size:.68rem;color:var(--ink-dim);"></span>
+    </div>
+    <div class="nvrow"><label>형식</label>
+      <select id="nvPreset">
+        <option value="9">9일기도</option>
+        <option value="54">54일기도</option>
+        <option value="0">직접 입력</option>
+      </select>
+      <input type="number" id="nvDays" min="1" max="365" value="9"> 일간
+    </div>
+    <div class="nvrow"><label>시작일</label><input type="date" id="nvStart"></div>
+    <div class="nvrow"><label>하루</label><input type="number" id="nvPerDay" min="1" max="99" value="1"> 단 이상</div>
+    <div id="nvStatus"></div>
+    <div class="row">
+      <button id="nvSave" class="primary">저장</button>
+      <button id="nvClear">삭제</button>
+      <button id="nvClose">닫기</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="voiceFile" accept="audio/*" hidden>
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+/* ═══ 기도문 ═══ */
+const P = {
+  sign: {t:'십자성호', x:'성부와 성자와 성령의 이름으로. <span class="amen">아멘.</span>'},
+  creed:{t:'사도신경', x:'전능하신 천주 성부 천지의 창조주를 저는 믿나이다. 그 외아들 우리 주 예수 그리스도님, 성령으로 인하여 동정 마리아께 잉태되어 나시고, 본시오 빌라도 통치 아래서 고난을 받으시고, 십자가에 못박혀 돌아가시고 묻히셨으며, 저승에 가시어 사흗날에 죽은 이들 가운데서 부활하시고, 하늘에 올라 전능하신 천주 성부 오른편에 앉으시며, 그리로부터 산 이와 죽은 이를 심판하러 오시리라 믿나이다. 성령을 믿으며, 거룩하고 보편된 교회와 모든 성인의 통공을 믿으며, 죄의 용서와 육신의 부활을 믿으며, 영원한 삶을 믿나이다. <span class="amen">아멘.</span>'},
+  lord: {t:'주님의 기도', x:'하늘에 계신 우리 아버지, 아버지의 이름이 거룩히 빛나시며, 아버지의 나라가 오시며, 아버지의 뜻이 하늘에서와 같이 땅에서도 이루어지소서. 오늘 저희에게 일용할 양식을 주시고, 저희에게 잘못한 이를 저희가 용서하오니 저희 죄를 용서하시고, 저희를 유혹에 빠지지 않게 하시고 악에서 구하소서. <span class="amen">아멘.</span>'},
+  hail: {t:'성모송', x:'은총이 가득하신 마리아님, 기뻐하소서! 주님께서 함께 계시니 여인 중에 복되시며, 태중의 아들 예수님 또한 복되시나이다. 천주의 성모 마리아님, 이제와 저희 죽을 때에 저희 죄인을 위하여 빌어 주소서. <span class="amen">아멘.</span>'},
+  glory:{t:'영광송', x:'영광이 성부와 성자와 성령께, 처음과 같이 이제와 항상 영원히. <span class="amen">아멘.</span>'},
+  fatima:{t:'구원송', x:'예수님, 저희 죄를 용서하시며, 저희를 지옥 불에서 구하시고, 연옥 영혼을 돌보시며, 가장 버림받은 영혼을 돌보소서.'},
+  spirit:{t:'신령성체를 위한 기도', x:'지극히 거룩하신 예수님, 참으로 성체 안에 계시는 당신을 사랑하며 제 안에 모시기를 간절히 원하나이다. 지금은 비록 당신을 직접 모실 수 없사오나, 당신은 신령한 방법으로 제 마음에 오실 수 있나이다. 이제 제가 묵주기도를 바치며 기억하는 당신 어머니의 티 없는 성심을 통해 영적으로 제게 오시어 길이 머무르소서. 또한 제가 당신을 떠나지 않고 당신의 사랑을 증거하고 실천하며 살게 하소서.'},
+  spiritP:{t:'꽃다발 봉헌 (청원)', x:'<span class="rubric">(청원기도를 바칠 때)</span> 너그러우신 어머니, 신령성체의 기도로 묶어 바치는 이 영적 꽃다발을 받으소서. 그리고 제가 하느님께 청하는 모든 은혜를 받아 누리도록 함께 기억하며 빌어 주소서. 또한 저를 온갖 위험과 고통 중에서 돌보아 주시며 제가 죽을 때에 저를 저버리지 마옵소서. <span class="amen">아멘.</span>'},
+  spiritT:{t:'꽃다발 봉헌 (감사)', x:'<span class="rubric">(감사기도를 바칠 때)</span> 너그러우신 어머니, 신령성체의 기도로 묶어 바치는 이 영적 꽃다발을 받으소서. 그리고 저를 위해 하느님께 은혜를 빌어 주심에 감사드리오니 받아 주소서. 또한 은혜를 내려 주신 하느님께 감사드리는 저와 함께해 주소서. <span class="amen">아멘.</span>'},
+  salve:{t:'성모찬송', x:'모후이시며 사랑이 넘친 어머니, 우리의 생명, 기쁨, 희망이시여, 당신 우러러 하와의 그 자손들이 눈물을 흘리며 부르짖나이다, 슬픔의 골짜기에서. 우리들의 보호자 성모님, 불쌍한 저희를 인자로운 눈으로 굽어보소서. 귀양살이 끝날 때에 당신의 아들 우리 주 예수님 뵙게 하소서. 너그러우시고, 자애로우시며 오! 아름다우신 동정 마리아님.'},
+  salveOra:{t:'마침 기도', x:'<span class="rubric">○</span> 천주의 성모님, 저희를 위하여 빌어 주시어 <span class="rubric">●</span> 그리스도께서 약속하신 영원한 생명을 얻게 하소서. <span class="rubric">† 기도합시다.</span> 하느님, 외아드님이 삶과 죽음과 부활로 저희에게 영원한 구원을 마련해 주셨나이다. 복되신 동정 마리아와 함께 이 신비를 묵상하며 묵주기도를 바치오니 저희가 그 가르침을 따라 영원한 생명을 얻게 하소서. 우리 주 그리스도를 통하여 비나이다. <span class="amen">◎ 아멘.</span>'}
+};
+
+/* ═══ 신비 ═══ */
+const MYST = {
+  joyful:  {name:'환희의 신비', days:[1,6], m:[
+    '마리아께서 예수님을 잉태하심을 묵상합시다',
+    '마리아께서 엘리사벳을 찾아보심을 묵상합시다',
+    '마리아께서 예수님을 낳으심을 묵상합시다',
+    '마리아께서 예수님을 성전에 바치심을 묵상합시다',
+    '마리아께서 잃으셨던 예수님을 성전에서 찾으심을 묵상합시다']},
+  luminous:{name:'빛의 신비', days:[4], m:[
+    '예수님께서 세례받으심을 묵상합시다',
+    '예수님께서 가나에서 첫 기적을 행하심을 묵상합시다',
+    '예수님께서 하느님 나라를 선포하심을 묵상합시다',
+    '예수님께서 거룩하게 변모하심을 묵상합시다',
+    '예수님께서 성체성사를 세우심을 묵상합시다']},
+  sorrowful:{name:'고통의 신비', days:[2,5], m:[
+    '예수님께서 저희를 위하여 피땀 흘리심을 묵상합시다',
+    '예수님께서 저희를 위하여 매맞으심을 묵상합시다',
+    '예수님께서 저희를 위하여 가시관 쓰심을 묵상합시다',
+    '예수님께서 저희를 위하여 십자가 지심을 묵상합시다',
+    '예수님께서 저희를 위하여 십자가에 못박혀 돌아가심을 묵상합시다']},
+  glorious:{name:'영광의 신비', days:[3,0], m:[
+    '예수님께서 부활하심을 묵상합시다',
+    '예수님께서 승천하심을 묵상합시다',
+    '예수님께서 성령을 보내심을 묵상합시다',
+    '예수님께서 성모님을 하늘에 불러올리심을 묵상합시다',
+    '예수님께서 성모님께 천상 모후의 관을 씌우심을 묵상합시다']}
+};
+function todayKey(){
+  const d=new Date().getDay();
+  for(const k in MYST) if(MYST[k].days.includes(d)) return k;
+  return 'joyful';
+}
+
+/* ═══ 기도 순서 구성 ═══ */
+let mystKey=todayKey();
+let steps=[];
+let counted=new Set();   /* 이번 회차에서 이미 봉헌 처리된 단 번호 */
+let pendingDan=0;        /* 수동 봉헌 모드에서 아직 정산 전인 이번 기도 단수 */
+function buildSteps(){
+  const M=MYST[mystKey];
+  steps=[]; counted=new Set();
+  steps.push({p:P.sign});
+  steps.push({p:P.creed});
+  steps.push({p:P.lord});
+  for(let i=1;i<=3;i++) steps.push({p:P.hail, bead:i, of:3, sub:'성모송 '+i+' / 3'});
+  steps.push({p:P.glory});
+  steps.push({p:P.fatima});
+  for(let d=0; d<5; d++){
+    steps.push({p:{t:'제'+(d+1)+'단 묵상', x:M.m[d]}, sub:M.name+' 제'+(d+1)+'단', med:true});
+    steps.push({p:P.lord, sub:M.name+' 제'+(d+1)+'단'});
+    for(let i=1;i<=10;i++)
+      steps.push({p:P.hail, bead:i, of:10, sub:M.name+' 제'+(d+1)+'단 · 성모송 '+i+' / 10'});
+    steps.push({p:P.glory, sub:M.name+' 제'+(d+1)+'단'});
+    steps.push({p:P.fatima, sub:M.name+' 제'+(d+1)+'단', dEnd:true, dNo:d});
+  }
+  steps.push({p:P.spirit});
+  steps.push({p: settings.spirit==='thx' ? P.spiritT : P.spiritP});
+  steps.push({p:P.salve});
+  steps.push({p:P.salveOra});
+  steps.push({p:P.sign});
+}
+
+const $=id=>document.getElementById(id);
+for(const k in P) P[k].id=k;
+
+/* ═══ 내 목소리 녹음/재생 ═══ */
+const voices={};          /* {id: dataURL} */
+const voiceAudio=new Audio();
+let voiceOn=false, voicePlaying=false;
+let mediaRec=null, recChunks=[], recId=null, openText=null, voiceFileTarget=null;
+
+$('voiceFile').onchange=e=>{
+  const f=e.target.files[0], k=voiceFileTarget;
+  e.target.value='';
+  if(!f||!k) return;
+  if(f.size>4*1024*1024){
+    alert('파일이 너무 큽니다(4MB 이하 권장).\n기도문 하나씩 짧게 녹음해 주세요.');
+    return;
+  }
+  const r=new FileReader();
+  r.onload=async()=>{
+    voices[k]=r.result;
+    const ok=await kvSet('rosary-voice-'+k, r.result);
+    if(!ok) toast('저장 공간이 부족해 이번만 사용됩니다');
+    drawVoiceList();
+    toast(P[k].t+' 녹음을 연결했습니다');
+  };
+  r.readAsDataURL(f);
+};
+
+async function loadVoices(){
+  for(const k in P){
+    const v=await kvGet('rosary-voice-'+k);
+    if(v && v.length>50) voices[k]=v;
+  }
+}
+function drawVoiceList(){
+  const box=$('voiceList'); box.innerHTML='';
+  for(const k in P){
+    const item=document.createElement('div');
+    item.className='vitem'
+      +(voices[k]?' has':'')
+      +(recId===k?' recing open':'')
+      +(openText===k?' open':'');
+    const row=document.createElement('div');
+    row.className='vrow';
+    const nm=document.createElement('span');
+    nm.className='nm';
+    nm.innerHTML='<span class="dot">●</span>'+P[k].t+' <small style="color:var(--ink-dim)">▾</small>';
+    nm.onclick=()=>{ openText = openText===k ? null : k; drawVoiceList(); };
+    const bRec=document.createElement('button');
+    bRec.textContent = recId===k ? '■ 정지' : '● 녹음';
+    if(recId===k) bRec.classList.add('recing');
+    bRec.onclick=()=>toggleRec(k);
+    const bFile=document.createElement('button');
+    bFile.textContent='📁';
+    bFile.title='녹음 파일 불러오기';
+    bFile.onclick=()=>{ voiceFileTarget=k; $('voiceFile').click(); };
+    const bPlay=document.createElement('button');
+    bPlay.textContent='▶'; bPlay.disabled=!voices[k];
+    bPlay.onclick=()=>{ voiceAudio.src=voices[k]; voiceAudio.play(); };
+    const bDel=document.createElement('button');
+    bDel.textContent='지움'; bDel.disabled=!voices[k];
+    bDel.onclick=async()=>{ delete voices[k]; try{ if(window.storage) await window.storage.delete('rosary-voice-'+k); }catch(e){} try{ localStorage.removeItem('rosary-voice-'+k); }catch(e){} drawVoiceList(); };
+    row.append(nm,bRec,bFile,bPlay,bDel);
+    const txt=document.createElement('div');
+    txt.className='vtext';
+    txt.innerHTML=P[k].x;
+    item.append(row,txt);
+    box.appendChild(item);
+  }
+}
+async function toggleRec(k){
+  if(recId===k){ mediaRec.stop(); return; }
+  if(recId){ mediaRec.stop(); }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    recChunks=[]; recId=k;
+    mediaRec=new MediaRecorder(stream);
+    mediaRec.ondataavailable=e=>recChunks.push(e.data);
+    mediaRec.onstop=()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      const blob=new Blob(recChunks,{type:mediaRec.mimeType||'audio/webm'});
+      const r=new FileReader();
+      r.onload=async()=>{
+        voices[k]=r.result;
+        const ok=await kvSet('rosary-voice-'+k, r.result);
+        if(!ok) toast('저장 공간이 부족해 이번만 사용됩니다');
+        recId=null; drawVoiceList();
+        toast(P[k].t+' 녹음을 저장했습니다');
+      };
+      r.readAsDataURL(blob);
+    };
+    mediaRec.start();
+    openText=k;
+    drawVoiceList();
+    const items=document.querySelectorAll('.vitem.recing');
+    if(items[0]) items[0].scrollIntoView({block:'center',behavior:'smooth'});
+  }catch(err){
+    alert('마이크를 사용할 수 없습니다.\n브라우저의 마이크 권한을 허용해 주세요.\n(일부 환경에서는 서버에 올린 뒤에만 녹음이 가능합니다.)');
+    recId=null; drawVoiceList();
+  }
+}
+$('btnVoiceRec').onclick=()=>{ closeMore(); stopVoice(); drawVoiceList(); $('voiceOverlay').classList.add('open'); };
+$('voiceClose').onclick=()=>{ if(recId&&mediaRec) mediaRec.stop(); voiceAudio.pause(); $('voiceOverlay').classList.remove('open'); };
+$('readSel').onchange=e=>{
+  settings.read=e.target.value; saveSettings();
+  voiceOn=(settings.read==='rec');
+  if(settings.read==='tts' && !('speechSynthesis' in window))
+    alert('이 기기에서는 기계 음성(TTS)을 지원하지 않습니다.');
+  refreshStep(true);
+};
+$('themeSel').onchange=e=>{
+  settings.theme=e.target.value; saveSettings();
+  applyTheme(settings.theme);
+};
+$('contSel').onchange=e=>{
+  settings.cont=(e.target.value==='cont'); saveSettings();
+  toast(settings.cont?'∞ 멈춤없이 계속 이어갑니다':'신비를 마치면 잠시 멈춥니다');
+  if(kOn) refreshStep(true);
+};
+function stopVoice(){ voicePlaying=false; voiceResume=false; voiceAudio.pause(); voiceAudio.currentTime=0; if(typeof stopTTS==='function') stopTTS(); }
+voiceAudio.onended=()=>{
+  if(!voicePlaying) return;
+  voicePlaying=false;
+  setTimeout(()=>{ if(idx<steps.length){ advance(); } },500);
+};
+const ORDER=['joyful','luminous','sorrowful','glorious'];
+let idx=0, finished=false;
+let kOn=false, kRate=3.5, kProg=0, kLast=0, kChars=[], kHold=0;
+
+let lastScrollCi=-1;
+function ensureVisible(el,ci){
+  if(ci===lastScrollCi || !el) return;
+  lastScrollCi=ci;
+  const m=$('main'), r=el.getBoundingClientRect(), mr=m.getBoundingClientRect();
+  if(r.bottom>mr.top+mr.height*0.72 || r.top<mr.top+mr.height*0.12)
+    el.scrollIntoView({block:'center',behavior:'smooth'});
+}
+function renderPrayer(html){
+  const pr=$('prayer');
+  pr.classList.toggle('karaoke',kOn);
+  const tmp=document.createElement('div'); tmp.innerHTML=html;
+  pr.innerHTML=''; kChars=[]; kProg=0; kHold=0; lastScrollCi=-1;
+  (function walk(node,cls){
+    node.childNodes.forEach(ch=>{
+      if(ch.nodeType===3){
+        for(const c of ch.textContent){
+          const s=document.createElement('span');
+          s.textContent=c;
+          s.className='ch'+(cls?' '+cls:'');
+          pr.appendChild(s);
+          if(c.trim() && cls!=='rubric') kChars.push(s);
+        }
+      }else{
+        let c2=cls;
+        if(ch.classList?.contains('amen')) c2='amen';
+        if(ch.classList?.contains('rubric')) c2='rubric';
+        walk(ch,c2);
+      }
+    });
+  })(tmp,'');
+}
+function show(){
+  const done = idx>=steps.length;
+  $('doneMsg').classList.toggle('show',done);
+  $('prayer').style.display=done?'none':'';
+  $('beads').style.display=done?'none':'';
+  if(done){
+    clearBM();
+    $('stepTitle').textContent='';
+    $('stepSub').textContent='';
+    $('barFill').style.width='100%';
+    $('btnNext').textContent='달력 보기';
+    if(!finished){
+      finished=true;
+      if(settings.cont){
+        /* 멈춤없이: 곧바로 다음 신비로 */
+        const t=log[ymd(new Date())]||0;
+        $('doneText').innerHTML='∞ '+MYST[mystKey].name+' 5단을 마쳤습니다'
+          +(settings.mode==='auto'?' (오늘 <b style="color:var(--gold)">'+t+'단</b>)':'')
+          +'<br>다음 신비로 이어갑니다…';
+        setTimeout(()=>{ if(finished) nextMystery(); },800);
+      }else if(settings.mode==='auto'){
+        const t=log[ymd(new Date())]||0;
+        $('doneText').innerHTML=MYST[mystKey].name+' 5단을 모두 봉헌하셨습니다. (오늘 <b style="color:var(--gold)">'+t+'단</b>)<br>잠시 후 다음 신비로 이어집니다…';
+        setTimeout(()=>{ if(finished) nextMystery(); },1800);
+      }else{
+        const t=log[ymd(new Date())]||0;
+        $('doneText').innerHTML='기도를 마치셨습니다.'
+          +(pendingDan>0?'<br>🙏 <b>기도 끝내기</b>를 누르시면 이번에 마치신 <b>'+pendingDan+'단</b>이 기록됩니다.':'')
+          +(t>0?'<br>(오늘 지금까지 '+t+'단)':'')
+          +'<br>주님의 평화가 함께하시길 빕니다. †';
+      }
+    }
+    return;
+  }
+  const s=steps[idx];
+  $('main').scrollTop=0;
+  $('stepTitle').textContent=s.p.t;
+  $('stepSub').textContent=s.sub||'';
+  renderPrayer(s.p.x);
+  const bd=$('beads'); bd.innerHTML='';
+  if(s.bead){
+    for(let i=1;i<=s.of;i++){
+      const b=document.createElement('span');
+      b.className='bd'+(i<s.bead?' on':i===s.bead?' now':'');
+      bd.appendChild(b);
+    }
+  }
+  $('barFill').style.width=(idx/steps.length*100)+'%';
+  $('btnNext').textContent='다음 ›';
+  $('btnPrev').disabled = idx===0;
+  /* 내 목소리 재생 */
+  stopVoice();
+  const pid=s.p.id;
+  if(kOn && settings.read==='tts'){
+    speakStep();
+  }else if(kOn && voiceOn && pid && voices[pid]){
+    voiceAudio.src=voices[pid];
+    voiceAudio.play().then(()=>{ voicePlaying=true; }).catch(()=>{});
+    voicePlaying=true;
+  }
+  saveBM();
+}
+
+function advance(){
+  const s=steps[idx];
+  idx++;
+  if(s && s.dEnd && !counted.has(s.dNo)){
+    counted.add(s.dNo);
+    if(settings.mode==='auto'){
+      markToday().then(()=>toast('🌹 오늘 '+(log[ymd(new Date())]||0)+'단째 봉헌'));
+    }else{
+      pendingDan++;
+      toast('🌹 '+pendingDan+'단째 (기도 끝내기 시 기록됩니다)');
+    }
+  }
+  show();
+}
+
+/* ═══ 따라 읽기(글자 색칠) ═══ */
+function kTick(ts){
+  /* TTS 안전 장치 */
+  if(kOn && settings.read==='tts' && idx<steps.length && ttsPlaying){
+    const el=performance.now()-ttsT0;
+    if(!ttsStarted && el>1800 && !ttsRetried){
+      /* 발화가 시작조차 안 됨 → 한 번만 다시 시도 */
+      ttsRetried=true; speakStep();
+    }else if(ttsStarted && el > ttsEst*1.8+2500){
+      /* 종료 신호가 유실됨 → 끝난 것으로 간주하고 다음으로 */
+      ttsPlaying=false;
+      if(kOn && idx<steps.length) advance();
+    }
+  }
+  if(idx<steps.length && kChars.length && (kOn || voicePlaying || ttsPlaying)){
+    if(ttsPlaying){
+      /* 경계 이벤트가 오면 실제 발화 위치, 아니면 보정된 시간 추정 */
+      const est=Math.min((performance.now()-ttsT0)/ttsEst,1)*kChars.length;
+      const p=ttsHasBoundary
+        ? Math.min(ttsBoundaryPos/ttsLen,1)*kChars.length
+        : est;
+      const ci=Math.min(Math.floor(p),kChars.length-1);
+      $('prayer').classList.add('karaoke');
+      kChars.forEach((c,i)=>{
+        c.classList.toggle('done', i<ci || p>=kChars.length);
+        c.classList.toggle('cur', i===ci && p<kChars.length);
+      });
+      ensureVisible(kChars[ci],ci);
+      kLast=ts;
+      requestAnimationFrame(kTick);
+      return;
+    }
+    if(voicePlaying && voiceAudio.duration){
+      /* 녹음 길이에 맞춰 색칠 */
+      const p=Math.min(voiceAudio.currentTime/voiceAudio.duration,1)*kChars.length;
+      const ci=Math.min(Math.floor(p),kChars.length-1);
+      $('prayer').classList.add('karaoke');
+      kChars.forEach((c,i)=>{
+        c.classList.toggle('done', i<ci || p>=kChars.length);
+        c.classList.toggle('cur', i===ci && p<kChars.length);
+      });
+      ensureVisible(kChars[ci],ci);
+    }else if(kOn && settings.read!=='tts' && kLast){
+      if(kProg<kChars.length){
+        kProg=Math.min(kProg+(ts-kLast)/1000*kRate, kChars.length);
+        const ci=Math.min(Math.floor(kProg),kChars.length-1);
+        kChars.forEach((c,i)=>{
+          c.classList.toggle('done', i<ci || kProg>=kChars.length);
+          c.classList.toggle('cur', i===ci && kProg<kChars.length);
+        });
+        ensureVisible(kChars[ci],ci);
+      }else{
+        kHold+=(ts-kLast)/1000;
+        if(kHold>0.9){ advance(); }
+      }
+    }
+    kLast=ts;
+  }else kLast=ts;
+  requestAnimationFrame(kTick);
+}
+requestAnimationFrame(kTick);
+let voiceResume=false;
+let wakeLock=null;
+async function holdWake(on){
+  try{
+    if(on){
+      if(!wakeLock && 'wakeLock' in navigator)
+        wakeLock=await navigator.wakeLock.request('screen');
+    }else if(wakeLock){
+      await wakeLock.release(); wakeLock=null;
+    }
+  }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible' && kOn) holdWake(true);
+});
+let ttsPlaying=false, ttsRestart=false, ttsT0=0, ttsEst=1;
+let ttsHasBoundary=false, ttsBoundaryPos=0, ttsLen=1, ttsRate=1;
+let ttsToken=0, ttsStarted=false, ttsRetried=false;
+function ttsText(x){
+  const t=document.createElement('div'); t.innerHTML=x;
+  t.querySelectorAll('.rubric').forEach(n=>n.remove());
+  return t.textContent||'';
+}
+function ttsRateFromSlider(){
+  /* 슬라이더(1.5~7) → 낭독 속도 0.55~1.5배 */
+  return 0.55 + (kRate-1.5)/(7-1.5)*(1.5-0.55);
+}
+function stopTTS(){
+  ttsPlaying=false; ttsRestart=false; ttsHasBoundary=false;
+  try{ speechSynthesis.cancel(); }catch(e){}
+}
+function speakStep(){
+  if(!kOn) return;   /* TTS는 ▶ 자동 읽기가 켜져 있을 때만 */
+  const s=steps[idx]; if(!s || !('speechSynthesis' in window)) return;
+  const txt=ttsText(s.p.x); if(!txt.trim()) return;
+  const tok=++ttsToken;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  ttsPlaying=true; ttsStarted=false; ttsRetried=false;
+  ttsHasBoundary=false; ttsBoundaryPos=0;
+  ttsRate=ttsRateFromSlider();
+  const nonSpace=txt.replace(/\s/g,'');
+  ttsLen=Math.max(nonSpace.length,1);
+  const map=new Array(txt.length+1); let c=0;
+  for(let i=0;i<txt.length;i++){ map[i]=c; if(txt[i].trim()) c++; }
+  map[txt.length]=c;
+  ttsT0=performance.now();
+  const cps=(settings.ttsCps||3.3)*ttsRate;
+  ttsEst=Math.max(ttsLen/cps*1000,1500);
+  const myIdx=idx;
+  /* cancel 직후 바로 speak하면 일부 기기에서 무시되므로 잠시 띄운다 */
+  setTimeout(()=>{
+    if(tok!==ttsToken || !ttsPlaying || idx!==myIdx) return;
+    try{
+      const u=new SpeechSynthesisUtterance(txt);
+      u.lang='ko-KR';
+      u.rate=ttsRate;
+      u.onstart=()=>{
+        if(tok!==ttsToken) return;
+        ttsStarted=true;
+        ttsT0=performance.now();   /* 실제 발화 시작에 맞춰 색칠 기준 재설정 */
+      };
+      u.onboundary=e=>{
+        if(tok!==ttsToken || idx!==myIdx) return;
+        if(typeof e.charIndex==='number' && e.charIndex>=0){
+          ttsHasBoundary=true; ttsStarted=true;
+          ttsBoundaryPos=map[Math.min(e.charIndex,txt.length)];
+        }
+      };
+      u.onend=()=>{
+        if(tok!==ttsToken || !ttsPlaying || idx!==myIdx) return;
+        const sec=(performance.now()-ttsT0)/1000;
+        if(ttsStarted && sec>1 && ttsLen>5){
+          const baseCps=ttsLen/sec/ttsRate;
+          if(baseCps>0.5 && baseCps<15){
+            settings.ttsCps = settings.ttsCps ? settings.ttsCps*0.5+baseCps*0.5 : baseCps;
+            saveSettings();
+          }
+        }
+        ttsPlaying=false;
+        setTimeout(()=>{ if(kOn && idx===myIdx && idx<steps.length) advance(); },400);
+      };
+      u.onerror=()=>{ if(tok===ttsToken) ttsPlaying=false; };
+      try{ speechSynthesis.resume(); }catch(e){}
+      speechSynthesis.speak(u);
+    }catch(e){ if(tok===ttsToken) ttsPlaying=false; }
+  },180);
+}
+function updateAutoBtn(){
+  const b=$('btnAuto');
+  b.textContent = kOn? '⏸ 멈추기' : '▶ 자동 읽기';
+  b.classList.toggle('playing',kOn);
+}
+$('btnAuto').onclick=()=>{
+  if(kOn){
+    /* 멈추기: 진행 위치 보존 */
+    kOn=false;
+    holdWake(false);
+    if(voicePlaying){ voiceAudio.pause(); voicePlaying=false; voiceResume=true; }
+    if(ttsPlaying||settings.read==='tts'){ stopTTS(); ttsToken++; ttsRestart=true; }
+    kLast=0;
+  }else{
+    /* 시작/이어서 */
+    kOn=true; kLast=0;
+    holdWake(true);
+    $('prayer').classList.add('karaoke');
+    const s=steps[idx];
+    if(settings.read==='tts'){
+      if(!ttsPlaying) speakStep();   /* 일시정지 후에는 해당 기도문 처음부터 다시 읽음 */
+    }else if(voiceResume && voiceAudio.src && !voiceAudio.ended){
+      voiceAudio.play(); voicePlaying=true; voiceResume=false;
+    }else if(voiceOn && s && s.p.id && voices[s.p.id] && !voicePlaying){
+      voiceAudio.src=voices[s.p.id];
+      voiceAudio.play().catch(()=>{});
+      voicePlaying=true;
+    }
+  }
+  updateAutoBtn();
+};
+$('kSpeed').oninput=e=>{ kRate=parseFloat(e.target.value); };
+function refreshStep(quiet){
+  stopVoice();                       /* 녹음·TTS 모두 정지 */
+  try{ speechSynthesis.cancel(); }catch(e){}
+  voiceResume=false; ttsRestart=false;
+  kProg=0; kHold=0; kLast=0;
+  show();                            /* 현재 기도문을 처음부터 다시 (자동 읽기 켜져 있으면 곧바로 재생) */
+  if(!quiet) toast('⟳ 새로 시작합니다');
+}
+$('kSpeed').onchange=()=>{ if(kOn) refreshStep(true); };
+$('btnRefresh').onclick=()=>refreshStep(false);
+function nextMystery(){
+  const ni=(ORDER.indexOf(mystKey)+1)%ORDER.length;
+  mystKey=ORDER[ni];
+  $('mysterySel').value=mystKey;
+  buildSteps(); idx=0; finished=false; refreshHead(); show();
+}
+$('btnNextMyst').onclick=e=>{ e.stopPropagation(); nextMystery(); };
+$('btnNext').onclick=()=>{
+  if(idx>=steps.length){ openCal(); return; }
+  advance();
+};
+$('btnPrev').onclick=()=>{ if(idx>0){ idx--; finished=finished&&idx>=steps.length; show(); } };
+$('btnRestart').onclick=()=>{ clearBM(); idx=0; finished=false; show(); updateGoalLine(); };
+let toastTimer=null;
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+$('btnMore').onclick=()=>{
+  const o=$('more').classList.toggle('open');
+  $('btnMore').classList.toggle('on',o);
+  $('btnMore').style.color=o?'var(--gold)':'';
+  $('btnMore').style.borderColor=o?'var(--gold)':'';
+};
+function closeMore(){ $('more').classList.remove('open'); $('btnMore').style.color=''; $('btnMore').style.borderColor=''; }
+$('moreClose').onclick=closeMore;
+document.addEventListener('pointerdown',e=>{
+  if($('more').classList.contains('open')
+     && !e.target.closest('#more') && !e.target.closest('#btnMore')) closeMore();
+});
+[['calOverlay',null],['nvOverlay',null],['voiceOverlay','vo']].forEach(([id,kind])=>{
+  $(id).addEventListener('click',e=>{
+    if(e.target!==$(id)) return;
+    if(kind==='vo'){ if(recId&&mediaRec) mediaRec.stop(); voiceAudio.pause(); }
+    $(id).classList.remove('open');
+    if(document.body.classList.contains('home')) renderHome();
+  });
+});
+$('btnDone').onclick=async e=>{
+  e.stopPropagation();
+  await markToday();
+  toast('🌹 오늘 '+log[ymd(new Date())]+'단을 봉헌하셨습니다');
+};
+$('btnEnd').onclick=async e=>{
+  e.stopPropagation();
+  stopVoice();
+  const n=pendingDan;
+  const today=log[ymd(new Date())]||0;
+  const msg = settings.mode==='manual'
+    ? (n>0 ? '이번 기도에서 마치신 '+n+'단을 기록에 더하고 마칩니다.\n(오늘 '+today+'단 → '+(today+n)+'단)' : '기도를 마칩니다. (오늘 '+today+'단)')
+    : '기도를 마칩니다. (오늘 '+today+'단 봉헌)';
+  if(!confirm('🙏 '+msg)) return;
+  if(settings.mode==='manual' && n>0) await markToday(n);
+  pendingDan=0;
+  const keptBM = idx>0 && idx<steps.length;
+  if(keptBM) saveBM(); else clearBM();
+  const bmTxt=keptBM&&bmLabel? ' · 📖 '+bmLabel+'에 책갈피' : '';
+  idx=0; finished=false; buildSteps(); show();
+  updateGoalLine();
+  toast('오늘 모두 '+(log[ymd(new Date())]||0)+'단 봉헌'+bmTxt);
+  curIntent=null;
+  showHome();
+};
+$('main').onclick=e=>{ if(e.target.closest('#doneMsg'))return; $('btnNext').click(); };
+$('fontSize').oninput=e=>$('prayer').style.setProperty('--fs',e.target.value+'rem');
+$('mysterySel').onchange=e=>{
+  mystKey = e.target.value==='auto'? todayKey() : e.target.value;
+  buildSteps(); idx=0; finished=false; refreshHead(); show();
+};
+function refreshHead(){
+  const n=new Date();
+  $('mysteryName').textContent=MYST[mystKey].name;
+  $('dateLine').textContent=n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일 '+'일월화수목금토'[n.getDay()]+'요일';
+}
+
+/* ═══ 저장 ═══ */
+async function kvSet(k,v){
+  try{ if(window.storage){ await window.storage.set(k,v); return true; } }catch(e){}
+  try{ localStorage.setItem(k,v); return true; }catch(e){}
+  return false;
+}
+async function kvGet(k){
+  try{ if(window.storage){ const r=await window.storage.get(k); if(r&&r.value!=null) return r.value; } }catch(e){}
+  try{ return localStorage.getItem(k); }catch(e){}
+  return null;
+}
+let log={};   /* { 'YYYY-MM-DD': 단수 } */
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+async function loadLog(){
+  try{
+    const v2=await kvGet('rosary-log-v2');
+    if(v2){ log=JSON.parse(v2)||{}; return; }
+    const v1=await kvGet('rosary-log-v1');   /* 구버전(완료일 목록) 이전 */
+    if(v1){ (JSON.parse(v1)||[]).forEach(d=>log[d]=1);
+      await kvSet('rosary-log-v2',JSON.stringify(log)); }
+  }catch(e){}
+}
+async function markToday(n=1){
+  const t=ymd(new Date());
+  const prev=log[t]||0;
+  log[t]=prev+n;
+  await kvSet('rosary-log-v2',JSON.stringify(log));
+  scheduleSync();
+  clearTimeout(window.__pdT); window.__pdT=setTimeout(pushDaily,1200);
+  updateGoalLine();
+  if(document.body.classList.contains('home')) renderHome();
+  if(settings.goal>0 && prev<settings.goal && log[t]>=settings.goal)
+    toast('🌹 오늘 목표 '+settings.goal+'단을 채우셨습니다!');
+  const noti = curIntent
+    ? activeIntents().filter(it=>it.id===curIntent)
+    : activeIntents();
+  for(const it of noti){
+    const di=iDayIndex(it);
+    if(di>=0 && di<it.days && prev<it.perDay && log[t]>=it.perDay){
+      toast('🕯 「'+it.title+'」 '+(di+1)+'일째 몫을 채우셨습니다');
+      break;
+    }
+  }
+}
+
+/* ═══ 책갈피(진행 위치 자동 저장) ═══ */
+async function kvDel(k){
+  try{ if(window.storage) await window.storage.delete(k); }catch(e){}
+  try{ localStorage.removeItem(k); }catch(e){}
+}
+let bmLabel=null;
+function saveBM(){
+  if(idx>0 && idx<steps.length){
+    const s=steps[idx];
+    bmLabel=(s.sub||s.p.t||'');
+    kvSet('rosary-bm-v1',JSON.stringify({
+      m:mystKey, i:idx,
+      label:bmLabel, ts:Date.now()
+    }));
+  }
+}
+function clearBM(){ bmLabel=null; kvDel('rosary-bm-v1'); }
+async function tryResume(){
+  try{
+    const v=await kvGet('rosary-bm-v1');
+    if(!v) return;
+    const bm=JSON.parse(v);
+    if(!MYST[bm.m] || !(bm.i>0)) return;
+    bmLabel=bm.label||MYST[bm.m].name;
+    const when=bm.ts? new Date(bm.ts) : null;
+    const dayTxt=when? (ymd(when)===ymd(new Date())?'오늘':(when.getMonth()+1)+'월 '+when.getDate()+'일') : '지난번';
+    if(confirm('📖 '+dayTxt+' 「'+(bm.label||MYST[bm.m].name)+'」에서 멈추셨습니다.\n\n[확인] 이어서 기도하기\n[취소] 처음부터')){
+      mystKey=bm.m;
+      $('mysterySel').value='auto'===$('mysterySel').value && bm.m===todayKey() ? 'auto' : bm.m;
+      buildSteps();
+      idx=Math.min(bm.i, steps.length-1);
+      /* 이미 지난 단은 봉헌 처리된 것으로 간주(중복 방지) */
+      steps.forEach((s,i)=>{ if(i<idx && s.dEnd) counted.add(s.dNo); });
+      refreshHead();
+      return true;
+    }else{
+      clearBM();
+    }
+  }catch(e){}
+  return false;
+}
+
+/* ═══ 설정(봉헌 방식·목표) ═══ */
+let settings={mode:'manual', goal:0, spirit:'pet', read:'none', theme:'light', cont:false};
+const APP_VER='2.5';
+document.querySelectorAll('.appver').forEach(e=>e.textContent=APP_VER);
+const THEMES=['light','rose','sky','lavender','forest','night'];
+function applyTheme(t){
+  if(!THEMES.includes(t)) t='light';
+  document.body.classList.remove('light','rose','sky','lavender','forest');
+  if(t!=='night'){
+    document.body.classList.add('light');
+    if(t!=='light') document.body.classList.add(t);
+  }
+}
+async function loadSettings(){
+  try{ const v=await kvGet('rosary-settings-v1'); if(v) Object.assign(settings,JSON.parse(v)); }catch(e){}
+  $('modeSel').value=settings.mode;
+  $('goalInput').value=settings.goal;
+  $('spiritSel').value=settings.spirit||'pet';
+  $('readSel').value=settings.read||'none';
+  $('themeSel').value=THEMES.includes(settings.theme)?settings.theme:'light';
+  voiceOn=(settings.read==='rec');
+  applyTheme(settings.theme);
+  $('contSel').value=settings.cont?'cont':'stop';
+}
+async function saveSettings(){ await kvSet('rosary-settings-v1',JSON.stringify(settings)); }
+$('spiritSel').onchange=e=>{
+  settings.spirit=e.target.value; saveSettings();
+  const savedCounted=counted, savedIdx=idx, savedFin=finished;
+  buildSteps();
+  counted=savedCounted;
+  idx=Math.min(savedIdx,steps.length); finished=savedFin;
+  refreshStep(true);
+};
+$('modeSel').onchange=e=>{ settings.mode=e.target.value; saveSettings(); if(kOn) refreshStep(true); };
+$('goalInput').onchange=e=>{
+  settings.goal=Math.max(0,parseInt(e.target.value)||0);
+  e.target.value=settings.goal; saveSettings(); updateGoalLine();
+};
+
+/* ═══ 지향 기도(9일기도 등) ═══ */
+/* ═══ 기도 지향 (여러 개, 개인/그룹) ═══ */
+const FIREBASE_CONFIG={
+  apiKey: "AIzaSyBhP0ZauwUcu8YzGnBGw_Rw_iMJywzIYxw",
+  authDomain: "rosaryapp-4f969.firebaseapp.com",
+  databaseURL: "https://rosaryapp-4f969-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "rosaryapp-4f969",
+  storageBucket: "rosaryapp-4f969.firebasestorage.app",
+  messagingSenderId: "560157832893",
+  appId: "1:560157832893:web:b75cd826a6795a848069d4"
+};
+let intents=[];               /* [{id,title,days,start,perDay,scope,done,achieved,end}] */
+let editIntentId=null;
+async function loadIntents(){
+  try{
+    const v=await kvGet('rosary-intents-v1');
+    if(v){ intents=JSON.parse(v)||[]; }
+    else{
+      /* 구버전 단일 지향 이전 */
+      const old=await kvGet('rosary-novena-v1');
+      if(old){
+        const d=JSON.parse(old);
+        intents=[{id:'m'+Date.now(),title:d.title,days:d.days,start:d.start,perDay:d.perDay,scope:'personal',done:false,achieved:null,end:null}];
+        await saveIntents();
+      }
+    }
+  }catch(e){}
+  sweepIntents();
+}
+async function saveIntents(){ await kvSet('rosary-intents-v1',JSON.stringify(intents)); scheduleSync(); }
+function iDayIndex(it){
+  const s=new Date(it.start+'T00:00:00');
+  return Math.floor((new Date()-s)/86400000);
+}
+function iAchieved(it){
+  let met=0;
+  const s=new Date(it.start+'T00:00:00');
+  for(let i=0;i<it.days;i++){
+    const d=new Date(s); d.setDate(s.getDate()+i);
+    if(d>new Date()) break;
+    if((log[ymd(d)]||0)>=it.perDay) met++;
+  }
+  return met;
+}
+function activeIntents(){ return intents.filter(it=>!it.done); }
+function doneIntents(){ return intents.filter(it=>it.done); }
+async function sweepIntents(){
+  /* 기간이 끝난 지향 → 완료(열매) 처리 */
+  let changed=false;
+  for(const it of intents){
+    if(!it.done && iDayIndex(it)>=it.days){
+      it.done=true; it.achieved=iAchieved(it); it.end=ymd(new Date()); it.up=Date.now();
+      changed=true;
+      toast('🍎 「'+it.title+'」 지향 기도를 마쳤습니다! ('+it.achieved+'/'+it.days+'일)');
+    }
+  }
+  if(changed) await saveIntents();
+}
+function updateGoalLine(){
+  const t=ymd(new Date()), cnt=log[t]||0;
+  const parts=[];
+  if(settings.goal>0) parts.push('오늘 '+cnt+' / '+settings.goal+'단');
+  else if(cnt>0) parts.push('오늘 '+cnt+'단');
+  if(bmLabel && idx===0) parts.push('📖 책갈피: '+bmLabel);
+  const showIts = curIntent
+    ? activeIntents().filter(it=>it.id===curIntent)
+    : activeIntents().slice(0,2);
+  showIts.forEach(it=>{
+    const di=iDayIndex(it);
+    if(di>=0 && di<it.days)
+      parts.push('<span class="nv">🕯 '+it.title+' · '+it.days+'일 중 '+(di+1)+'일째 ('+cnt+'/'+it.perDay+'단)</span>');
+    else if(di<0)
+      parts.push('<span class="nv">🕯 '+it.title+' · '+it.start+' 시작</span>');
+  });
+  $('goalLine').innerHTML=parts.join('<br>');
+}
+function intentsStatusText(){
+  const a=activeIntents(), d=doneIntents();
+  if(!a.length && !d.length) return '';
+  let s='';
+  a.forEach(it=>{
+    const di=iDayIndex(it);
+    const pos=di<0?'시작 전':di>=it.days?'기간 종료':(di+1)+'일째';
+    s+='🕯 『'+it.title+'』 '+it.days+'일 중 <b>'+iAchieved(it)+'일</b> 달성 · '+pos+'<br>';
+  });
+  if(d.length) s+='🍎 완료된 지향 <b>'+d.length+'개</b>';
+  return s;
+}
+/* 편집기 */
+function openIntentEditor(it){
+  editIntentId=it?it.id:null;
+  $('nvHead').textContent=it?'지향 수정':'새 기도 지향';
+  $('nvTitle').value=it?it.title:'';
+  $('nvScope').value=it?(it.scope||'personal'):'personal';
+  $('nvDays').value=it?it.days:9;
+  $('nvPreset').value=it&&(it.days===9||it.days===54)?String(it.days):(it?'0':'9');
+  $('nvStart').value=it?it.start:ymd(new Date());
+  $('nvPerDay').value=it?it.perDay:1;
+  $('nvClear').style.display=it?'':'none';
+  $('nvStatus').innerHTML=intentsStatusText();
+  scopeNote();
+  $('nvOverlay').classList.add('open');
+}
+function scopeNote(){
+  const grp=$('nvScope').value==='group';
+  const sel=$('nvGroup');
+  sel.style.display=grp?'':'none';
+  if(grp){
+    sel.innerHTML='';
+    const gids=Object.keys(myGroups);
+    if(!gids.length){
+      sel.innerHTML='<option value="">모임이 없습니다</option>';
+      $('nvScopeNote').textContent='먼저 홈에서 모임을 만들거나 참여해 주세요';
+    }else{
+      gids.forEach(gid=>{
+        const o=document.createElement('option');
+        o.value=gid; o.textContent=myGroups[gid].name;
+        sel.appendChild(o);
+      });
+      $('nvScopeNote').textContent='모임원 모두에게 공유됩니다';
+    }
+  }else $('nvScopeNote').textContent='';
+}
+$('nvScope').onchange=scopeNote;
+$('btnAddIntent').onclick=()=>openIntentEditor(null);
+$('btnNovena').onclick=()=>{ closeMore(); openIntentEditor(null); };
+$('nvPreset').onchange=e=>{ if(e.target.value!=='0') $('nvDays').value=e.target.value; };
+$('nvSave').onclick=async()=>{
+  const title=$('nvTitle').value.trim()||'기도 지향';
+  const days=Math.max(1,parseInt($('nvDays').value)||9);
+  const start=$('nvStart').value||ymd(new Date());
+  const perDay=Math.max(1,parseInt($('nvPerDay').value)||1);
+  const scope=$('nvScope').value;
+  const gid = scope==='group' ? ($('nvGroup').value||null) : null;
+  if(scope==='group' && !gid){ alert('공유할 모임을 선택해 주세요.'); return; }
+  const gname = gid? myGroups[gid].name : null;
+  let saved;
+  if(editIntentId){
+    const it=intents.find(x=>x.id===editIntentId);
+    if(it){ Object.assign(it,{title,days,start,perDay,scope,gid,gname,up:Date.now()}); it.done=false; it.achieved=null; it.end=null; saved=it; }
+  }else{
+    saved={id:'i'+Date.now(),title,days,start,perDay,scope,gid,gname,done:false,achieved:null,end:null,up:Date.now()};
+    intents.push(saved);
+  }
+  if(saved && saved.gid) pushGroupIntent(saved);
+  await saveIntents(); await sweepIntents();
+  updateGoalLine(); renderHome(); toast('지향 기도를 봉헌합니다 🕯');
+  $('nvOverlay').classList.remove('open');
+};
+$('nvClear').onclick=async()=>{
+  if(editIntentId){
+    if(!confirm('이 지향을 삭제할까요?')) return;
+    intents=intents.filter(x=>x.id!==editIntentId);
+    await saveIntents();
+  }
+  updateGoalLine(); renderHome(); $('nvOverlay').classList.remove('open');
+};
+$('nvClose').onclick=()=>$('nvOverlay').classList.remove('open');
+
+/* ═══ 달력 ═══ */
+let calY, calM, selDay=null;
+function openCal(){
+  const n=new Date(); calY=n.getFullYear(); calM=n.getMonth();
+  selDay=null;
+  if(!$('rgFrom').value){
+    $('rgFrom').value=calY+'-'+String(calM+1).padStart(2,'0')+'-01';
+    $('rgTo').value=ymd(n);
+  }
+  drawCal(); rangeStats(); $('calOverlay').classList.add('open');
+}
+function rangeStats(){
+  const f=$('rgFrom').value, t=$('rgTo').value;
+  const out=$('rgResult');
+  if(!f||!t){ out.innerHTML='기간을 선택해 주세요.'; return; }
+  const d1=new Date(f+'T00:00:00'), d2=new Date(t+'T00:00:00');
+  if(d1>d2){ out.innerHTML='시작일이 종료일보다 늦습니다.'; return; }
+  let dan=0, days=0, span=0;
+  for(const d=new Date(d1); d<=d2; d.setDate(d.getDate()+1)){
+    span++;
+    const c=log[ymd(d)]||0;
+    if(c>0){ days++; dan+=c; }
+  }
+  const avg = days? (dan/span).toFixed(1) : 0;
+  out.innerHTML=span+'일 동안 <b>'+dan+'단</b>을 봉헌하셨습니다.'
+    +'<br>기도한 날 <b>'+days+'일</b> · 하루 평균 <b>'+avg+'단</b>';
+}
+$('rgFrom').onchange=rangeStats;
+$('rgTo').onchange=rangeStats;
+async function adjustDay(delta){
+  if(!selDay) return;
+  const v=Math.max((log[selDay]||0)+delta,0);
+  if(v===0) delete log[selDay]; else log[selDay]=v;
+  logEdit[selDay]=Date.now(); await saveLogEdit();
+  await kvSet('rosary-log-v2',JSON.stringify(log));
+  scheduleSync();
+  clearTimeout(window.__pdT); window.__pdT=setTimeout(pushDaily,1200);
+  scheduleSync();
+  updateGoalLine();
+  if(document.body.classList.contains('home')) renderHome();
+  drawCal(); rangeStats();
+}
+$('calMinus').onclick=()=>adjustDay(-1);
+$('calPlus').onclick=()=>adjustDay(1);
+function drawCal(){
+  $('calTitle').textContent=calY+'년 '+(calM+1)+'월';
+  const g=$('calGrid'); g.innerHTML='';
+  '일월화수목금토'.split('').forEach((d,i)=>{
+    const e=document.createElement('div');
+    e.className='dow'+(i===0?' sun':''); e.textContent=d; g.appendChild(e);
+  });
+  const first=new Date(calY,calM,1), start=first.getDay();
+  const dim=new Date(calY,calM+1,0).getDate();
+  const today=ymd(new Date());
+  let monthDays=0, monthDan=0;
+  for(let i=0;i<start;i++){ const e=document.createElement('div'); e.className='day out'; g.appendChild(e); }
+  for(let d=1;d<=dim;d++){
+    const key=calY+'-'+String(calM+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const cnt=log[key]||0;
+    if(cnt>0){ monthDays++; monthDan+=cnt; }
+    const e=document.createElement('div');
+    let nvCls='';
+    const nv0=activeIntents()[0];
+    if(nv0){
+      const s=new Date(nv0.start+'T00:00:00');
+      const cur=new Date(calY,calM,d);
+      const di=Math.floor((cur-s)/86400000);
+      if(di>=0 && di<nv0.days) nvCls=' nv'+(cnt>=nv0.perDay?' nvmet':'');
+    }
+    e.className='day'+(cnt>0?' done':'')+(key===today?' today':'')+(key===selDay?' sel':'')+nvCls;
+    e.innerHTML='<span>'+d+'</span><span class="mark">'+(cnt>0?cnt:'')+'</span>';
+    e.onclick=()=>{ selDay=key; drawCal(); };
+    g.appendChild(e);
+  }
+  /* 연속 일수·누적 */
+  let streak=0; const t=new Date();
+  for(;;){ const k=ymd(t); if((log[k]||0)>0){ streak++; t.setDate(t.getDate()-1); } else break; }
+  let totalDan=0; for(const k in log) totalDan+=log[k];
+  $('calStats').innerHTML='이번 달 <b>'+monthDays+'일</b>, <b>'+monthDan+'단</b>'
+    +' · 지금까지 모두 <b>'+totalDan+'단</b>을 봉헌하셨습니다.'
+    +(streak>0? '<br>오늘까지 <b>'+streak+'일</b> 연속입니다. 🌹':'')
+    +(intents.length? '<br>'+intentsStatusText():'');
+  /* 편집기 */
+  const ed=$('calEdit');
+  if(selDay){
+    ed.classList.add('open');
+    const[y,m,dd]=selDay.split('-');
+    $('calEditDate').textContent=(+m)+'월 '+(+dd)+'일';
+    $('calEditCnt').textContent=(log[selDay]||0)+'단';
+  }else ed.classList.remove('open');
+}
+$('btnCal').onclick=()=>{ closeMore(); openCal(); };
+$('calClose').onclick=()=>{ $('calOverlay').classList.remove('open');
+  if(document.body.classList.contains('home')) renderHome(); };
+$('calPrev').onclick=()=>{ calM--; if(calM<0){calM=11;calY--;} selDay=null; drawCal(); };
+$('calNext').onclick=()=>{ calM++; if(calM>11){calM=0;calY++;} selDay=null; drawCal(); };
+
+/* ═══ 프로필 · Firebase 인증 · 서버 동기화 ═══ */
+let user=null;         /* {uid,name} */
+let fb=null, fbUser=null, syncTimer=null;
+let logEdit={};   /* {date: 수동 편집 시각} — 의도적 수정이 병합에서 이기도록 */
+async function loadLogEdit(){
+  try{ const v=await kvGet('rosary-logedit-v1'); if(v) logEdit=JSON.parse(v)||{}; }catch(e){}
+}
+async function saveLogEdit(){ await kvSet('rosary-logedit-v1',JSON.stringify(logEdit)); }
+function fbInit(){
+  try{
+    if(!FIREBASE_CONFIG || !window.firebase) return null;
+    firebase.initializeApp(FIREBASE_CONFIG);
+    return { auth:firebase.auth(), db:firebase.database() };
+  }catch(e){ return null; }
+}
+function fbEmail(uid){ return uid.toLowerCase()+'@rosary-tree.app'; }
+function setPfStatus(){
+  const s=$('pfStatus');
+  s.textContent = fbUser ? '☁ 서버에 연결되어 있습니다 ('+(user?user.uid:'')+')'
+                : fb ? '' : '⚠ 서버 연결 불가 — 기기에만 저장됩니다';
+  $('pfLogout').style.display = fbUser ? '' : 'none';
+  $('pfPw').style.display = fbUser ? 'none' : '';
+  $('pfSkip').style.display = fbUser ? 'none' : '';
+}
+async function loadUser(){
+  try{ const v=await kvGet('rosary-user-v1'); if(v) user=JSON.parse(v); }catch(e){}
+  fb=fbInit();
+  if(fb){
+    fb.auth.onAuthStateChanged(async u=>{
+      fbUser=u;
+      setPfStatus();
+      if(u){ await syncDown(); scheduleSync(); toast('☁ 서버와 연결되었습니다'); renderHome(); }
+    });
+  }
+  if(!user){ $('pfOverlay').classList.add('open'); setPfStatus(); }
+  else{
+    greet();
+    /* 기존 사용자가 아직 서버 미연결이면 한 번 안내 */
+    if(fb && !fb.auth.currentUser && !settings.localOnly){
+      setTimeout(()=>{
+        if(!fbUser){
+          $('pfName').value=user.name; $('pfId').value=user.uid;
+          $('pfOverlay').classList.add('open'); setPfStatus();
+        }
+      },1200);
+    }
+  }
+}
+function greet(){
+  $('hGreet').innerHTML= user? '<b>'+user.name+'</b>님, 오늘도 평화를 빕니다 🌹'
+    +(fbUser?' <span style="color:var(--ink-dim)">☁</span>':'') : '';
+}
+$('pfSave').onclick=async()=>{
+  const name=$('pfName').value.trim();
+  const uid=$('pfId').value.trim();
+  const pw=$('pfPw').value;
+  if(!name){ alert('이름을 입력해 주세요.'); return; }
+  if(!/^[A-Za-z0-9_]{3,15}$/.test(uid)){ alert('아이디는 영문·숫자·밑줄 3~15자로 정해 주세요.'); return; }
+  user={uid,name};
+  await kvSet('rosary-user-v1',JSON.stringify(user));
+  if(fb && !fbUser){
+    if(pw.length<6){ alert('비밀번호는 6자 이상으로 정해 주세요.\n(서버 저장 없이 쓰시려면 [나중에]를 눌러 주세요)'); return; }
+    $('pfStatus').textContent='서버에 연결하는 중…';
+    try{
+      try{
+        await fb.auth.createUserWithEmailAndPassword(fbEmail(uid),pw);
+      }catch(e){
+        if(e.code==='auth/email-already-in-use'){
+          await fb.auth.signInWithEmailAndPassword(fbEmail(uid),pw);
+        }else throw e;
+      }
+      settings.localOnly=false; saveSettings();
+    }catch(e){
+      const msg = e.code==='auth/wrong-password'||e.code==='auth/invalid-credential' ? '비밀번호가 맞지 않습니다.'
+        : e.code==='auth/network-request-failed' ? '네트워크 연결을 확인해 주세요.'
+        : '서버 연결에 실패했습니다. ('+(e.code||e.message)+')';
+      alert(msg); setPfStatus(); return;
+    }
+  }
+  $('pfOverlay').classList.remove('open');
+  greet(); renderHome(); toast(name+'님, 환영합니다 🌹');
+};
+$('pfSkip').onclick=async()=>{
+  const name=$('pfName').value.trim(), uid=$('pfId').value.trim();
+  if(!user){
+    if(!name){ alert('이름을 입력해 주세요.'); return; }
+    if(!/^[A-Za-z0-9_]{3,15}$/.test(uid)){ alert('아이디는 영문·숫자·밑줄 3~15자로 정해 주세요.'); return; }
+    user={uid,name};
+    await kvSet('rosary-user-v1',JSON.stringify(user));
+  }
+  settings.localOnly=true; saveSettings();
+  $('pfOverlay').classList.remove('open');
+  greet(); renderHome();
+};
+$('pfLogout').onclick=async()=>{
+  if(!confirm('서버 연결을 끊을까요?\n기록은 이 기기에 남아 있습니다.')) return;
+  try{ await fb.auth.signOut(); }catch(e){}
+  settings.localOnly=true; saveSettings();
+  setPfStatus(); greet();
+};
+$('btnProfile').onclick=()=>{
+  if(user){ $('pfName').value=user.name; $('pfId').value=user.uid; }
+  $('pfPw').value='';
+  setPfStatus();
+  $('pfOverlay').classList.add('open');
+};
+
+/* ── 서버 동기화: 로컬이 즉시 저장, 서버가 보관소 ── */
+function scheduleSync(){
+  if(!fb || !fbUser) return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(syncUp,1500);
+}
+async function syncUp(){
+  if(!fb || !fbUser) return;
+  try{
+    await fb.db.ref('u/'+fbUser.uid).set({
+      profile:user, log, logEdit, intents, tree, groups:myGroups, updated:Date.now()
+    });
+  }catch(e){}
+}
+async function syncDown(){
+  if(!fb || !fbUser) return;
+  try{
+    const snap=await fb.db.ref('u/'+fbUser.uid).get();
+    const d=snap.val();
+    if(!d) return;
+    /* 로그 병합: 수동 편집 시각이 최신인 쪽이 이기고, 둘 다 없으면 큰 값(기도 기록 보존) */
+    const sEdit=d.logEdit||{};
+    {
+      let ch=false, chE=false;
+      const dates=new Set([...Object.keys(log),...Object.keys(d.log||{})]);
+      dates.forEach(k=>{
+        const lv=log[k]||0, sv=(d.log&&d.log[k])||0;
+        const lt=logEdit[k]||0, st=sEdit[k]||0;
+        let v;
+        if(lt>st) v=lv;              /* 이 기기의 의도적 수정이 최신 */
+        else if(st>lt) v=sv;         /* 다른 기기의 의도적 수정이 최신 */
+        else v=Math.max(lv,sv);      /* 자연 누적끼리는 큰 값 = 기도 기록은 절대 줄지 않음 */
+        if(v!==(log[k]||0)){ if(v===0) delete log[k]; else log[k]=v; ch=true; }
+        const t=Math.max(lt,st);
+        if(t && t!==(logEdit[k]||0)){ logEdit[k]=t; chE=true; }
+      });
+      if(ch){ await kvSet('rosary-log-v2',JSON.stringify(log)); updateGoalLine(); }
+      if(chE) await saveLogEdit();
+    }
+    /* 지향 병합: 같은 id는 최근 수정본, 새 것은 합류 */
+    if(Array.isArray(d.intents)){
+      const map=new Map(intents.map(x=>[x.id,x]));
+      let ch=false;
+      d.intents.forEach(it=>{
+        if(!it||!it.id) return;
+        const mine=map.get(it.id);
+        if(!mine){ intents.push(it); ch=true; }
+        else if((it.up||0)>(mine.up||0)){ Object.assign(mine,it); ch=true; }
+      });
+      if(ch) await saveIntents();
+    }
+    /* 나무: 없으면 서버 것 채택 */
+    if(d.tree && d.tree.treeName && !(tree&&tree.treeName)){
+      tree=d.tree; await saveTree();
+    }
+    /* 프로필: 로컬이 없을 때만 */
+    if(d.profile && !user){ user=d.profile; await kvSet('rosary-user-v1',JSON.stringify(user)); }
+    /* 모임 합류 상태 복원 */
+    if(d.groups){
+      let ch=false;
+      for(const gid in d.groups){ if(!myGroups[gid]){ myGroups[gid]=d.groups[gid]; ch=true; } }
+      if(ch){ await kvSet('rosary-groups-v1',JSON.stringify(myGroups)); renderGroups(); }
+      Object.keys(myGroups).forEach(gid=>pullGroupIntents(gid));
+    }
+    sweepIntents();
+  }catch(e){}
+}
+
+/* ═══ 기도 나무 ═══ */
+let tree=null;   /* {treeName,startDate,lastStage} */
+async function loadTree(){
+  try{ const v=await kvGet('rosary-tree-v1'); if(v) tree=JSON.parse(v); }catch(e){}
+}
+async function saveTree(){ await kvSet('rosary-tree-v1',JSON.stringify(tree)); scheduleSync(); }
+$('btnPlant').onclick=async()=>{
+  const nm=$('treeNameInput').value.trim();
+  if(!nm){ alert('나무 이름을 지어 주세요.'); return; }
+  tree={treeName:nm,startDate:new Date().toISOString(),lastStage:0};
+  await saveTree(); renderHome();
+  toast('🌱 '+nm+' 나무를 심었습니다');
+};
+function treeMetrics(){
+  let total=0; for(const k in log) total+=log[k];
+  return {
+    total,
+    today: log[ymd(new Date())]||0,
+    act: activeIntents().length,
+    done: doneIntents().length
+  };
+}
+function treeStageOf(total){
+  return total>=300?3: total>=100?2: total>=20?1:0;
+}
+/* ── 나무 SVG (상담앱 이식) ── */
+const FLOWER_POS=[
+  [],
+  [{cx:113,cy:200,p:'#FF9EB5',r:4},{cx:185,cy:196,p:'#FFB5D5',r:4},{cx:150,cy:183,p:'#FFC5E0',r:3.5},{cx:100,cy:207,p:'#FFAEC5',r:3}],
+  [{cx:82,cy:162,p:'#FF9EB5',r:5},{cx:218,cy:156,p:'#FFB5D5',r:5},{cx:148,cy:114,p:'#FFC5E0',r:5},{cx:107,cy:170,p:'#FFAEC5',r:4},{cx:193,cy:163,p:'#FFB5D5',r:4},{cx:135,cy:125,p:'#FFC5E0',r:3.5},{cx:165,cy:122,p:'#FF9EB5',r:3.5},{cx:65,cy:168,p:'#FFAEC5',r:3.5}],
+  [{cx:78,cy:136,p:'#FF9EB5',r:5},{cx:222,cy:128,p:'#FFB5D5',r:5},{cx:148,cy:86,p:'#FFC5E0',r:5},{cx:105,cy:155,p:'#FFAEC5',r:4.5},{cx:195,cy:148,p:'#FFB5D5',r:4.5},{cx:130,cy:105,p:'#FFC5E0',r:4},{cx:170,cy:103,p:'#FF9EB5',r:4},{cx:60,cy:145,p:'#FFAEC5',r:3.5}]
+];
+const FRUIT_POS=[
+  [],
+  [{cx:130,cy:210,r:7},{cx:170,cy:207,r:7}],
+  [{cx:100,cy:184,r:8},{cx:200,cy:177,r:8},{cx:160,cy:140,r:7},{cx:118,cy:192,r:6.5},{cx:182,cy:187,r:6.5},{cx:148,cy:126,r:6}],
+  [{cx:95,cy:163,r:9},{cx:205,cy:156,r:9},{cx:162,cy:113,r:8},{cx:112,cy:172,r:8},{cx:188,cy:168,r:8},{cx:150,cy:100,r:7}]
+];
+function flowerSvg(f){
+  return '<g><circle cx="'+f.cx+'" cy="'+f.cy+'" r="'+f.r+'" fill="white"/>'
+    +'<circle cx="'+f.cx+'" cy="'+f.cy+'" r="'+f.r*0.6+'" fill="#FFD700"/>'
+    +'<circle cx="'+(f.cx-f.r*0.9)+'" cy="'+f.cy+'" r="'+f.r*0.7+'" fill="'+f.p+'" opacity="0.9"/>'
+    +'<circle cx="'+(f.cx+f.r*0.9)+'" cy="'+f.cy+'" r="'+f.r*0.7+'" fill="'+f.p+'" opacity="0.9"/>'
+    +'<circle cx="'+f.cx+'" cy="'+(f.cy-f.r*0.9)+'" r="'+f.r*0.7+'" fill="'+f.p+'" opacity="0.9"/>'
+    +'<circle cx="'+f.cx+'" cy="'+(f.cy+f.r*0.9)+'" r="'+f.r*0.7+'" fill="'+f.p+'" opacity="0.9"/></g>';
+}
+function fruitSvg(fr){
+  return '<g><circle cx="'+fr.cx+'" cy="'+fr.cy+'" r="'+fr.r+'" fill="url(#fg1)"/>'
+    +'<path d="M'+fr.cx+' '+(fr.cy-fr.r)+' Q'+(fr.cx+2)+' '+(fr.cy-fr.r-3)+' '+(fr.cx+4)+' '+(fr.cy-fr.r-2)+'" stroke="#4A7C3F" stroke-width="1.2" fill="none" stroke-linecap="round"/></g>';
+}
+const LF='style="animation:leafFloat 3s ease-in-out infinite;';
+const TREE_BODY=[
+  /* 0 새싹 */
+  '<path d="M150 280 Q150 265 150 255" stroke="#8B5E1A" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  +'<ellipse cx="140" cy="250" rx="10" ry="6" fill="#5BAD6A" transform="rotate(-30 140 250)"/>'
+  +'<ellipse cx="160" cy="248" rx="10" ry="6" fill="#4A9E5C" transform="rotate(30 160 248)"/>'
+  +'<circle cx="150" cy="244" r="7" fill="#3D8C4E" opacity="0.9"/>',
+  /* 1 작은 나무 */
+  '<path d="M144 280 Q143 260 144 240 Q145 220 146 205" stroke="#A0722A" stroke-width="8" fill="none" stroke-linecap="round"/>'
+  +'<path d="M156 280 Q157 260 156 240 Q155 220 154 205" stroke="#A0722A" stroke-width="8" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 280 Q150 260 150 240 Q150 220 150 205" stroke="#8B5E1A" stroke-width="5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M146 235 Q130 220 118 215" stroke="#9B6820" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  +'<path d="M154 230 Q168 215 178 210" stroke="#9B6820" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  +'<g '+LF+'animation-delay:.3s"><circle cx="118" cy="208" r="18" fill="#4A9E5C" opacity="0.9"/><circle cx="107" cy="214" r="13" fill="#5BAD6A" opacity="0.85"/><circle cx="128" cy="200" r="15" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<g '+LF+'animation-delay:.6s"><circle cx="178" cy="203" r="18" fill="#4A9E5C" opacity="0.9"/><circle cx="190" cy="210" r="13" fill="#5BAD6A" opacity="0.85"/><circle cx="168" cy="197" r="15" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<g '+LF+'animation-delay:.1s"><circle cx="150" cy="192" r="22" fill="#3D8C4E" opacity="0.95"/><circle cx="138" cy="202" r="16" fill="#4A9E5C" opacity="0.9"/><circle cx="162" cy="200" r="16" fill="#4A9E5C" opacity="0.9"/></g>',
+  /* 2 중간 나무 */
+  '<path d="M142 280 Q140 255 141 228 Q142 200 143 178" stroke="#A0722A" stroke-width="11" fill="none" stroke-linecap="round"/>'
+  +'<path d="M158 280 Q160 255 159 228 Q158 200 157 178" stroke="#A0722A" stroke-width="11" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 280 Q150 255 150 228 Q150 200 150 178" stroke="#8B5E1A" stroke-width="7" fill="none" stroke-linecap="round"/>'
+  +'<path d="M144 220 Q125 202 108 194" stroke="#9B6820" stroke-width="5.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M108 194 Q95 186 85 178" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M156 212 Q175 194 192 186" stroke="#9B6820" stroke-width="5.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M192 186 Q205 178 215 172" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M148 185 Q138 166 130 156" stroke="#9B6820" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<path d="M152 183 Q162 164 170 154" stroke="#9B6820" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 180 Q150 160 150 148" stroke="#9B6820" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<g '+LF+'animation-delay:.2s"><circle cx="90" cy="172" r="26" fill="#4A9E5C" opacity="0.9"/><circle cx="76" cy="180" r="18" fill="#5BAD6A" opacity="0.85"/><circle cx="103" cy="161" r="21" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<g '+LF+'animation-delay:.5s"><circle cx="210" cy="166" r="24" fill="#4A9E5C" opacity="0.9"/><circle cx="223" cy="175" r="18" fill="#5BAD6A" opacity="0.85"/><circle cx="198" cy="157" r="20" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<g '+LF+'animation-delay:.8s"><circle cx="110" cy="172" r="18" fill="#5BAD6A" opacity="0.85"/><circle cx="120" cy="163" r="16" fill="#3D8C4E" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:1s"><circle cx="190" cy="165" r="18" fill="#5BAD6A" opacity="0.85"/><circle cx="180" cy="157" r="16" fill="#3D8C4E" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:.3s"><circle cx="150" cy="126" r="24" fill="#3D8C4E" opacity="0.95"/><circle cx="136" cy="138" r="18" fill="#4A9E5C" opacity="0.9"/><circle cx="164" cy="135" r="18" fill="#4A9E5C" opacity="0.9"/><circle cx="150" cy="142" r="14" fill="#5BAD6A" opacity="0.85"/></g>',
+  /* 3 큰 나무 */
+  '<path d="M140 280 Q125 277 115 285" stroke="#8B6914" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<path d="M160 280 Q175 277 185 285" stroke="#8B6914" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<path d="M138 280 Q135 245 137 210 Q139 175 140 148" stroke="#A0722A" stroke-width="13" fill="none" stroke-linecap="round"/>'
+  +'<path d="M162 280 Q165 245 163 210 Q161 175 160 148" stroke="#A0722A" stroke-width="13" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 280 Q150 245 150 210 Q150 175 150 148" stroke="#8B5E1A" stroke-width="9" fill="none" stroke-linecap="round"/>'
+  +'<path d="M143 208 Q120 183 100 173" stroke="#9B6820" stroke-width="7" fill="none" stroke-linecap="round"/>'
+  +'<path d="M100 173 Q85 163 75 153" stroke="#9B6820" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M157 198 Q180 173 200 163" stroke="#9B6820" stroke-width="7" fill="none" stroke-linecap="round"/>'
+  +'<path d="M200 163 Q215 153 225 146" stroke="#9B6820" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M141 183 Q118 166 105 156" stroke="#9B6820" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M155 173 Q172 156 185 148" stroke="#9B6820" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M148 156 Q135 136 125 126" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M152 153 Q165 133 175 123" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<path d="M150 150 Q150 128 150 113" stroke="#9B6820" stroke-width="3.5" fill="none" stroke-linecap="round"/>'
+  +'<g '+LF+'animation-delay:.2s"><circle cx="82" cy="148" r="30" fill="#4A9E5C" opacity="0.9"/><circle cx="68" cy="156" r="21" fill="#5BAD6A" opacity="0.85"/><circle cx="95" cy="136" r="25" fill="#3D8C4E" opacity="0.9"/><circle cx="72" cy="136" r="19" fill="#6BBE78" opacity="0.8"/><circle cx="88" cy="163" r="17" fill="#4A9E5C" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:.5s"><circle cx="218" cy="140" r="28" fill="#4A9E5C" opacity="0.9"/><circle cx="232" cy="148" r="21" fill="#5BAD6A" opacity="0.85"/><circle cx="205" cy="130" r="23" fill="#3D8C4E" opacity="0.9"/><circle cx="228" cy="130" r="19" fill="#6BBE78" opacity="0.8"/><circle cx="212" cy="156" r="17" fill="#4A9E5C" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:.8s"><circle cx="105" cy="148" r="21" fill="#5BAD6A" opacity="0.85"/><circle cx="92" cy="156" r="17" fill="#4A9E5C" opacity="0.9"/><circle cx="115" cy="140" r="18" fill="#3D8C4E" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:1s"><circle cx="185" cy="141" r="21" fill="#5BAD6A" opacity="0.85"/><circle cx="197" cy="150" r="17" fill="#4A9E5C" opacity="0.9"/><circle cx="175" cy="134" r="18" fill="#3D8C4E" opacity="0.85"/></g>'
+  +'<g '+LF+'animation-delay:.3s"><circle cx="150" cy="98" r="27" fill="#3D8C4E" opacity="0.95"/><circle cx="135" cy="110" r="21" fill="#4A9E5C" opacity="0.9"/><circle cx="165" cy="106" r="21" fill="#4A9E5C" opacity="0.9"/><circle cx="150" cy="116" r="17" fill="#5BAD6A" opacity="0.85"/><circle cx="138" cy="93" r="19" fill="#3D8C4E" opacity="0.9"/><circle cx="162" cy="93" r="19" fill="#3D8C4E" opacity="0.9"/></g>'
+  +'<path d="M100 280 Q105 268 110 280" stroke="#6BAE7A" stroke-width="2" fill="none"/>'
+  +'<path d="M185 280 Q190 269 195 280" stroke="#6BAE7A" stroke-width="2" fill="none"/>'
+];
+function butterflySvg(stage){
+  if(stage<2) return '';
+  const y=stage===2?110:85, x=stage===2?55:40;
+  return '<g '+LF.replace('3s','2.5s')+'animation-delay:1s">'
+    +'<path d="M'+x+' '+y+' Q'+(x+7)+' '+(y-12)+' '+(x+15)+' '+y+' Q'+(x+7)+' '+(y-6)+' '+x+' '+y+'" fill="#FFD700" opacity="0.85"/>'
+    +'<path d="M'+(x+15)+' '+y+' Q'+(x+22)+' '+(y-12)+' '+(x+30)+' '+y+' Q'+(x+22)+' '+(y-6)+' '+(x+15)+' '+y+'" fill="#FFB347" opacity="0.85"/>'
+    +'<line x1="'+(x+15)+'" y1="'+(y-6)+'" x2="'+(x+15)+'" y2="'+(y+4)+'" stroke="#8B4513" stroke-width="1.2"/></g>';
+}
+/* ── 계절·전례 시기 장식 ── */
+function easterDate(y){
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,
+        f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,
+        i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),
+        mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;
+  return new Date(y,mo-1,da);
+}
+let seasonPreview=null;   /* 미리보기용 (저장 안 됨) */
+function adventStart(y){            /* 대림 제1주일 = 12/24 이전(포함) 마지막 주일 - 3주 */
+  const x=new Date(y,11,24);
+  return new Date(y,11,24-x.getDay()-21);
+}
+function adventWeek(){              /* 1~4주 (미리보기 등 대림 밖이면 4) */
+  const n=new Date(), t0=new Date(n.getFullYear(),n.getMonth(),n.getDate());
+  const w=Math.floor((t0-adventStart(t0.getFullYear()))/86400000/7)+1;
+  return (w>=1&&w<=4)?w:4;
+}
+function seasonNow(){
+  if(seasonPreview!==null) return seasonPreview;
+  const n=new Date(), y=n.getFullYear(), mo=n.getMonth()+1, da=n.getDate();
+  const t0=new Date(y,mo-1,da);
+  if((mo===12&&da>=24)||(mo===1&&da<=6)) return 'xmas';
+  if((mo===11||mo===12)&&t0>=adventStart(y)) return 'advent';
+  const diff=Math.round((t0-easterDate(y))/86400000);
+  if(diff===49) return 'pentecost';             /* 성령 강림 대축일 */
+  if(diff>=0&&diff<49) return 'easter';
+  if(diff>=-7&&diff<0) return 'holyweek';       /* 주님 수난 성지 주일 ~ 성토요일 */
+  if(diff>=-46&&diff<0) return 'lent';          /* 재의 수요일 ~ */
+  if(mo===5) return 'may';
+  if(mo===6) return 'june';
+  if(mo===10) return 'october';
+  if(mo===11) return 'november';
+  return '';
+}
+const SEASON_LABEL={
+  advent:'🕯️ 대림 시기', xmas:'🎄 성탄 시기',
+  lent:'✝️ 사순 시기', holyweek:'🌿 성주간', easter:'🐣 부활 시기', pentecost:'🔥 성령 강림 대축일',
+  may:'🌹 성모 성월', june:'❤️ 예수 성심 성월', october:'📿 묵주기도 성월', november:'🕯️ 위령 성월'
+};
+/* 줄기에 두르는 천(띠) */
+function sashSvg(stage,c,d){
+  const g=[{y:268,w:8,h:4},{y:258,w:26,h:9},{y:248,w:36,h:11},{y:241,w:46,h:13}][stage];
+  const x1=150-g.w/2, x2=150+g.w/2, y=g.y, h=g.h, t=h*0.9;
+  let s='<path d="M'+x1+' '+(y-h/2)+' Q150 '+(y-h/2+2)+' '+x2+' '+(y-h/2)+' L'+x2+' '+(y+h/2)+' Q150 '+(y+h/2+2)+' '+x1+' '+(y+h/2)+' Z" fill="'+c+'" opacity="0.95"/>'
+       +'<path d="M'+x1+' '+(y+1)+' Q150 '+(y+3)+' '+x2+' '+(y+1)+'" stroke="'+d+'" stroke-width="0.8" fill="none" opacity="0.6"/>';
+  const kx=x2+1, ky=y;
+  s+='<path d="M'+kx+' '+ky+' q'+(t*0.8)+' -'+(t*0.7)+' '+(t*1.5)+' '+(t*0.2)+' q-'+(t*0.7)+' 0 -'+(t*1.5)+' -'+(t*0.2)+' Z" fill="'+c+'"/>'
+    +'<path d="M'+kx+' '+ky+' q'+(t*0.6)+' '+(t*0.9)+' '+(t*0.9)+' '+(t*1.8)+' q-'+(t*0.5)+' -'+(t*0.7)+' -'+(t*0.9)+' -'+(t*1.8)+' Z" fill="'+d+'"/>'
+    +'<circle cx="'+kx+'" cy="'+ky+'" r="'+(h*0.3)+'" fill="'+d+'"/>';
+  return s;
+}
+/* 초 (lit=true면 불꽃) */
+function candleSvg(x,base,h,c,lit,w){
+  w=w||4;
+  let s='<rect x="'+(x-w/2)+'" y="'+(base-h)+'" width="'+w+'" height="'+h+'" rx="1" fill="'+c+'"/>'
+       +'<line x1="'+x+'" y1="'+(base-h)+'" x2="'+x+'" y2="'+(base-h-2)+'" stroke="#4a3a2a" stroke-width="0.8"/>';
+  if(lit) s+='<g style="animation:leafFloat 1.6s ease-in-out infinite"><path d="M'+x+' '+(base-h-9)+' q3.2 4.5 0 7.5 q-3.2 -3 0 -7.5 Z" fill="#FFB347" opacity="0.95"/><path d="M'+x+' '+(base-h-6.5)+' q1.5 2.5 0 4.5 q-1.5 -2 0 -4.5 Z" fill="#FFF6C0"/></g>';
+  return s;
+}
+/* 달걀 */
+function eggSvg(cx,cy,r,c,d){
+  return '<g><path d="M'+cx+' '+(cy-r*1.3)+' C'+(cx+r*1.05)+' '+(cy-r*1.3)+' '+(cx+r)+' '+(cy+r)+' '+cx+' '+(cy+r)+' C'+(cx-r)+' '+(cy+r)+' '+(cx-r*1.05)+' '+(cy-r*1.3)+' '+cx+' '+(cy-r*1.3)+' Z" fill="'+c+'"/>'
+    +'<path d="M'+(cx-r*0.85)+' '+(cy-r*0.15)+' q'+(r*0.45)+' -'+(r*0.4)+' '+(r*0.85)+' 0 q'+(r*0.4)+' '+(r*0.4)+' '+(r*0.85)+' 0" stroke="'+d+'" stroke-width="'+(r*0.18)+'" fill="none"/>'
+    +'<circle cx="'+(cx-r*0.35)+'" cy="'+(cy+r*0.45)+'" r="'+(r*0.14)+'" fill="'+d+'"/><circle cx="'+(cx+r*0.35)+'" cy="'+(cy+r*0.45)+'" r="'+(r*0.14)+'" fill="'+d+'"/>'
+    +'<circle cx="'+cx+'" cy="'+(cy-r*0.7)+'" r="'+(r*0.14)+'" fill="'+d+'"/>'
+    +'<ellipse cx="'+(cx-r*0.35)+'" cy="'+(cy-r*0.75)+'" rx="'+(r*0.18)+'" ry="'+(r*0.3)+'" fill="white" opacity="0.5" transform="rotate(-20 '+(cx-r*0.35)+' '+(cy-r*0.75)+')"/></g>';
+}
+/* 장미 */
+function roseSvg(cx,cy,r){
+  let g='<g><ellipse cx="'+(cx-r*0.95)+'" cy="'+(cy+r*0.75)+'" rx="'+(r*0.8)+'" ry="'+(r*0.42)+'" fill="#4A9E5C" transform="rotate(-35 '+(cx-r*0.95)+' '+(cy+r*0.75)+')"/>'
+    +'<ellipse cx="'+(cx+r*0.95)+'" cy="'+(cy+r*0.75)+'" rx="'+(r*0.8)+'" ry="'+(r*0.42)+'" fill="#3D8C4E" transform="rotate(35 '+(cx+r*0.95)+' '+(cy+r*0.75)+')"/>';
+  /* 바깥 꽃잎 5장 */
+  for(let k=0;k<5;k++){ const a=-Math.PI/2+k*Math.PI*2/5;
+    g+='<circle cx="'+(cx+Math.cos(a)*r*0.55)+'" cy="'+(cy+Math.sin(a)*r*0.55)+'" r="'+(r*0.6)+'" fill="#D6455E"/>'; }
+  g+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*0.72)+'" fill="#E8607A"/>'
+    +'<circle cx="'+(cx+r*0.12)+'" cy="'+(cy-r*0.08)+'" r="'+(r*0.45)+'" fill="#D6455E"/>'
+    +'<circle cx="'+(cx-r*0.05)+'" cy="'+(cy+r*0.05)+'" r="'+(r*0.26)+'" fill="#E8607A"/>'
+    +'<circle cx="'+(cx+r*0.06)+'" cy="'+cy+'" r="'+(r*0.12)+'" fill="#B93350"/>'
+    +'<circle cx="'+(cx-r*0.35)+'" cy="'+(cy-r*0.4)+'" r="'+(r*0.14)+'" fill="#F7B8C8" opacity="0.8"/></g>';
+  return g;
+}
+/* 기도하시는 성모님 (base: 발끝 y, h: 전체 높이) */
+function marySvg(cx,base,h){
+  const u=h/40, top=base-h;
+  const y=(v)=>top+v*u, x=(v)=>cx+v*u;
+  return '<g style="animation:leafFloat 4s ease-in-out infinite">'
+    /* 후광 */
+    +'<circle cx="'+cx+'" cy="'+y(7)+'" r="'+(7*u)+'" fill="none" stroke="#F2C94C" stroke-width="'+(1.2*u)+'" opacity="0.85"/>'
+    /* 푸른 망토 (머리 위부터 발끝까지) */
+    +'<path d="M'+cx+' '+y(1.5)+' C'+x(-8)+' '+y(1.5)+' '+x(-9)+' '+y(14)+' '+x(-10)+' '+y(22)+' C'+x(-12)+' '+y(32)+' '+x(-13)+' '+y(38)+' '+x(-13)+' '+y(40)+' L'+x(13)+' '+y(40)+' C'+x(13)+' '+y(38)+' '+x(12)+' '+y(32)+' '+x(10)+' '+y(22)+' C'+x(9)+' '+y(14)+' '+x(8)+' '+y(1.5)+' '+cx+' '+y(1.5)+' Z" fill="#4F7BC8"/>'
+    +'<path d="M'+x(-13)+' '+y(40)+' L'+x(13)+' '+y(40)+' C'+x(12)+' '+y(36)+' '+x(9)+' '+y(30)+' '+x(9)+' '+y(26)+' L'+x(-9)+' '+y(26)+' C'+x(-9)+' '+y(30)+' '+x(-12)+' '+y(36)+' '+x(-13)+' '+y(40)+' Z" fill="#3E66AD" opacity="0.6"/>'
+    /* 흰 속옷 */
+    +'<path d="M'+x(-4.5)+' '+y(14)+' C'+x(-6)+' '+y(22)+' '+x(-6.5)+' '+y(32)+' '+x(-6)+' '+y(40)+' L'+x(6)+' '+y(40)+' C'+x(6.5)+' '+y(32)+' '+x(6)+' '+y(22)+' '+x(4.5)+' '+y(14)+' Z" fill="#F6F1E6"/>'
+    /* 얼굴 */
+    +'<ellipse cx="'+cx+'" cy="'+y(8)+'" rx="'+(4*u)+'" ry="'+(4.8*u)+'" fill="#F5D9C3"/>'
+    +'<path d="M'+x(-4.2)+' '+y(7)+' C'+x(-4)+' '+y(3)+' '+x(4)+' '+y(3)+' '+x(4.2)+' '+y(7)+' C'+x(2)+' '+y(5)+' '+x(-2)+' '+y(5)+' '+x(-4.2)+' '+y(7)+' Z" fill="#4F7BC8"/>'
+    +'<path d="M'+x(-1.8)+' '+y(8.5)+' q.6 .8 1.2 0 M'+x(0.6)+' '+y(8.5)+' q.6 .8 1.2 0" stroke="#6B4A3A" stroke-width="'+(0.6*u)+'" fill="none" stroke-linecap="round"/>'
+    +'<path d="M'+x(-1)+' '+y(10.8)+' q1 .8 2 0" stroke="#D08A7A" stroke-width="'+(0.5*u)+'" fill="none" stroke-linecap="round"/>'
+    /* 모아 쥔 손 */
+    +'<path d="M'+x(-2.2)+' '+y(23)+' C'+x(-2.6)+' '+y(19)+' '+x(-1)+' '+y(17)+' '+cx+' '+y(17)+' C'+x(1)+' '+y(17)+' '+x(2.6)+' '+y(19)+' '+x(2.2)+' '+y(23)+' Z" fill="#F5D9C3"/>'
+    +'<line x1="'+cx+'" y1="'+y(17.5)+'" x2="'+cx+'" y2="'+y(22.5)+'" stroke="#E5BFA8" stroke-width="'+(0.5*u)+'"/>'
+    /* 묵주 */
+    +'<path d="M'+x(1.5)+' '+y(22)+' C'+x(3.5)+' '+y(25)+' '+x(4)+' '+y(29)+' '+x(2.5)+' '+y(31)+'" stroke="#C9A24A" stroke-width="'+(0.5*u)+'" fill="none" stroke-dasharray="'+(0.7*u)+' '+(0.9*u)+'"/>'
+    +'<line x1="'+x(2.5)+'" y1="'+y(31)+'" x2="'+x(2.5)+'" y2="'+y(33.5)+'" stroke="#C9A24A" stroke-width="'+(0.7*u)+'"/><line x1="'+x(1.6)+'" y1="'+y(32)+'" x2="'+x(3.4)+'" y2="'+y(32)+'" stroke="#C9A24A" stroke-width="'+(0.7*u)+'"/>'
+    +'</g>';
+}
+/* 산타 (base: 발끝 y, h: 전체 높이) */
+function santaSvg(cx,base,h){
+  const u=h/40, top=base-h, y=v=>top+v*u, x=v=>cx+v*u;
+  return '<g style="animation:leafFloat 3.6s ease-in-out infinite">'
+    /* 몸(붉은 옷) */
+    +'<path d="M'+x(-9)+' '+y(40)+' C'+x(-11)+' '+y(30)+' '+x(-9)+' '+y(20)+' '+cx+' '+y(18)+' C'+x(9)+' '+y(20)+' '+x(11)+' '+y(30)+' '+x(9)+' '+y(40)+' Z" fill="#C8302E"/>'
+    +'<rect x="'+x(-9.5)+'" y="'+y(30)+'" width="'+(19*u)+'" height="'+(3*u)+'" fill="#2B2B2B"/><rect x="'+x(-1.5)+'" y="'+y(29.5)+'" width="'+(3*u)+'" height="'+(4*u)+'" fill="#F2C94C"/>'
+    +'<rect x="'+x(-9.5)+'" y="'+y(38)+'" width="'+(19*u)+'" height="'+(2.5*u)+'" rx="'+(1*u)+'" fill="#F6F1E6"/>'
+    /* 팔·장갑 */
+    +'<path d="M'+x(-8)+' '+y(22)+' q-4 4 -4 9" stroke="#C8302E" stroke-width="'+(3.2*u)+'" fill="none" stroke-linecap="round"/><circle cx="'+x(-12)+'" cy="'+y(31.5)+'" r="'+(1.8*u)+'" fill="#F6F1E6"/>'
+    +'<path d="M'+x(8)+' '+y(22)+' q4 4 4 9" stroke="#C8302E" stroke-width="'+(3.2*u)+'" fill="none" stroke-linecap="round"/><circle cx="'+x(12)+'" cy="'+y(31.5)+'" r="'+(1.8*u)+'" fill="#F6F1E6"/>'
+    /* 얼굴·수염 */
+    +'<circle cx="'+cx+'" cy="'+y(11)+'" r="'+(5.5*u)+'" fill="#F5D9C3"/>'
+    +'<path d="M'+x(-6)+' '+y(12)+' C'+x(-7)+' '+y(19)+' '+x(-3)+' '+y(22)+' '+cx+' '+y(22)+' C'+x(3)+' '+y(22)+' '+x(7)+' '+y(19)+' '+x(6)+' '+y(12)+' C'+x(4)+' '+y(15)+' '+x(-4)+' '+y(15)+' '+x(-6)+' '+y(12)+' Z" fill="#F6F1E6"/>'
+    +'<ellipse cx="'+cx+'" cy="'+y(13.5)+'" rx="'+(3*u)+'" ry="'+(1.3*u)+'" fill="#F6F1E6"/>'
+    +'<circle cx="'+cx+'" cy="'+y(12.5)+'" r="'+(1.1*u)+'" fill="#E89A8A"/>'
+    +'<circle cx="'+x(-2)+'" cy="'+y(10)+'" r="'+(0.6*u)+'" fill="#333"/><circle cx="'+x(2)+'" cy="'+y(10)+'" r="'+(0.6*u)+'" fill="#333"/>'
+    /* 모자 */
+    +'<path d="M'+x(-6)+' '+y(7.5)+' C'+x(-5)+' '+y(1)+' '+x(5)+' '+y(1)+' '+x(6)+' '+y(7.5)+' Z" fill="#C8302E"/>'
+    +'<path d="M'+x(2)+' '+y(2)+' q3 -3 6 2" stroke="#C8302E" stroke-width="'+(2.5*u)+'" fill="none" stroke-linecap="round"/>'
+    +'<circle cx="'+x(8.5)+'" cy="'+y(4.5)+'" r="'+(1.6*u)+'" fill="#F6F1E6"/>'
+    +'<rect x="'+x(-6.5)+'" y="'+y(6.5)+'" width="'+(13*u)+'" height="'+(2.4*u)+'" rx="'+(1.2*u)+'" fill="#F6F1E6"/>'
+    +'</g>';
+}
+/* 루돌프 */
+function rudolphSvg(cx,base,h){
+  const u=h/30, top=base-h, y=v=>top+v*u, x=v=>cx+v*u;
+  return '<g style="animation:leafFloat 3s ease-in-out infinite;animation-delay:.5s">'
+    /* 다리 */
+    +'<line x1="'+x(-6)+'" y1="'+y(22)+'" x2="'+x(-7)+'" y2="'+y(30)+'" stroke="#8B5E3C" stroke-width="'+(2.2*u)+'" stroke-linecap="round"/>'
+    +'<line x1="'+x(-2)+'" y1="'+y(22)+'" x2="'+x(-2)+'" y2="'+y(30)+'" stroke="#8B5E3C" stroke-width="'+(2.2*u)+'" stroke-linecap="round"/>'
+    +'<line x1="'+x(4)+'" y1="'+y(22)+'" x2="'+x(4)+'" y2="'+y(30)+'" stroke="#8B5E3C" stroke-width="'+(2.2*u)+'" stroke-linecap="round"/>'
+    +'<line x1="'+x(8)+'" y1="'+y(22)+'" x2="'+x(9)+'" y2="'+y(30)+'" stroke="#8B5E3C" stroke-width="'+(2.2*u)+'" stroke-linecap="round"/>'
+    /* 몸통·꼬리 */
+    +'<ellipse cx="'+x(1)+'" cy="'+y(19)+'" rx="'+(9*u)+'" ry="'+(5*u)+'" fill="#A9754D"/>'
+    +'<circle cx="'+x(-9)+'" cy="'+y(17)+'" r="'+(1.6*u)+'" fill="#D9B48F"/>'
+    /* 목·머리 */
+    +'<path d="M'+x(7)+' '+y(17)+' L'+x(11)+' '+y(9)+'" stroke="#A9754D" stroke-width="'+(4.5*u)+'" stroke-linecap="round"/>'
+    +'<ellipse cx="'+x(12.5)+'" cy="'+y(8)+'" rx="'+(4.5*u)+'" ry="'+(3.6*u)+'" fill="#A9754D"/>'
+    +'<ellipse cx="'+x(15.5)+'" cy="'+y(9.5)+'" rx="'+(2.8*u)+'" ry="'+(2.2*u)+'" fill="#C99A6E"/>'
+    /* 빨간 코 */
+    +'<circle cx="'+x(17.5)+'" cy="'+y(9)+'" r="'+(1.9*u)+'" fill="#E8302E"/><circle cx="'+x(17)+'" cy="'+y(8.4)+'" r="'+(0.6*u)+'" fill="#FF9A98"/>'
+    +'<circle cx="'+x(12.5)+'" cy="'+y(7)+'" r="'+(0.7*u)+'" fill="#333"/>'
+    /* 귀·뿔 */
+    +'<ellipse cx="'+x(9.5)+'" cy="'+y(5)+'" rx="'+(1.8*u)+'" ry="'+(1*u)+'" fill="#A9754D" transform="rotate(-30 '+x(9.5)+' '+y(5)+')"/>'
+    +'<path d="M'+x(11)+' '+y(5)+' L'+x(9)+' '+y(0.5)+' M'+x(9.8)+' '+y(2.5)+' L'+x(7.5)+' '+y(1.5)+' M'+x(9.4)+' '+y(1.5)+' L'+x(10.8)+' '+y(0)+'" stroke="#6E4A2B" stroke-width="'+(1*u)+'" fill="none" stroke-linecap="round"/>'
+    +'<path d="M'+x(13.5)+' '+y(4.8)+' L'+x(14.5)+' '+y(0.5)+' M'+x(14.1)+' '+y(2.5)+' L'+x(12.5)+' '+y(1.3)+' M'+x(14.3)+' '+y(1.5)+' L'+x(16)+' '+y(0.2)+'" stroke="#6E4A2B" stroke-width="'+(1*u)+'" fill="none" stroke-linecap="round"/>'
+    /* 목 방울 */
+    +'<circle cx="'+x(9)+'" cy="'+y(13.5)+'" r="'+(1.1*u)+'" fill="#F2C94C"/>'
+    +'</g>';
+}
+/* 작은 나무 십자가 */
+function crossSvg(x,base,h){
+  return '<line x1="'+x+'" y1="'+base+'" x2="'+x+'" y2="'+(base-h)+'" stroke="#7A5230" stroke-width="3" stroke-linecap="round"/>'
+       +'<line x1="'+(x-h*0.32)+'" y1="'+(base-h*0.68)+'" x2="'+(x+h*0.32)+'" y2="'+(base-h*0.68)+'" stroke="#7A5230" stroke-width="3" stroke-linecap="round"/>';
+}
+function seasonSvg(stage){
+  const s=seasonNow(); if(!s) return '';
+  const fp=FLOWER_POS[stage]||[];
+  const topY=[236,168,100,68][stage];
+  let out='';
+  if(s==='advent'){
+    out+=sashSvg(stage,'#7B3F9E','#4E2469');
+    /* 대림초 4개: 1·2·4주 보라, 3주 장미색 */
+    const wk=adventWeek(), cols=['#8E4FB0','#8E4FB0','#D98FB0','#8E4FB0'];
+    out+='<ellipse cx="80" cy="281" rx="26" ry="5" fill="#4A8C4E" opacity="0.8"/>';
+    [62,74,86,98].forEach((cx,i)=>{ out+=candleSvg(cx,281,i===2?14:13,cols[i],i<wk); });
+  }else if(s==='xmas'){
+    fp.forEach(f=>{ out+='<ellipse cx="'+f.cx+'" cy="'+(f.cy-3)+'" rx="'+(f.r+2.5)+'" ry="'+(f.r*0.65)+'" fill="white" opacity="0.9"/>'; });
+    out+='<ellipse cx="150" cy="'+(topY+8)+'" rx="10" ry="4.5" fill="white" opacity="0.92"/>';
+    if(stage>=1){
+      const sy=topY-10;
+      out+='<path d="M150 '+(sy-8)+' L152.4 '+(sy-2.4)+' L158 '+(sy-2.4)+' L153.5 '+(sy+1.2)+' L155.4 '+(sy+7)+' L150 '+(sy+3.6)+' L144.6 '+(sy+7)+' L146.5 '+(sy+1.2)+' L142 '+(sy-2.4)+' L147.6 '+(sy-2.4)+' Z" fill="#FFD700" stroke="#E8B923" stroke-width="0.6"/>';
+    }
+    out+='<g style="animation:leafFloat 3.4s ease-in-out infinite">'
+       +'<text x="70" y="90" font-size="11" opacity="0.75">❄</text>'
+       +'<text x="228" y="120" font-size="9" opacity="0.65">❄</text>'
+       +'<text x="55" y="200" font-size="8" opacity="0.55">❄</text>'
+       +'<text x="245" y="215" font-size="10" opacity="0.6">❄</text></g>';
+    out+=santaSvg(232,284,stage===0?34:44)+rudolphSvg(66,284,stage===0?26:34);
+  }else if(s==='lent'||s==='holyweek'){
+    out+=sashSvg(stage,'#6B3A8C','#3F1F55');
+    out+=crossSvg(222,282,22);
+    if(s==='holyweek'){            /* 성지가지 */
+      out+='<g style="animation:leafFloat 3.2s ease-in-out infinite">'
+         +'<path d="M78 282 Q70 262 58 250" stroke="#5E9E52" stroke-width="2" fill="none" stroke-linecap="round"/>'
+         +'<path d="M74 272 Q66 268 60 270 M72 266 Q64 260 59 262 M70 259 Q63 253 60 254 M75 270 Q80 262 86 262 M73 263 Q77 255 83 256 M71 257 Q73 250 78 249" stroke="#6BAE7A" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+         +'<path d="M84 282 Q92 262 104 250" stroke="#5E9E52" stroke-width="2" fill="none" stroke-linecap="round"/>'
+         +'<path d="M88 272 Q96 268 102 270 M90 266 Q98 260 103 262 M92 259 Q99 253 102 254 M87 270 Q82 262 76 262 M89 263 Q85 255 79 256 M91 257 Q89 250 84 249" stroke="#6BAE7A" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>';
+    }
+  }else if(s==='easter'){
+    out+='<g style="animation:leafFloat 3.2s ease-in-out infinite">'
+       +'<circle cx="72" cy="120" r="3.2" fill="#FFB5D5" opacity="0.85"/>'
+       +'<circle cx="236" cy="145" r="2.8" fill="#FFC5E0" opacity="0.8"/>'
+       +'<circle cx="58" cy="228" r="2.6" fill="#FF9EB5" opacity="0.75"/>'
+       +'<circle cx="243" cy="238" r="3" fill="#FFB5D5" opacity="0.8"/></g>';
+    /* 나무에 달린 달걀 */
+    (FRUIT_POS[stage]||[]).slice(0,3).forEach((p,i)=>{ out+=eggSvg(p.cx,p.cy-1,p.r*0.85,['#A8D8EA','#FFE49C','#C9B6E8'][i],['#5A9BC4','#E8A23C','#8E6BC4'][i]); });
+    /* 땅 위 달걀 */
+    out+=eggSvg(216,276,6,'#FFD3E0','#E0759A')+eggSvg(230,278,5.2,'#C5E8C3','#5E9E52')+eggSvg(243,275,5.5,'#FFE49C','#E8A23C');
+    /* 토끼 */
+    out+='<g style="animation:leafFloat 2.8s ease-in-out infinite;animation-delay:.4s">'
+       +'<ellipse cx="70" cy="272" rx="11" ry="9.5" fill="white" stroke="#E4D9CC" stroke-width="0.8"/>'
+       +'<circle cx="62" cy="261" r="7.5" fill="white" stroke="#E4D9CC" stroke-width="0.8"/>'
+       +'<ellipse cx="58" cy="248" rx="2.8" ry="8" fill="white" stroke="#E4D9CC" stroke-width="0.8" transform="rotate(-12 58 248)"/>'
+       +'<ellipse cx="58" cy="248" rx="1.3" ry="5.5" fill="#FFC5D5" transform="rotate(-12 58 248)"/>'
+       +'<ellipse cx="65" cy="248" rx="2.8" ry="8" fill="white" stroke="#E4D9CC" stroke-width="0.8" transform="rotate(10 65 248)"/>'
+       +'<ellipse cx="65" cy="248" rx="1.3" ry="5.5" fill="#FFC5D5" transform="rotate(10 65 248)"/>'
+       +'<circle cx="59.5" cy="260" r="1" fill="#333"/><circle cx="57" cy="263" r="1.1" fill="#F29BB0"/>'
+       +'<path d="M54 264.5 q-3 -.5 -5 -1.5 M54 265.5 q-3 .5 -5 1.2" stroke="#BBB" stroke-width="0.6"/>'
+       +'<circle cx="80" cy="273" r="3.5" fill="white" stroke="#E4D9CC" stroke-width="0.8"/></g>';
+  }else if(s==='pentecost'){
+    /* 가지마다 붉은 불꽃 */
+    fp.forEach((f,i)=>{
+      out+='<g style="animation:leafFloat 1.4s ease-in-out infinite;animation-delay:'+(i*0.2)+'s">'
+         +'<path d="M'+f.cx+' '+(f.cy-f.r-12)+' q5.5 6 0 12 q-5.5 -5 0 -12 Z" fill="#E8452F" opacity="0.92"/>'
+         +'<path d="M'+f.cx+' '+(f.cy-f.r-8)+' q2.5 3.5 0 7 q-2.5 -3 0 -7 Z" fill="#FFB347"/></g>';
+    });
+    /* 흰 비둘기 */
+    const dy=topY-14;
+    out+='<g style="animation:leafFloat 2.6s ease-in-out infinite">'
+       +'<ellipse cx="150" cy="'+dy+'" rx="8" ry="4" fill="white"/>'
+       +'<circle cx="157" cy="'+(dy-2)+'" r="2.8" fill="white"/>'
+       +'<path d="M160 '+(dy-2)+' l3 1 l-3 1 Z" fill="#F0A030"/>'
+       +'<path d="M148 '+(dy-2)+' q-6 -12 -14 -8 q6 3 9 10 Z" fill="white"/>'
+       +'<path d="M144 '+(dy+1)+' q-5 6 -11 6 q4 -2 8 -6 Z" fill="white" opacity="0.9"/>'
+       +'<circle cx="158" cy="'+(dy-2.6)+'" r="0.6" fill="#333"/></g>';
+  }else if(s==='may'){
+    /* 성모 성월: 장미 */
+    (FRUIT_POS[stage]||[]).slice(0,3).forEach(p=>{ out+=roseSvg(p.cx,p.cy-2,p.r*0.85); });
+    out+=roseSvg(150,topY+8,stage===0?3.5:5.5);
+    out+='<g style="animation:leafFloat 3.4s ease-in-out infinite">'
+       +'<ellipse cx="68" cy="130" rx="3" ry="1.8" fill="#E8607A" opacity="0.7" transform="rotate(30 68 130)"/>'
+       +'<ellipse cx="238" cy="160" rx="3" ry="1.8" fill="#D6455E" opacity="0.7" transform="rotate(-25 238 160)"/>'
+       +'<ellipse cx="55" cy="232" rx="2.6" ry="1.6" fill="#E8607A" opacity="0.6" transform="rotate(50 55 232)"/>'
+       +'<ellipse cx="248" cy="240" rx="2.8" ry="1.7" fill="#D6455E" opacity="0.65" transform="rotate(-40 248 240)"/></g>';
+  }else if(s==='october'){
+    /* 묵주기도 성월: 기도하시는 성모님 */
+    out+=marySvg(226,284,stage===0?38:52);
+  }else if(s==='june'){
+    /* 예수 성심: 나무 꼭대기의 붉은 심장과 작은 불꽃 */
+    const hy=topY-6, r=stage===0?4:6;
+    out+='<g style="animation:leafFloat 2.4s ease-in-out infinite">'
+       +'<path d="M150 '+(hy+r*1.3)+' C'+(150-r*1.8)+' '+(hy-r*0.2)+' '+(150-r*1.1)+' '+(hy-r*1.4)+' 150 '+(hy-r*0.4)+' C'+(150+r*1.1)+' '+(hy-r*1.4)+' '+(150+r*1.8)+' '+(hy-r*0.2)+' 150 '+(hy+r*1.3)+' Z" fill="#D8322F" stroke="#A81E1E" stroke-width="0.6"/>'
+       +'<path d="M150 '+(hy-r*1.9)+' q'+(r*0.5)+' '+(r*0.6)+' 0 '+(r*1.2)+' q-'+(r*0.5)+' -'+(r*0.5)+' 0 -'+(r*1.2)+' Z" fill="#FFB347"/>'
+       +'<circle cx="'+(150-r*0.5)+'" cy="'+(hy-r*0.1)+'" r="'+(r*0.22)+'" fill="#FF8A80" opacity="0.8"/></g>';
+    out+='<g style="animation:leafFloat 3.4s ease-in-out infinite;animation-delay:.6s">'
+       +'<text x="66" y="150" font-size="9" fill="#E05A5A" opacity="0.7">♥</text>'
+       +'<text x="230" y="130" font-size="8" fill="#E05A5A" opacity="0.65">♥</text>'
+       +'<text x="240" y="230" font-size="7" fill="#E05A5A" opacity="0.6">♥</text></g>';
+  }else if(s==='november'){
+    /* 위령 성월: 흰 국화와 촛불 */
+    const rp=(FRUIT_POS[stage]||[]).slice(0,3);
+    rp.forEach(p=>{
+      const r=p.r*0.8; let g='<g>';
+      for(let k=0;k<8;k++){ const a=k*Math.PI/4;
+        g+='<ellipse cx="'+(p.cx+Math.cos(a)*r*0.55)+'" cy="'+(p.cy-2+Math.sin(a)*r*0.55)+'" rx="'+(r*0.5)+'" ry="'+(r*0.24)+'" fill="white" opacity="0.95" transform="rotate('+(k*45)+' '+(p.cx+Math.cos(a)*r*0.55)+' '+(p.cy-2+Math.sin(a)*r*0.55)+')"/>'; }
+      out+=g+'<circle cx="'+p.cx+'" cy="'+(p.cy-2)+'" r="'+(r*0.3)+'" fill="#F2D06B"/></g>';
+    });
+    out+='<ellipse cx="220" cy="282" rx="14" ry="3.5" fill="#8A7355" opacity="0.7"/>'
+       +candleSvg(214,281,17,'#EAD9A6',true,5.5)+candleSvg(227,281,12,'#EAD9A6',true,4.5);
+  }
+  return out;
+}
+const STAGE_LABEL=['🌱 새싹','🌿 작은 나무','🌳 중간 나무','🌲 큰 나무'];
+const GROW_MSGS=['','🌿 새싹이 작은 나무가 되었어요!','🌳 중간 나무로 자랐어요!','🌲 드디어 큰 나무가 되었어요! 🎉'];
+function renderTree(){
+  const m=treeMetrics();
+  const stage=treeStageOf(m.total);
+  const flowersN=Math.floor(m.total/50);
+  const fpos=FLOWER_POS[stage]||[], frpos=FRUIT_POS[stage]||[];
+  const vf=Math.min(flowersN,fpos.length), vfr=Math.min(m.done,frpos.length);
+  let inner='<ellipse cx="150" cy="285" rx="75" ry="10" fill="#D4C9B8" opacity="0.5"/>'
+    +'<ellipse cx="150" cy="283" rx="55" ry="7" fill="#C4B89F" opacity="0.4"/>'
+    +'<g style="animation:treeSway 4s ease-in-out infinite;transform-origin:150px 280px">'
+    +TREE_BODY[stage]
+    +fpos.slice(0,vf).map(flowerSvg).join('')
+    +frpos.slice(0,vfr).map(fruitSvg).join('')
+    +butterflySvg(stage)
+    +seasonSvg(stage)
+    +'</g>';
+  $('treeSvgWrap').innerHTML=
+    '<svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<defs><radialGradient id="fg1" cx="35%" cy="35%"><stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#C0392B"/></radialGradient></defs>'
+    +inner+'</svg>';
+  /* 배지·안내 */
+  $('treeNameBadge').querySelector('span').textContent=tree.treeName;
+  const days=Math.max(1,Math.floor((Date.now()-new Date(tree.startDate))/86400000)+1);
+  $('treeMeta').textContent='심은 지 '+days+'일 · 총 '+m.total+'단의 물';
+  const sn=seasonNow();
+  $('treeStageBadge').querySelector('span').textContent=
+    STAGE_LABEL[stage]+(sn?' · '+SEASON_LABEL[sn]:'')+(seasonPreview!==null?' 👁':'');
+  const nx= stage===0? (20-m.total)+'단 더 봉헌하면 작은 나무로 자라요'
+        : stage===1? (100-m.total)+'단 더 봉헌하면 중간 나무로 자라요'
+        : stage===2? (300-m.total)+'단 더 봉헌하면 큰 나무로 자라요'
+        : '가장 큰 나무에 도달했어요! 🎉 (50단마다 꽃이 피어요)';
+  $('treeNext').textContent=nx;
+  $('treeTodayTxt').innerHTML='오늘 <b>'+tree.treeName+'</b>에게<br>'
+    +(m.today>0? '기도의 물을 '+m.today+'번 주었어요 💧' : '기도의 물을 줄 준비가 됐어요 🌿');
+  $('treeTodayNum').textContent=m.today;
+  $('stIntent').textContent=m.act;
+  $('stDan').textContent=m.total;
+  $('stDone').textContent=m.done;
+  /* 성장 축하 */
+  if(tree.lastStage!=null && stage>tree.lastStage){
+    const g=$('growMsg'); g.textContent=GROW_MSGS[stage]; g.classList.add('show');
+    setTimeout(()=>g.classList.remove('show'),4000);
+  }
+  if(tree.lastStage!==stage){ tree.lastStage=stage; saveTree(); }
+}
+
+/* ═══ 기도 모임 (Firebase) ═══ */
+let myGroups={};            /* {gid:{name,code}} */
+let grpOpen=null, grpRefs=[];
+const STICKERS=['🌹','🙏','💛','💪'];
+async function loadGroups(){
+  try{ const v=await kvGet('rosary-groups-v1'); if(v) myGroups=JSON.parse(v)||{}; }catch(e){}
+}
+async function saveGroups(){ await kvSet('rosary-groups-v1',JSON.stringify(myGroups)); scheduleSync(); }
+function needFb(){
+  if(!fb || !fbUser){ alert('모임 기능은 로그인 후 사용할 수 있습니다.\n[내 정보]에서 서버에 연결해 주세요.'); return true; }
+  return false;
+}
+function genCode(){
+  const C='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let s='';
+  for(let i=0;i<6;i++) s+=C[Math.floor(Math.random()*C.length)];
+  return s;
+}
+$('btnGrpMake').onclick=async()=>{
+  if(needFb()) return;
+  const name=(prompt('모임 이름을 정해 주세요 (예: 성모회 묵주기도)')||'').trim();
+  if(!name) return;
+  const code=genCode();
+  const gid='g'+Date.now()+Math.floor(Math.random()*1000);
+  try{
+    await fb.db.ref('g/'+gid+'/members/'+fbUser.uid).set({name:user.name,uid:user.uid,joined:Date.now()});
+    await fb.db.ref('g/'+gid+'/info').set({name,code,owner:fbUser.uid,created:Date.now()});
+    await fb.db.ref('codes/'+code).set(gid);
+    myGroups[gid]={name,code}; await saveGroups();
+    renderGroups(); pushDaily();
+    alert('모임이 만들어졌습니다!\n\n초대 코드: '+code+'\n\n이 코드를 도반들께 알려 주세요.');
+  }catch(e){ alert('모임 만들기에 실패했습니다. ('+(e.code||e.message)+')'); }
+};
+$('btnGrpJoin').onclick=async()=>{
+  if(needFb()) return;
+  const code=(prompt('초대 코드 6자리를 입력해 주세요')||'').trim().toUpperCase();
+  if(!/^[A-Z0-9]{6}$/.test(code)){ if(code) alert('코드는 영문·숫자 6자리입니다.'); return; }
+  try{
+    const snap=await fb.db.ref('codes/'+code).get();
+    const gid=snap.val();
+    if(!gid){ alert('코드를 찾을 수 없습니다. 다시 확인해 주세요.'); return; }
+    await fb.db.ref('g/'+gid+'/members/'+fbUser.uid).set({name:user.name,uid:user.uid,joined:Date.now()});
+    const info=(await fb.db.ref('g/'+gid+'/info').get()).val()||{};
+    myGroups[gid]={name:info.name||'기도 모임',code};
+    await saveGroups(); renderGroups(); pushDaily();
+    await pullGroupIntents(gid);
+    toast('🤝 「'+myGroups[gid].name+'」에 참여했습니다');
+  }catch(e){ alert('참여에 실패했습니다. ('+(e.code||e.message)+')'); }
+};
+function renderGroups(){
+  const box=$('grpList'); if(!box) return;
+  box.innerHTML='';
+  const gids=Object.keys(myGroups);
+  if(!gids.length){
+    box.innerHTML='<div id="grpEmpty">아직 모임이 없습니다.<br>모임을 만들어 초대 코드를 나누거나, 코드를 받아 참여해 보세요.</div>';
+    return;
+  }
+  gids.forEach(gid=>{
+    const g=myGroups[gid];
+    const e=document.createElement('div'); e.className='grp';
+    e.innerHTML='<span class="gn">🤝 '+g.name+'</span><span class="gc">'+g.code+' ›</span>';
+    e.onclick=()=>openGroup(gid);
+    box.appendChild(e);
+  });
+}
+/* 내 오늘 봉헌을 모임 현황판에 올림 */
+function pushDaily(){
+  if(!fb || !fbUser) return;
+  const t=ymd(new Date());
+  let intentT='';
+  if(curIntent){ const it=intents.find(x=>x.id===curIntent); if(it&&it.gid) intentT=it.title; }
+  Object.keys(myGroups).forEach(gid=>{
+    fb.db.ref('g/'+gid+'/daily/'+t+'/'+fbUser.uid)
+      .set({name:user.name,uid:user.uid,dan:log[t]||0,ts:Date.now(),intent:intentT})
+      .catch(()=>{});
+  });
+}
+/* 그룹 지향 공유: 저장 시 올리고, 열람 시 내려받기 */
+async function pushGroupIntent(it){
+  if(!fb || !fbUser || !it.gid) return;
+  try{ await fb.db.ref('g/'+it.gid+'/intents/'+it.id).set(it); }catch(e){}
+}
+async function pullGroupIntents(gid){
+  if(!fb || !fbUser) return;
+  try{
+    const snap=await fb.db.ref('g/'+gid+'/intents').get();
+    const d=snap.val(); if(!d) return;
+    const map=new Map(intents.map(x=>[x.id,x]));
+    let ch=false;
+    Object.values(d).forEach(it=>{
+      if(!it||!it.id) return;
+      const mine=map.get(it.id);
+      if(!mine){ intents.push(it); ch=true; }
+      else if((it.up||0)>(mine.up||0)){ Object.assign(mine,it); ch=true; }
+    });
+    if(ch){ await saveIntents(); renderHome(); }
+  }catch(e){}
+}
+/* 모임 화면 */
+function detachGrp(){ grpRefs.forEach(r=>{try{r.off();}catch(e){}}); grpRefs=[]; grpOpen=null; }
+async function openGroup(gid){
+  if(needFb()) return;
+  grpOpen=gid;
+  const g=myGroups[gid];
+  $('grpName').textContent='🤝 '+g.name;
+  $('grpCodeV').textContent=g.code;
+  $('grpFeed').innerHTML='<div id="grpEmpty">불러오는 중…</div>';
+  $('grpOverlay').classList.add('open');
+  pushDaily();
+  await pullGroupIntents(gid);
+  const t=ymd(new Date());
+  const y=ymd(new Date(Date.now()-86400000));
+  const dr=fb.db.ref('g/'+gid+'/daily/'+t);
+  const yr=fb.db.ref('g/'+gid+'/daily/'+y);
+  const sr=fb.db.ref('g/'+gid+'/stickers/'+t);
+  let today={}, yest={}, stk={};
+  const draw=()=>drawGrpFeed(gid,t,y,today,yest,stk);
+  dr.on('value',s=>{ today=s.val()||{}; draw(); });
+  yr.once('value').then(s=>{ yest=s.val()||{}; draw(); });
+  sr.on('value',s=>{ stk=s.val()||{}; draw(); });
+  grpRefs=[dr,sr];
+}
+function drawGrpFeed(gid,t,y,today,yest,stk){
+  if(grpOpen!==gid) return;
+  const box=$('grpFeed'); box.innerHTML='';
+  const sec=(label,data,date,withStk)=>{
+    const h=document.createElement('div'); h.className='gday'; h.textContent=label;
+    box.appendChild(h);
+    const rows=Object.entries(data).sort((a,b)=>(b[1].dan||0)-(a[1].dan||0));
+    if(!rows.length){
+      const e=document.createElement('div'); e.id='grpEmpty';
+      e.textContent='아직 봉헌 기록이 없습니다.';
+      box.appendChild(e); return;
+    }
+    rows.forEach(([au,m])=>{
+      const e=document.createElement('div'); e.className='frow';
+      e.innerHTML='<div class="f1"><span class="fn">'+(m.name||'')+' <small>@'+(m.uid||'')+'</small></span>'
+        +'<span class="fd">'+(m.dan||0)+'단</span></div>'
+        +(m.intent? '<div class="fi">🕯 '+m.intent+'</div>':'');
+      if(withStk){
+        const row=document.createElement('div'); row.className='stkRow';
+        const got=(stk[au])||{};
+        const counts={};
+        Object.values(got).forEach(em=>counts[em]=(counts[em]||0)+1);
+        STICKERS.forEach(em=>{
+          const b=document.createElement('button');
+          b.className='stk'+(got[fbUser.uid]===em?' got':'');
+          b.innerHTML=em+(counts[em]?'<span class="c">'+counts[em]+'</span>':'');
+          b.onclick=ev=>{
+            ev.stopPropagation();
+            const ref=fb.db.ref('g/'+gid+'/stickers/'+t+'/'+au+'/'+fbUser.uid);
+            if(got[fbUser.uid]===em) ref.remove(); else ref.set(em);
+          };
+          row.appendChild(b);
+        });
+        e.appendChild(row);
+      }
+      box.appendChild(e);
+    });
+  };
+  sec('오늘의 봉헌',today,t,true);
+  if(Object.keys(yest).length) sec('어제',yest,y,false);
+}
+$('grpClose').onclick=()=>{ detachGrp(); $('grpOverlay').classList.remove('open'); renderHome(); };
+$('grpOverlay').addEventListener('click',e=>{
+  if(e.target===$('grpOverlay')){ detachGrp(); $('grpOverlay').classList.remove('open'); renderHome(); }
+});
+$('grpCopy').onclick=async()=>{
+  const g=myGroups[grpOpen]; if(!g) return;
+  const msg='「'+g.name+'」 묵주기도 모임에 초대합니다 🌹\n초대 코드: '+g.code+'\n'+location.origin+location.pathname;
+  try{ await navigator.clipboard.writeText(msg); toast('초대 글이 복사되었습니다'); }
+  catch(e){ prompt('아래 내용을 복사해 주세요', msg); }
+};
+$('grpLeave').onclick=async()=>{
+  const g=myGroups[grpOpen]; if(!g) return;
+  if(!confirm('「'+g.name+'」 모임에서 나갈까요?')) return;
+  try{ await fb.db.ref('g/'+grpOpen+'/members/'+fbUser.uid).remove(); }catch(e){}
+  delete myGroups[grpOpen]; await saveGroups();
+  detachGrp(); $('grpOverlay').classList.remove('open');
+  renderGroups(); renderHome();
+};
+
+/* 나무 배지 탭 → 계절 미리보기 순환 */
+const SEASON_CYCLE=[null,'advent','xmas','lent','holyweek','easter','pentecost','may','june','october','november',''];
+$('treeStageBadge').onclick=()=>{
+  const i=SEASON_CYCLE.indexOf(seasonPreview);
+  seasonPreview=SEASON_CYCLE[(i+1)%SEASON_CYCLE.length];
+  if(seasonPreview==='') seasonPreview=null,seasonPreviewOff();
+  else{
+    renderTree();
+    toast(seasonPreview===null?'실제 계절로 돌아왔습니다'
+      :'👁 미리보기: '+SEASON_LABEL[seasonPreview]+' (탭해서 넘기기)');
+  }
+};
+function seasonPreviewOff(){ renderTree(); toast('실제 계절로 돌아왔습니다'); }
+
+/* ═══ 나무 자랑하기: 이미지 만들어 카톡 등으로 공유 ═══ */
+$('btnTreeShare').onclick=async()=>{
+  if(!tree||!tree.treeName) return;
+  try{ await document.fonts.ready; }catch(e){}
+  const m=treeMetrics();
+  const cs=getComputedStyle(document.body);
+  const v=n=>cs.getPropertyValue(n).trim();
+  const isL=document.body.classList.contains('light');
+  const W=800,H=1080;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const x=cv.getContext('2d');
+  const bg=x.createLinearGradient(0,0,0,H);
+  if(isL){ bg.addColorStop(0,v('--bg1')||'#fdf9f0'); bg.addColorStop(.5,v('--bg2')||'#faf5ea'); bg.addColorStop(1,v('--bg3')||'#f3ead6'); }
+  else{ bg.addColorStop(0,'#1a2140'); bg.addColorStop(1,'#0e1226'); }
+  x.fillStyle=bg; x.fillRect(0,0,W,H);
+  const gold=v('--gold')||'#b8892f', bright=v('--gold-bright')||'#d4a63c';
+  const dim=v('--ink-dim')||'#b3a88f', mid=v('--ink-mid')||'#6e6450', rose=v('--rose')||'#c76a80';
+  x.strokeStyle=gold; x.globalAlpha=.5; x.lineWidth=2; x.strokeRect(30,30,W-60,H-60); x.globalAlpha=1;
+  x.textAlign='center';
+  x.fillStyle=bright; x.font='700 44px "Noto Serif KR",serif';
+  x.fillText('나 의  기 도  나 무',W/2,110);
+  x.fillStyle=rose; x.font='600 30px "Gowun Batang",serif';
+  x.fillText('🌳 '+tree.treeName,W/2,160);
+  const n=new Date();
+  x.fillStyle=dim; x.font='22px "Gowun Batang",serif';
+  const sn=seasonNow();
+  x.fillText(n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일'+(sn?' · '+SEASON_LABEL[sn]:''),W/2,196);
+  /* 나무 SVG → 이미지 */
+  const svgEl=$('treeSvgWrap').querySelector('svg');
+  await new Promise(res=>{
+    const img=new Image();
+    const blob=new Blob([svgEl.outerHTML],{type:'image/svg+xml'});
+    const url=URL.createObjectURL(blob);
+    img.onload=()=>{ x.drawImage(img,(W-520)/2,215,520,520); URL.revokeObjectURL(url); res(); };
+    img.onerror=()=>{ URL.revokeObjectURL(url); res(); };
+    img.src=url;
+  });
+  let streak=0; const tt=new Date();
+  for(;;){ const k=ymd(tt); if((log[k]||0)>0){ streak++; tt.setDate(tt.getDate()-1); } else break; }
+  x.fillStyle=gold; x.font='700 58px "Gowun Batang",serif';
+  x.fillText('총 '+m.total+'단 봉헌',W/2,810);
+  x.fillStyle=mid; x.font='26px "Gowun Batang",serif';
+  x.fillText('오늘 '+m.today+'단 · 완료 지향 '+m.done+'개'+(streak>0?' · '+streak+'일 연속':''),W/2,856);
+  x.fillStyle=dim; x.font='20px "Gowun Batang",serif';
+  x.fillText((user?user.name+'님의 묵주기도':''),W/2,905);
+  x.fillStyle=rose; x.font='24px serif'; x.fillText('🌹',W/2,950);
+  x.fillStyle=dim; x.font='18px "Gowun Batang",serif';
+  x.fillText(location.host+location.pathname,W/2,H-52);
+  cv.toBlob(async b=>{
+    const file=new File([b],'나의기도나무.png',{type:'image/png'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{
+        await navigator.share({files:[file],title:'나의 기도 나무',
+          text:'🌳 '+tree.treeName+' · 총 '+m.total+'단 봉헌\n'+location.href});
+        return;
+      }catch(e){ if(e.name==='AbortError') return; }
+    }
+    /* 공유 미지원: 이미지 저장 + 주소 복사 */
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b); a.download='나의기도나무.png'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    try{ await navigator.clipboard.writeText(location.href); toast('이미지를 저장하고 주소를 복사했습니다'); }
+    catch(e){ toast('이미지를 저장했습니다'); }
+  },'image/png');
+};
+
+/* ═══ 홈 렌더 ═══ */
+function fmtScope(it){ return it.scope==='group'?'그룹':'개인'; }
+function renderIntents(){
+  const box=$('intentList'); box.innerHTML='';
+  const act=activeIntents(), done=doneIntents();
+  if(!act.length && !done.length){
+    box.innerHTML='<div id="intentEmpty">아직 지향이 없습니다. ＋ 새 지향으로 시작해 보세요.</div>';
+    return;
+  }
+  act.forEach(it=>{
+    const di=iDayIndex(it);
+    const prog=Math.min(Math.max((di+1)/it.days,0),1);
+    const e=document.createElement('div'); e.className='intent';
+    e.innerHTML='<div class="t1"><span class="nm">🕯 '+it.title+'</span>'
+      +'<span class="tag'+(it.scope==='group'?' grp':'')+'">'+(it.gname||fmtScope(it))+'</span></div>'
+      +'<div class="t2"><span>'+it.days+'일기도 · 하루 '+it.perDay+'단</span>'
+      +'<span>'+(di<0? it.start+' 시작' : (di+1)+' / '+it.days+'일 · 달성 '+iAchieved(it)+'일')+'</span></div>'
+      +'<div class="pbar"><div class="pfill" style="width:'+(prog*100)+'%"></div></div>';
+    e.onclick=()=>openIntentEditor(it);
+    box.appendChild(e);
+  });
+  done.slice(-3).reverse().forEach(it=>{
+    const e=document.createElement('div'); e.className='intent doneIt';
+    e.innerHTML='<div class="t1"><span class="nm">🍎 '+it.title+'</span>'
+      +'<span class="tag">완료</span></div>'
+      +'<div class="t2"><span>'+it.days+'일 중 '+it.achieved+'일 달성</span><span>'+(it.end||'')+'</span></div>';
+    e.onclick=()=>openIntentEditor(it);
+    box.appendChild(e);
+  });
+}
+function renderHome(){
+  const n=new Date();
+  $('hDate').textContent=MYST[mystKey].name+' · '+n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일';
+  greet();
+  if(tree&&tree.treeName){
+    $('treePlant').hidden=true; $('treeShow').hidden=false;
+    renderTree();
+  }else{
+    $('treePlant').hidden=false; $('treeShow').hidden=true;
+  }
+  renderIntents();
+  renderGroups();
+  $('btnStartPray').textContent = (idx>0&&idx<steps.length) ? '📖 이어서 기도하기' : '📿 기도 시작';
+}
+
+/* ═══ 화면 전환 ═══ */
+function showHome(){
+  if(kOn){ kOn=false; holdWake(false); stopVoice(); updateAutoBtn(); }
+  document.body.classList.add('home');
+  renderHome();
+}
+function showPray(){
+  document.body.classList.remove('home');
+  show();
+}
+/* ── 기도 지향 선택 ── */
+let curIntent=null;   /* 이번 기도가 봉헌되는 지향 id (없으면 null) */
+function openPick(){
+  const act=activeIntents();
+  if(!act.length){ curIntent=null; showPray(); return; }
+  if(idx>0 && idx<steps.length){ showPray(); return; }  /* 이어서 하기는 곧장 */
+  const box=$('pickList'); box.innerHTML='';
+  act.forEach(it=>{
+    const di=iDayIndex(it);
+    const e=document.createElement('div'); e.className='pick';
+    e.innerHTML='<span class="pn">🕯 '+it.title+'</span>'
+      +'<span class="pd">'+(di<0? it.start+' 시작' : (di+1)+'/'+it.days+'일 · 오늘 '+(log[ymd(new Date())]||0)+'/'+it.perDay+'단')+'</span>';
+    e.onclick=()=>{ curIntent=it.id; $('pickOverlay').classList.remove('open'); showPray();
+      toast('🕯 「'+it.title+'」 지향으로 봉헌합니다'); };
+    box.appendChild(e);
+  });
+  const n=document.createElement('div'); n.className='pick none';
+  n.innerHTML='<span class="pn">지향 없이 기도하기</span>';
+  n.onclick=()=>{ curIntent=null; $('pickOverlay').classList.remove('open'); showPray(); };
+  box.appendChild(n);
+  $('pickOverlay').classList.add('open');
+}
+$('pickCancel').onclick=()=>$('pickOverlay').classList.remove('open');
+$('pickOverlay').addEventListener('click',e=>{ if(e.target===$('pickOverlay')) $('pickOverlay').classList.remove('open'); });
+$('btnStartPray').onclick=openPick;
+$('btnGoHome').onclick=showHome;
+$('btnHomeCal').onclick=openCal;
+$('btnHomeSet').onclick=()=>{ $('more').classList.add('open'); };
+
+/* ═══ 시작 ═══ */
+(async()=>{
+  await loadLog();
+  await loadLogEdit();
+  await loadVoices();
+  await loadSettings();
+  await loadIntents();
+  await loadGroups();
+  await loadUser();
+  await loadTree();
+  buildSteps(); refreshHead();
+  const resumed=await tryResume();
+  updateGoalLine(); show();
+  if(resumed) showPray(); else showHome();
+})();
+</script>
+<script>
+/* PWA 서비스 워커 등록 */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+</script>
+</body>
+</html>
